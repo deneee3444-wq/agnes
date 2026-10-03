@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark overflow-x-hidden">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Agnes AI Full Suite Studio</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        screens: {
+          'xs': '420px',
+          'sm': '640px',
+          'md': '768px',
+          'lg': '1024px',
+          'xl': '1280px',
+          '2xl': '1536px',
+        },
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+      width: 100%;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(75, 85, 99, 0.5); }
+    pre code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-[#0c0d12] dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200 overflow-x-hidden w-full max-w-full">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-[#12141c]/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 w-full">
+    <div class="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1 sm:gap-4">
+      
+      <!-- Logo & Title -->
+      <div class="flex items-center space-x-2 shrink-0">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
+          <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <span class="font-bold text-base sm:text-lg tracking-tight">Agnes AI</span>
+            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium hidden xs:inline-block">Free Suite</span>
+          </div>
+          <p class="text-[10px] text-gray-500 dark:text-gray-400 hidden md:block">Metin, Görsel ve Video Stüdyosu</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center space-x-0.5 sm:space-x-1 bg-gray-100 dark:bg-[#181b24] p-1 rounded-xl border border-gray-200 dark:border-gray-800 text-xs sm:text-sm font-medium shrink-0">
+        <button onclick="switchTab('chat')" id="tab-btn-chat" class="tab-btn active px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-indigo-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm">
+          <i data-lucide="message-square-text" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span class="text-xs sm:text-sm">Metin</span>
+        </button>
+        <button onclick="switchTab('image')" id="tab-btn-image" class="tab-btn px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+          <i data-lucide="image" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span class="text-xs sm:text-sm">Görsel</span>
+        </button>
+        <button onclick="switchTab('video')" id="tab-btn-video" class="tab-btn px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+          <i data-lucide="clapperboard" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span class="text-xs sm:text-sm">Video</span>
+        </button>
+      </nav>
+
+      <!-- Actions (Reset State, Settings & Theme) -->
+      <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+        <button onclick="resetRuntimeState()" class="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-rose-500 dark:text-gray-400 dark:hover:text-rose-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Geçici Belleği Temizle (Reset State)">
+          <i data-lucide="rotate-ccw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </button>
+        <button onclick="openSettingsModal()" class="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="API Ayarları">
+          <i data-lucide="settings" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </button>
+        <button onclick="toggleTheme()" class="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Karanlık/Aydınlık Tema">
+          <i id="theme-icon" data-lucide="moon" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full flex flex-col space-y-5 sm:space-y-6 min-w-0 overflow-x-hidden">
+
+    <!-- TAB 1: METİN & AKIL YÜRÜTME (CHAT / MULTIMODAL) -->
+    <div id="tab-content-chat" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 min-w-0 w-full">
+      
+      <!-- Sol Panel: Form ve Parametreler -->
+      <div class="lg:col-span-5 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 min-w-0 w-full overflow-hidden">
+        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+          <h2 class="text-sm sm:text-base font-semibold flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-indigo-500"></i> Metin & Vision Yapılandırması
+          </h2>
+          <span class="text-[11px] text-emerald-500 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Ücretsiz Modeller</span>
+        </div>
+
+        <!-- Model Seçici -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Model Seçimi</label>
+          <select id="chat-model" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="agnes-3.0-flash">agnes-3.0-flash (En Yeni Nesil / Önerilen / Ajan & Kodlama)</option>
+            <option value="agnes-2.5-flash">agnes-2.5-flash (GA Kararlı / Reasoning & Multimodal)</option>
+            <option value="agnes-2.0-flash">agnes-2.0-flash (v2.0 Geriye Dönük Uyumluluk)</option>
+          </select>
+        </div>
+
+        <!-- Sistem Talimatı -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Sistem Talimatı (System Prompt - İsteğe Bağlı)</label>
+          <textarea id="chat-system" rows="2" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Sen yardımcı ve teknik konularda uzman bir yapay zekasın..."></textarea>
+        </div>
+
+        <!-- Kullanıcı İstemi (Prompt) -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">İstem (Prompt) *</label>
+          <textarea id="chat-prompt" rows="4" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-sans" placeholder="Bir soru sorun, kod yazdırın veya analizi yapılacak konuyu belirtin..."></textarea>
+        </div>
+
+        <!-- Görsel Ekleme (Multimodal Input) -->
+        <div class="border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-gray-50/50 dark:bg-[#151821]/50 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+              <i data-lucide="image-plus" class="w-3.5 h-3.5 text-indigo-400"></i> Görsel Ekle (Multimodal Vision)
+            </span>
+            <button onclick="clearChatImage()" id="chat-img-clear" class="text-[11px] text-red-500 hover:underline hidden">Temizle</button>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="file" id="chat-img-file" accept="image/*" class="text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 dark:file:bg-indigo-950 dark:file:text-indigo-300 hover:file:bg-indigo-100 cursor-pointer">
+            <span class="text-xs text-gray-400 self-center hidden sm:inline">veya</span>
+            <input type="text" id="chat-img-url" class="text-xs flex-1 bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none" placeholder="Görsel URL'si yapıştırın">
+          </div>
+          <div id="chat-img-preview-wrap" class="hidden pt-1">
+            <img id="chat-img-preview" src="" class="max-h-24 rounded-lg border border-gray-200 dark:border-gray-700 object-cover">
+          </div>
+        </div>
+
+        <!-- Parametre Sürgüleri (Collapsible) -->
+        <details class="group border border-gray-200 dark:border-gray-800 rounded-xl p-3 bg-gray-50/50 dark:bg-[#181b24]/50">
+          <summary class="text-xs font-semibold cursor-pointer list-none flex items-center justify-between text-gray-600 dark:text-gray-400">
+            <span>İleri Düzey Parametreler (Temperature, Tokens, Penalties)</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="pt-3 space-y-3">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span>Temperature (Rastgelelik): <strong id="chat-temp-val">0.7</strong></span>
+              </div>
+              <input type="range" id="chat-temp" min="0" max="2" step="0.05" value="0.7" class="w-full accent-indigo-600" oninput="document.getElementById('chat-temp-val').innerText = this.value">
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span>Top_P (Nucleus Sampling): <strong id="chat-topp-val">0.9</strong></span>
+              </div>
+              <input type="range" id="chat-topp" min="0" max="1" step="0.05" value="0.9" class="w-full accent-indigo-600" oninput="document.getElementById('chat-topp-val').innerText = this.value">
+            </div>
+
+            <div class="flex items-center justify-between">
+              <label class="text-xs">Max Output Tokens:</label>
+              <input type="number" id="chat-max-tokens" value="2048" class="text-xs bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1 w-24 text-right">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-gray-200 dark:border-gray-700">
+              <div>
+                <label class="text-[11px] block text-gray-500">Presence Penalty:</label>
+                <input type="number" id="chat-presence" value="0.0" step="0.1" min="-2" max="2" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1">
+              </div>
+              <div>
+                <label class="text-[11px] block text-gray-500">Frequency Penalty:</label>
+                <input type="number" id="chat-frequency" value="0.0" step="0.1" min="-2" max="2" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1">
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1 border-t border-gray-200 dark:border-gray-700">
+              <div>
+                <span class="text-xs font-medium block">Akıl Yürütme Modu (Thinking Mode)</span>
+                <span class="text-[10px] text-gray-500">Adım adım düşünme çıktısını etkinleştirir</span>
+              </div>
+              <input type="checkbox" id="chat-thinking" checked class="w-4 h-4 accent-indigo-600 rounded">
+            </div>
+          </div>
+        </details>
+
+        <!-- Gönder Butonu -->
+        <button onclick="sendChat()" id="chat-submit-btn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl flex items-center justify-center space-x-2 transition shadow-md shadow-indigo-600/20 active:scale-[0.99]">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Yanıt Üret</span>
+        </button>
+
+      </div>
+
+      <!-- Sağ Panel: Metin Yanıtı ve İstatistikler -->
+      <div class="lg:col-span-7 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col space-y-3 min-h-[460px] min-w-0 w-full overflow-hidden">
+        
+        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+          <div class="flex items-center gap-2">
+            <h2 class="text-sm sm:text-base font-semibold">Model Yanıtı</h2>
+            <span id="chat-status-badge" class="hidden text-[11px] px-2 py-0.5 rounded-full font-medium"></span>
+          </div>
+          <div class="flex items-center space-x-1 sm:space-x-2">
+            <button onclick="copyChatOutput()" id="chat-copy-btn" class="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Kopyala">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+            <button onclick="clearChatOutput()" class="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Temizle">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Token & Süre Rozetleri -->
+        <div id="chat-stats-bar" class="hidden flex flex-wrap gap-2 text-[11px] text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#181b24] p-2 rounded-xl">
+          <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> <span id="stat-chat-time">0 ms</span></span>
+          <span>•</span>
+          <span>Girdi: <strong id="stat-chat-prompt" class="text-gray-700 dark:text-gray-300">0</strong></span>
+          <span>•</span>
+          <span>Çıktı: <strong id="stat-chat-completion" class="text-gray-700 dark:text-gray-300">0</strong></span>
+          <span id="stat-chat-reasoning-wrap" class="hidden">• Düşünme: <strong id="stat-chat-reasoning" class="text-indigo-400">0</strong></span>
+        </div>
+
+        <!-- Yanıt Metin Kutusu -->
+        <div class="flex-1 overflow-y-auto max-h-[500px] bg-gray-50 dark:bg-[#181b24] border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words font-sans min-w-0" id="chat-output">
+          <div class="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 py-12">
+            <i data-lucide="message-square" class="w-8 h-8 mb-2 opacity-50"></i>
+            <p class="text-xs">Sol taraftan bir istem yazıp "Yanıt Üret" butonuna basın.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TAB 2: GÖRSEL STÜDYOSU (IMAGE STUDIO) -->
+    <div id="tab-content-image" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 min-w-0 w-full">
+      
+      <!-- Sol Panel: Form -->
+      <div class="lg:col-span-5 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 min-w-0 w-full overflow-hidden">
+        
+        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+          <h2 class="text-sm sm:text-base font-semibold flex items-center gap-2">
+            <i data-lucide="palette" class="w-4 h-4 text-purple-500"></i> Görsel Üretimi & Düzenleme
+          </h2>
+          <span class="text-[11px] text-purple-500 font-medium bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">Ücretsiz 1K-4K</span>
+        </div>
+
+        <!-- Model Seçici -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Görsel Modeli</label>
+          <select id="image-model" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <option value="agnes-image-2.5-flash">agnes-image-2.5-flash (En Yeni Nesil / Yüksek Detay)</option>
+            <option value="agnes-image-2.1-flash">agnes-image-2.1-flash (Yüksek Bilgi Yoğunluğu)</option>
+            <option value="agnes-image-2.0-flash">agnes-image-2.0-flash (Hızlı v2.0 ELO 1184)</option>
+          </select>
+        </div>
+
+        <!-- Çalışma Modu (Text2Img vs Img2Img) -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Üretim Modu</label>
+          <div class="grid grid-cols-2 gap-2 bg-gray-100 dark:bg-[#181b24] p-1 rounded-xl text-xs font-medium">
+            <button type="button" onclick="setImageMode('t2i')" id="img-mode-t2i" class="py-1.5 rounded-lg text-purple-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition">Metinden Görsel</button>
+            <button type="button" onclick="setImageMode('i2i')" id="img-mode-i2i" class="py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition">Görsel Düzenleme</button>
+          </div>
+        </div>
+
+        <!-- Pozitif Prompt -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Görsel Tanımı (Prompt) *</label>
+          <textarea id="image-prompt" rows="3" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="A luminous floating city above a misty canyon at sunrise, cinematic realism, 8k detail..."></textarea>
+        </div>
+
+        <!-- NEGATİF PROMPT (Kullanıcının İstediği Özel Alan) -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400 flex items-center justify-between">
+            <span>Negatif İstem (Negative Prompt)</span>
+            <span class="text-[10px] text-gray-400">İstenmeyen ögeler</span>
+          </label>
+          <textarea id="image-negative-prompt" rows="2" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="blurry, distorted, low quality, bad anatomy, deformed limbs, watermark, text, out of focus..."></textarea>
+        </div>
+
+        <!-- Img2Img Referans Görsel Alanı (Varsa) -->
+        <div id="image-ref-box" class="hidden border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-gray-50/50 dark:bg-[#151821]/50 space-y-2">
+          <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300">Giriş / Referans Görsel (URL veya Yükleme)</label>
+          <input type="file" id="image-ref-file" accept="image/*" class="text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 dark:file:bg-purple-950 dark:file:text-purple-300 cursor-pointer w-full">
+          <input type="text" id="image-ref-url" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none" placeholder="Veya herkese açık HTTPS görsel URL'si">
+          <div id="image-ref-preview-wrap" class="hidden pt-1">
+            <img id="image-ref-preview" src="" class="max-h-20 rounded-lg border object-cover">
+          </div>
+        </div>
+
+        <!-- Çözünürlük (Size Tier) ve En-Boy Oranı (Ratio) -->
+        <div class="grid grid-cols-2 gap-2 sm:gap-3">
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Çözünürlük Seviyesi</label>
+            <select id="image-size" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-2.5 py-2 focus:outline-none">
+              <option value="1K" selected>1K (Hızlı / Standart)</option>
+              <option value="2K">2K (Yüksek Çözünürlük)</option>
+              <option value="3K">3K (Ultra Detay)</option>
+              <option value="4K">4K (Maksimum Kalite)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">En-Boy Oranı (Ratio)</label>
+            <select id="image-ratio" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-2.5 py-2 focus:outline-none">
+              <option value="1:1" selected>1:1 (Kare - 1024x1024)</option>
+              <option value="16:9">16:9 (Geniş Ekran - 1312x736)</option>
+              <option value="9:16">9:16 (Dikey / Hikaye - 736x1312)</option>
+              <option value="4:3">4:3 (Klasik Manzara - 1152x864)</option>
+              <option value="3:4">3:4 (Dikey Portre - 864x1152)</option>
+              <option value="2:3">2:3 (Portre - 832x1248)</option>
+              <option value="3:2">3:2 (Fotoğraf - 1248x832)</option>
+              <option value="21:9">21:9 (Sinematik - 1568x672)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- İLERİ DÜZEY GÖRSEL PARAMETRELERİ (Seed, CFG, Steps, Strength) -->
+        <details class="group border border-gray-200 dark:border-gray-800 rounded-xl p-3 bg-gray-50/50 dark:bg-[#181b24]/50">
+          <summary class="text-xs font-semibold cursor-pointer list-none flex items-center justify-between text-gray-600 dark:text-gray-400">
+            <span>İleri Düzey Parametreler (Seed, CFG Scale, Adım, Format)</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="pt-3 space-y-3">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[11px] block font-medium mb-1">Seed (Tohum):</label>
+                <input type="number" id="image-seed" placeholder="Örn: 42 (boş=rastgele)" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5">
+              </div>
+              <div>
+                <label class="text-[11px] block font-medium mb-1">Inference Steps:</label>
+                <input type="number" id="image-steps" value="30" min="10" max="60" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5">
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-[11px] mb-1">
+                <span>Guidance Scale (CFG / Prompta Bağlılık): <strong id="image-cfg-val">7.5</strong></span>
+              </div>
+              <input type="range" id="image-cfg" min="1" max="20" step="0.5" value="7.5" class="w-full accent-purple-600" oninput="document.getElementById('image-cfg-val').innerText = this.value">
+            </div>
+
+            <div>
+              <div class="flex justify-between text-[11px] mb-1">
+                <span>Dönüşüm Gücü (Image Strength - Img2Img): <strong id="image-strength-val">0.8</strong></span>
+              </div>
+              <input type="range" id="image-strength" min="0.1" max="1.0" step="0.05" value="0.8" class="w-full accent-purple-600" oninput="document.getElementById('image-strength-val').innerText = this.value">
+            </div>
+
+            <div class="flex items-center justify-between pt-1 border-t border-gray-200 dark:border-gray-700 text-xs">
+              <span>Çıktı Biçimi:</span>
+              <div class="flex items-center space-x-3">
+                <label class="flex items-center space-x-1 cursor-pointer">
+                  <input type="radio" name="img_format" value="url" checked class="accent-purple-600">
+                  <span>URL</span>
+                </label>
+                <label class="flex items-center space-x-1 cursor-pointer">
+                  <input type="radio" name="img_format" value="b64_json" class="accent-purple-600">
+                  <span>Base64</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Üret Butonu -->
+        <button onclick="generateImage()" id="image-submit-btn" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm rounded-xl flex items-center justify-center space-x-2 transition shadow-md shadow-purple-600/20 active:scale-[0.99]">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Görsel Oluştur</span>
+        </button>
+
+      </div>
+
+      <!-- Sağ Panel: Sonuç Önizleme -->
+      <div class="lg:col-span-7 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col space-y-3 min-h-[460px] min-w-0 w-full overflow-hidden">
+        
+        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+          <h2 class="text-sm sm:text-base font-semibold">Oluşturulan Görsel</h2>
+          <div id="image-actions" class="hidden flex items-center space-x-2">
+            <a id="image-download-btn" href="#" download="agnes_image.png" class="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-xs font-medium rounded-lg flex items-center gap-1 transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> İndir
+            </a>
+            <a id="image-open-btn" href="#" target="_blank" class="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-xs font-medium rounded-lg flex items-center gap-1 transition">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Yeni Sekme
+            </a>
+          </div>
+        </div>
+
+        <!-- Görsel Görüntüleme Alanı -->
+        <div class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-[#181b24] border border-gray-200 dark:border-gray-800 rounded-xl p-3 sm:p-4 overflow-hidden relative min-w-0" id="image-output-container">
+          <div id="image-placeholder" class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 py-12">
+            <i data-lucide="image" class="w-10 h-10 mb-2 opacity-50"></i>
+            <p class="text-xs">İstediğiniz görsel ayarlarını seçip "Görsel Oluştur"a tıklayın.</p>
+          </div>
+          <img id="image-result" src="" class="hidden max-h-[480px] max-w-full rounded-lg shadow-md object-contain transition-transform hover:scale-[1.01]">
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TAB 3: VİDEO STÜDYOSU (VIDEO STUDIO) -->
+    <div id="tab-content-video" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 min-w-0 w-full">
+      
+      <!-- Sol Panel: Form -->
+      <div class="lg:col-span-5 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 min-w-0 w-full overflow-hidden">
+        
+        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+          <h2 class="text-sm sm:text-base font-semibold flex items-center gap-2">
+            <i data-lucide="video" class="w-4 h-4 text-rose-500"></i> Video Üretimi (Asenkron)
+          </h2>
+          <span class="text-[11px] text-rose-500 font-medium bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">Ücretsiz 720P</span>
+        </div>
+
+        <!-- Model Seçimi -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Video Modeli</label>
+          <select id="video-model" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-500">
+            <option value="agnes-video-2.5-flash">agnes-video-2.5-flash (Ücretsiz Promosyon / Hızlı 720P)</option>
+            <option value="agnes-video-v2.0">agnes-video-v2.0 (Klasik v2.0 Video Modeli)</option>
+            <option value="agnes-video-2.5">agnes-video-2.5 (Pro Ücretli Model - Bakiye İster)</option>
+          </select>
+        </div>
+
+        <!-- Üretim Modu (text, keyframe, reference) -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Çalışma Modu</label>
+          <div class="grid grid-cols-3 gap-1 bg-gray-100 dark:bg-[#181b24] p-1 rounded-xl text-xs font-medium text-center">
+            <button type="button" onclick="setVideoMode('text')" id="vid-mode-text" class="py-1.5 rounded-lg text-rose-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition">Metin</button>
+            <button type="button" onclick="setVideoMode('keyframe')" id="vid-mode-keyframe" class="py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition">Keyframe</button>
+            <button type="button" onclick="setVideoMode('reference')" id="vid-mode-reference" class="py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition">Referans</button>
+          </div>
+        </div>
+
+        <!-- Video Sahne Promptu -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Video Sahne Açıklaması (Prompt) *</label>
+          <textarea id="video-prompt" rows="3" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="A futuristic car driving through a neon-lit cyber city in rain, slow camera pan, cinematic lighting..."></textarea>
+        </div>
+
+        <!-- NEGATİF PROMPT (Video için) -->
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400 flex items-center justify-between">
+            <span>Video Negatif İstem (Negative Prompt)</span>
+            <span class="text-[10px] text-gray-400">İstenmeyen hareketler</span>
+          </label>
+          <textarea id="video-negative-prompt" rows="2" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="blurry, jitter, flickering, low quality, morphing, static image, sudden cuts..."></textarea>
+        </div>
+
+        <!-- Keyframe Alanları (Keyframe modunda açılır) -->
+        <div id="video-keyframe-box" class="hidden border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-gray-50/50 dark:bg-[#151821]/50 space-y-2">
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 block">İlk & Son Kare Resim URL'leri</span>
+          <input type="text" id="video-first-frame" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="İlk Kare (First Frame) HTTPS URL">
+          <input type="text" id="video-last-frame" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="Son Kare (Last Frame) HTTPS URL">
+        </div>
+
+        <!-- Referans Alanları (Reference modunda açılır) -->
+        <div id="video-ref-box" class="hidden border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-gray-50/50 dark:bg-[#151821]/50 space-y-2">
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 block">Referans Medya URL'leri</span>
+          <input type="text" id="video-ref-images" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="Görsel URL'leri (virgülle ayırın, maks. 5)">
+          <input type="text" id="video-ref-audios" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="Ses URL'leri (isteğe bağlı, virgülle ayırın, maks. 3)">
+          <input type="text" id="video-ref-videos" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="Video URL'leri (yalnızca v2.5 Pro için)">
+        </div>
+
+        <!-- Video Süresi, Oran, Çözünürlük -->
+        <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Süre</label>
+            <select id="video-seconds" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-1.5 sm:px-2 py-2 focus:outline-none">
+              <option value="4" selected>4 Saniye</option>
+              <option value="5">5 Saniye</option>
+              <option value="6">6 Saniye</option>
+              <option value="8">8 Saniye</option>
+              <option value="10">10 Saniye</option>
+              <option value="12">12 Saniye</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Oran</label>
+            <select id="video-ratio" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-1.5 sm:px-2 py-2 focus:outline-none">
+              <option value="16:9" selected>16:9 (Yatay)</option>
+              <option value="9:16">9:16 (Dikey)</option>
+              <option value="1:1">1:1 (Kare)</option>
+              <option value="4:3">4:3 (Klasik)</option>
+              <option value="21:9">21:9 (Sinema)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Çözünürlük</label>
+            <select id="video-size" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-1.5 sm:px-2 py-2 focus:outline-none">
+              <option value="720P" selected>720P (Standart)</option>
+              <option value="1080P">1080P (Full HD)</option>
+              <option value="1K">1K (Kare 1024)</option>
+              <option value="2K">2K (Ultra HD)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- İLERİ DÜZEY VİDEO PARAMETRELERİ (Seed, FPS) -->
+        <details class="group border border-gray-200 dark:border-gray-800 rounded-xl p-3 bg-gray-50/50 dark:bg-[#181b24]/50">
+          <summary class="text-xs font-semibold cursor-pointer list-none flex items-center justify-between text-gray-600 dark:text-gray-400">
+            <span>İleri Düzey Parametreler (Seed, FPS)</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="pt-3 grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[11px] block font-medium mb-1">Seed (Tohum):</label>
+              <input type="number" id="video-seed" placeholder="Örn: 1101" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5">
+            </div>
+            <div>
+              <label class="text-[11px] block font-medium mb-1">Kare Hızı (FPS):</label>
+              <select id="video-fps" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1.5">
+                <option value="" selected>Varsayılan</option>
+                <option value="24">24 FPS</option>
+                <option value="30">30 FPS</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <!-- Video Oluştur Butonu -->
+        <button onclick="createVideoTask()" id="video-submit-btn" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-xl flex items-center justify-center space-x-2 transition shadow-md shadow-rose-600/20 active:scale-[0.99]">
+          <i data-lucide="film" class="w-4 h-4"></i>
+          <span>Video Görevi Başlat</span>
+        </button>
+
+      </div>
+
+      <!-- Sağ Panel: İlerleme & Video Oynatıcı -->
+      <div class="lg:col-span-7 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col space-y-4 min-h-[460px] min-w-0 w-full overflow-hidden">
+        
+        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+          <h2 class="text-sm sm:text-base font-semibold">Video Durumu & Çıktısı</h2>
+          <div id="video-actions" class="hidden flex items-center space-x-2">
+            <a id="video-download-btn" href="#" download="agnes_video.mp4" class="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-xs font-medium rounded-lg flex items-center gap-1 transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> İndir (.mp4)
+            </a>
+          </div>
+        </div>
+
+        <!-- İlerleme Çubuğu ve Görev Durumu (CSS TAŞMA HATASI DÜZELTİLDİ) -->
+        <div id="video-progress-card" class="hidden p-3.5 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#181b24] space-y-2.5 max-w-full overflow-hidden">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2">
+              <div class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></div>
+              <span id="video-status-text" class="font-semibold text-gray-700 dark:text-gray-300">İşleniyor...</span>
+            </div>
+            <span id="video-progress-pct" class="font-mono font-bold text-rose-500">0%</span>
+          </div>
+
+          <div class="w-full bg-gray-200 dark:bg-gray-700 h-2.5 rounded-full overflow-hidden">
+            <div id="video-progress-bar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-full w-0 transition-all duration-500"></div>
+          </div>
+
+          <!-- Görev ID ve Sayaç Satırı: Taşan uzun Base64 string'i artık break-all ve kopyalama butonu ile güvenli sarılır -->
+          <div class="mt-2 pt-2 border-t border-gray-200/50 dark:border-gray-800/50 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-gray-400 gap-1.5 min-w-0">
+            <div class="min-w-0 flex-1 flex items-start sm:items-center gap-1">
+              <span class="font-medium shrink-0">Görev ID:</span>
+              <span id="video-task-id-txt" class="font-mono text-gray-500 dark:text-gray-400 break-all select-all text-[11px] leading-relaxed">-</span>
+              <button type="button" onclick="copyTaskId()" class="shrink-0 p-1 text-gray-400 hover:text-indigo-400 transition" title="ID Kopyala">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+            <div class="shrink-0 flex items-center gap-1 self-end sm:self-auto">
+              <span>Geçen Süre:</span>
+              <span id="video-timer-txt" class="font-mono text-gray-600 dark:text-gray-300">0s</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Player Alanı -->
+        <div class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-[#181b24] border border-gray-200 dark:border-gray-800 rounded-xl p-3 sm:p-4 overflow-hidden min-w-0" id="video-player-wrap">
+          <div id="video-placeholder" class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 py-12">
+            <i data-lucide="clapperboard" class="w-10 h-10 mb-2 opacity-50"></i>
+            <p class="text-xs">Video görevini başlattığınızda durum canlı olarak burada takip edilecektir.</p>
+          </div>
+          <video id="video-result" controls autoplay loop class="hidden max-h-[460px] max-w-full rounded-lg shadow-md"></video>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- LOG KUTUSU / RAW API RESPONSE -->
+    <div class="bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden transition-all min-w-0 w-full">
+      <div class="px-4 sm:px-5 py-3 sm:py-3.5 bg-gray-50/80 dark:bg-[#161922] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between min-w-0">
+        <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+          <div class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div>
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 truncate">Canlı API Yanıtı & Ham Log</span>
+          <span id="log-status-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0"></span>
+          <span id="log-duration-badge" class="hidden text-[10px] text-gray-400 font-mono hidden sm:inline-block"></span>
+        </div>
+
+        <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
+          <button onclick="copyRawLog()" class="px-2 sm:px-2.5 py-1 text-[11px] bg-white dark:bg-[#1f2330] hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center gap-1 transition">
+            <i data-lucide="copy" class="w-3 h-3"></i> <span class="hidden xs:inline">Kopyala</span>
+          </button>
+          <button onclick="toggleLogPanel()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
+            <i id="log-toggle-icon" data-lucide="chevron-down" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Log İçeriği -->
+      <div id="log-panel-body" class="p-3 sm:p-4 bg-gray-900 text-emerald-400 font-mono text-xs overflow-x-auto max-h-56 min-w-0 w-full">
+        <pre id="log-pre" class="whitespace-pre-wrap break-all leading-relaxed font-mono">// API'ye gönderilen isteklerin ve dönen ham JSON yanıtlarının detayları burada anlık olarak görünecektir...</pre>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- AYARLAR MODALI (SETTINGS) -->
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-[#161922] border border-gray-200 dark:border-gray-800 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl space-y-4 mx-3">
+      <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+        <h3 class="text-sm sm:text-base font-semibold flex items-center gap-2">
+          <i data-lucide="key" class="w-4 h-4 text-indigo-500"></i> API Ayarları & Bağlantı
+        </h3>
+        <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Agnes API Key</label>
+          <input type="text" id="setting-api-key" class="w-full text-xs font-mono bg-gray-50 dark:bg-[#1c202c] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none" placeholder="sk-...">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">API Base URL</label>
+          <input type="text" id="setting-base-url" class="w-full text-xs font-mono bg-gray-50 dark:bg-[#1c202c] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none" value="https://apihub.agnes-ai.com/v1">
+        </div>
+
+        <button onclick="fetchLiveModels()" id="btn-fetch-models" class="w-full py-2 bg-gray-100 dark:bg-[#212634] hover:bg-gray-200 dark:hover:bg-[#282e3f] text-xs font-semibold rounded-xl flex items-center justify-center space-x-1.5 transition">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span>API'den Canlı Modelleri Çek (/v1/models)</span>
+        </button>
+      </div>
+
+      <div class="pt-2 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-800">
+        <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs font-medium bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl">Kapat</button>
+        <button onclick="saveSettings()" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Lucide ikonlarını başlat
+    lucide.createIcons();
+
+    // Varsayılan API Anahtarı ve Base URL
+    const DEFAULT_KEY = "sk-niO32ft0zOmYOJSp0OIbPwSKdxVdBupsF6AmB0slcZMUwQjv";
+    const DEFAULT_URL = "https://apihub.agnes-ai.com/v1";
+
+    let storedKey = localStorage.getItem("agnes_api_key");
+    if (!storedKey || storedKey.includes("3uzl5L8zNFYR")) {
+      storedKey = DEFAULT_KEY;
+      localStorage.setItem("agnes_api_key", DEFAULT_KEY);
+    }
+    let currentApiKey = storedKey;
+    let currentBaseUrl = localStorage.getItem("agnes_base_url") || DEFAULT_URL;
+
+    document.getElementById("setting-api-key").value = currentApiKey;
+    document.getElementById("setting-base-url").value = currentBaseUrl;
+
+    // TEMA AYARI (DARK / LIGHT)
+    function initTheme() {
+      const savedTheme = localStorage.getItem("agnes_theme") || "dark";
+      if (savedTheme === "dark") {
+        document.documentElement.classList.add("dark");
+        document.getElementById("theme-icon").setAttribute("data-lucide", "sun");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.getElementById("theme-icon").setAttribute("data-lucide", "moon");
+      }
+      lucide.createIcons();
+    }
+    initTheme();
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle("dark");
+      localStorage.setItem("agnes_theme", isDark ? "dark" : "light");
+      document.getElementById("theme-icon").setAttribute("data-lucide", isDark ? "sun" : "moon");
+      lucide.createIcons();
+    }
+
+    // TAB DEĞİŞTİRME
+    function switchTab(tabId, sync = true) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.querySelectorAll(".tab-btn").forEach(el => {
+        el.className = "tab-btn px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white";
+      });
+
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "tab-btn active px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-indigo-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm";
+      }
+      const activeContent = document.getElementById(`tab-content-${tabId}`);
+      if (activeContent) {
+        activeContent.classList.remove("hidden");
+      }
+
+      if (sync) {
+        fetch("/api/state", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ active_tab: tabId })
+        }).catch(() => {});
+      }
+    }
+
+    // AYARLAR MODALI
+    function openSettingsModal() { document.getElementById("settings-modal").classList.remove("hidden"); }
+    function closeSettingsModal() { document.getElementById("settings-modal").classList.add("hidden"); }
+    function saveSettings() {
+      currentApiKey = document.getElementById("setting-api-key").value.trim() || DEFAULT_KEY;
+      currentBaseUrl = document.getElementById("setting-base-url").value.trim() || DEFAULT_URL;
+      localStorage.setItem("agnes_api_key", currentApiKey);
+      localStorage.setItem("agnes_base_url", currentBaseUrl);
+      closeSettingsModal();
+      logResponse({ message: "Ayarlar başarıyla kaydedildi.", api_key: currentApiKey.substring(0, 8) + "...", base_url: currentBaseUrl }, 200, 0, "SETTINGS");
+    }
+
+    // LOG PANELİ GÜNCELLEME
+    function logResponse(jsonObj, statusCode = 200, durationMs = 0, endpoint = "") {
+      const logPre = document.getElementById("log-pre");
+      const statusBadge = document.getElementById("log-status-badge");
+      const durBadge = document.getElementById("log-duration-badge");
+
+      statusBadge.classList.remove("hidden", "bg-emerald-500/10", "text-emerald-500", "bg-red-500/10", "text-red-500", "bg-amber-500/10", "text-amber-500");
+      if (statusCode >= 200 && statusCode < 300) {
+        statusBadge.classList.add("bg-emerald-500/20", "text-emerald-400");
+        statusBadge.innerText = `${statusCode} OK`;
+      } else if (statusCode === 429) {
+        statusBadge.classList.add("bg-amber-500/20", "text-amber-400");
+        statusBadge.innerText = `${statusCode} Rate Limited`;
+      } else {
+        statusBadge.classList.add("bg-red-500/20", "text-red-400");
+        statusBadge.innerText = `${statusCode} Error`;
+      }
+
+      if (durationMs > 0) {
+        durBadge.classList.remove("hidden");
+        durBadge.innerText = `${durationMs} ms ${endpoint ? `(${endpoint})` : ''}`;
+      } else if (endpoint) {
+        durBadge.classList.remove("hidden");
+        durBadge.innerText = endpoint;
+      }
+
+      logPre.innerText = JSON.stringify(jsonObj, null, 2);
+    }
+
+    function toggleLogPanel() {
+      const body = document.getElementById("log-panel-body");
+      const icon = document.getElementById("log-toggle-icon");
+      body.classList.toggle("hidden");
+      icon.setAttribute("data-lucide", body.classList.contains("hidden") ? "chevron-up" : "chevron-down");
+      lucide.createIcons();
+    }
+
+    function copyRawLog() {
+      const txt = document.getElementById("log-pre").innerText;
+      navigator.clipboard.writeText(txt);
+      alert("Ham JSON logu panoya kopyalandı!");
+    }
+
+    function copyTaskId() {
+      const id = document.getElementById("video-task-id-txt").innerText;
+      if (id && id !== "-") {
+        navigator.clipboard.writeText(id);
+        alert("Görev ID panoya kopyalandı: " + id);
+      }
+    }
+
+    // 1. METİN / VISION (CHAT) LOGIC
+    let chatBase64Image = null;
+    document.getElementById("chat-img-file").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          chatBase64Image = evt.target.result;
+          document.getElementById("chat-img-preview").src = chatBase64Image;
+          document.getElementById("chat-img-preview-wrap").classList.remove("hidden");
+          document.getElementById("chat-img-clear").classList.remove("hidden");
+          syncInputState();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function clearChatImage() {
+      chatBase64Image = null;
+      document.getElementById("chat-img-file").value = "";
+      document.getElementById("chat-img-url").value = "";
+      document.getElementById("chat-img-preview-wrap").classList.add("hidden");
+      document.getElementById("chat-img-clear").classList.add("hidden");
+      syncInputState();
+    }
+
+    async function sendChat() {
+      const prompt = document.getElementById("chat-prompt").value.trim();
+      if (!prompt && !chatBase64Image && !document.getElementById("chat-img-url").value.trim()) {
+        alert("Lütfen bir metin istemi veya görsel girin!");
+        return;
+      }
+
+      const submitBtn = document.getElementById("chat-submit-btn");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>İşleniyor...</span>`;
+      lucide.createIcons();
+
+      const outputEl = document.getElementById("chat-output");
+      outputEl.innerText = "Model yanıtı bekleniyor...";
+
+      const imgInput = chatBase64Image || document.getElementById("chat-img-url").value.trim();
+
+      const payload = {
+        api_key: currentApiKey,
+        base_url: currentBaseUrl,
+        model: document.getElementById("chat-model").value,
+        prompt: prompt,
+        system_prompt: document.getElementById("chat-system").value.trim(),
+        image: imgInput || null,
+        temperature: parseFloat(document.getElementById("chat-temp").value),
+        top_p: parseFloat(document.getElementById("chat-topp").value),
+        max_tokens: parseInt(document.getElementById("chat-max-tokens").value),
+        presence_penalty: parseFloat(document.getElementById("chat-presence").value || 0),
+        frequency_penalty: parseFloat(document.getElementById("chat-frequency").value || 0),
+        enable_thinking: document.getElementById("chat-thinking").checked
+      };
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        logResponse(data, data.status, data.duration_ms, data.endpoint);
+
+        if (data.status === 200 && data.raw_response && data.raw_response.choices) {
+          const choice = data.raw_response.choices[0];
+          outputEl.innerText = choice.message.content || "(Yanıt boş)";
+          
+          document.getElementById("chat-stats-bar").classList.remove("hidden");
+          document.getElementById("stat-chat-time").innerText = `${data.duration_ms} ms`;
+          const usage = data.raw_response.usage || {};
+          document.getElementById("stat-chat-prompt").innerText = usage.prompt_tokens || 0;
+          document.getElementById("stat-chat-completion").innerText = usage.completion_tokens || 0;
+
+          if (usage.completion_tokens_details && usage.completion_tokens_details.reasoning_tokens) {
+            document.getElementById("stat-chat-reasoning-wrap").classList.remove("hidden");
+            document.getElementById("stat-chat-reasoning").innerText = usage.completion_tokens_details.reasoning_tokens;
+          } else {
+            document.getElementById("stat-chat-reasoning-wrap").classList.add("hidden");
+          }
+        } else {
+          outputEl.innerText = `Hata (${data.status}):\n${JSON.stringify(data.raw_response || data.error, null, 2)}`;
+        }
+      } catch (err) {
+        outputEl.innerText = `İstek Hatası: ${err.message}`;
+        logResponse({ error: err.message }, 500);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Yanıt Üret</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    function copyChatOutput() {
+      navigator.clipboard.writeText(document.getElementById("chat-output").innerText);
+      alert("Metin panoya kopyalandı!");
+    }
+    function clearChatOutput() {
+      document.getElementById("chat-output").innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 py-12"><i data-lucide="message-square" class="w-8 h-8 mb-2 opacity-50"></i><p class="text-xs">Temizlendi.</p></div>`;
+      document.getElementById("chat-stats-bar").classList.add("hidden");
+      lucide.createIcons();
+      fetch("/api/state", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat: { output: "", has_output: false } })
+      }).catch(() => {});
+    }
+
+    // 2. GÖRSEL (IMAGE) LOGIC
+    let currentImageMode = "t2i";
+    let imageRefBase64 = null;
+
+    function setImageMode(mode, sync = true) {
+      currentImageMode = mode;
+      const t2iBtn = document.getElementById("img-mode-t2i");
+      const i2iBtn = document.getElementById("img-mode-i2i");
+      const refBox = document.getElementById("image-ref-box");
+
+      if (mode === "t2i") {
+        t2iBtn.className = "py-1.5 rounded-lg text-purple-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition";
+        i2iBtn.className = "py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition";
+        refBox.classList.add("hidden");
+      } else {
+        i2iBtn.className = "py-1.5 rounded-lg text-purple-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition";
+        t2iBtn.className = "py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition";
+        refBox.classList.remove("hidden");
+      }
+      if (sync) syncInputState();
+    }
+
+    document.getElementById("image-ref-file").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          imageRefBase64 = evt.target.result;
+          document.getElementById("image-ref-preview").src = imageRefBase64;
+          document.getElementById("image-ref-preview-wrap").classList.remove("hidden");
+          syncInputState();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    async function generateImage() {
+      const prompt = document.getElementById("image-prompt").value.trim();
+      if (!prompt) { alert("Lütfen bir görsel tanımı (prompt) girin!"); return; }
+
+      const submitBtn = document.getElementById("image-submit-btn");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Görsel Oluşturuluyor...</span>`;
+      lucide.createIcons();
+
+      const format = document.querySelector('input[name="img_format"]:checked').value;
+      const refImg = imageRefBase64 || document.getElementById("image-ref-url").value.trim();
+
+      const payload = {
+        api_key: currentApiKey,
+        base_url: currentBaseUrl,
+        model: document.getElementById("image-model").value,
+        prompt: prompt,
+        negative_prompt: document.getElementById("image-negative-prompt").value.trim(),
+        size: document.getElementById("image-size").value,
+        ratio: document.getElementById("image-ratio").value,
+        response_format: format,
+        seed: document.getElementById("image-seed").value,
+        guidance_scale: document.getElementById("image-cfg").value,
+        steps: document.getElementById("image-steps").value,
+        image_strength: document.getElementById("image-strength").value,
+        single_image: currentImageMode === "i2i" && refImg ? refImg : null
+      };
+
+      try {
+        const res = await fetch("/api/image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        logResponse(data, data.status, data.duration_ms, data.endpoint);
+
+        if (data.status === 200 && data.raw_response && data.raw_response.data && data.raw_response.data.length > 0) {
+          const item = data.raw_response.data[0];
+          const imgSrc = item.url ? item.url : (item.b64_json ? `data:image/png;base64,${item.b64_json}` : null);
+          
+          if (imgSrc) {
+            document.getElementById("image-placeholder").classList.add("hidden");
+            const resultImg = document.getElementById("image-result");
+            resultImg.src = imgSrc;
+            resultImg.classList.remove("hidden");
+
+            document.getElementById("image-actions").classList.remove("hidden");
+            document.getElementById("image-download-btn").href = imgSrc;
+            document.getElementById("image-open-btn").href = imgSrc;
+          }
+        } else {
+          alert(`Görsel üretimi başarısız oldu:\n${JSON.stringify(data.raw_response || data.error)}`);
+        }
+      } catch (err) {
+        alert("Bağlantı hatası: " + err.message);
+        logResponse({ error: err.message }, 500);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i><span>Görsel Oluştur</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    // 3. VİDEO LOGIC
+    let currentVideoMode = "text";
+    let videoPollInterval = null;
+    let videoSecondsElapsed = 0;
+    let videoTimerInterval = null;
+
+    function setVideoMode(mode, sync = true) {
+      currentVideoMode = mode;
+      ["text", "keyframe", "reference"].forEach(m => {
+        const btn = document.getElementById(`vid-mode-${m}`);
+        btn.className = (m === mode)
+          ? "py-1.5 rounded-lg text-rose-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition"
+          : "py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition";
+      });
+
+      document.getElementById("video-keyframe-box").classList.toggle("hidden", mode !== "keyframe");
+      document.getElementById("video-ref-box").classList.toggle("hidden", mode !== "reference");
+
+      if (sync) syncInputState();
+    }
+
+    async function createVideoTask() {
+      const prompt = document.getElementById("video-prompt").value.trim();
+      if (!prompt) { alert("Lütfen bir video sahne açıklaması girin!"); return; }
+
+      const submitBtn = document.getElementById("video-submit-btn");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Görev Başlatılıyor...</span>`;
+      lucide.createIcons();
+
+      const payload = {
+        api_key: currentApiKey,
+        base_url: currentBaseUrl,
+        model: document.getElementById("video-model").value,
+        prompt: prompt,
+        negative_prompt: document.getElementById("video-negative-prompt").value.trim(),
+        mode: currentVideoMode,
+        seconds: document.getElementById("video-seconds").value,
+        aspect_ratio: document.getElementById("video-ratio").value,
+        size: document.getElementById("video-size").value,
+        seed: document.getElementById("video-seed").value,
+        fps: document.getElementById("video-fps").value
+      };
+
+      if (currentVideoMode === "keyframe") {
+        payload.first_frame = document.getElementById("video-first-frame").value.trim() || null;
+        payload.last_frame = document.getElementById("video-last-frame").value.trim() || null;
+      } else if (currentVideoMode === "reference") {
+        const imgs = document.getElementById("video-ref-images").value.trim();
+        if (imgs) payload.images = imgs.split(",").map(s => s.trim());
+        const auds = document.getElementById("video-ref-audios").value.trim();
+        if (auds) payload.audios = auds.split(",").map(s => s.trim());
+        const vids = document.getElementById("video-ref-videos").value.trim();
+        if (vids) payload.ref_videos = vids;
+      }
+
+      try {
+        const res = await fetch("/api/video/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        logResponse(data, data.status, data.duration_ms, data.endpoint);
+
+        if (data.status === 200 && data.raw_response && (data.raw_response.video_id || data.raw_response.id)) {
+          const videoId = data.raw_response.video_id || data.raw_response.id;
+          startPollingVideo(videoId, payload.model);
+        } else {
+          alert(`Video görevi başlatılamadı:\n${JSON.stringify(data.raw_response || data.error)}`);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<i data-lucide="film" class="w-4 h-4"></i><span>Video Görevi Başlat</span>`;
+          lucide.createIcons();
+        }
+      } catch (err) {
+        alert("Hata: " + err.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="film" class="w-4 h-4"></i><span>Video Görevi Başlat</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    function startPollingVideo(videoId, modelName) {
+      document.getElementById("video-progress-card").classList.remove("hidden");
+      document.getElementById("video-task-id-txt").innerText = videoId;
+      document.getElementById("video-placeholder").classList.remove("hidden");
+      document.getElementById("video-result").classList.add("hidden");
+      document.getElementById("video-actions").classList.add("hidden");
+
+      const submitBtn = document.getElementById("video-submit-btn");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Oluşturuluyor...</span>`;
+      lucide.createIcons();
+
+      videoSecondsElapsed = 0;
+      clearInterval(videoTimerInterval);
+      videoTimerInterval = setInterval(() => {
+        videoSecondsElapsed++;
+        document.getElementById("video-timer-txt").innerText = `${videoSecondsElapsed}s`;
+      }, 1000);
+
+      clearInterval(videoPollInterval);
+      videoPollInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/video/status?video_id=${encodeURIComponent(videoId)}&model_name=${encodeURIComponent(modelName)}&api_key=${encodeURIComponent(currentApiKey)}`);
+          const data = await res.json();
+          logResponse(data, data.status, data.duration_ms, "GET /agnesapi");
+
+          if (data.status === 200 && data.raw_response) {
+            const r = data.raw_response;
+            const progress = r.progress || 0;
+            const status = r.status || "queued";
+
+            document.getElementById("video-progress-pct").innerText = `${progress}%`;
+            document.getElementById("video-progress-bar").style.width = `${progress}%`;
+            document.getElementById("video-status-text").innerText = `Durum: ${status.toUpperCase()} (${progress}%)`;
+
+            if (status === "completed") {
+              clearInterval(videoPollInterval);
+              clearInterval(videoTimerInterval);
+
+              const videoUrl = r.url;
+              if (videoUrl) {
+                document.getElementById("video-placeholder").classList.add("hidden");
+                const videoEl = document.getElementById("video-result");
+                videoEl.src = videoUrl;
+                videoEl.classList.remove("hidden");
+
+                document.getElementById("video-actions").classList.remove("hidden");
+                document.getElementById("video-download-btn").href = videoUrl;
+              }
+
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<i data-lucide="film" class="w-4 h-4"></i><span>Video Görevi Başlat</span>`;
+              lucide.createIcons();
+            } else if (status === "failed") {
+              clearInterval(videoPollInterval);
+              clearInterval(videoTimerInterval);
+              alert("Video üretimi başarısız oldu: " + JSON.stringify(r.error));
+
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<i data-lucide="film" class="w-4 h-4"></i><span>Video Görevi Başlat</span>`;
+              lucide.createIcons();
+            }
+          }
+        } catch (err) {
+          console.error("Poll err:", err);
+        }
+      }, 2000);
+    }
+
+    // 4. CANLI MODELLERİ ÇEKME
+    async function fetchLiveModels() {
+      const btn = document.getElementById("btn-fetch-models");
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Çekiliyor...</span>`;
+      lucide.createIcons();
+
+      try {
+        const res = await fetch("/api/models", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ api_key: currentApiKey, base_url: currentBaseUrl })
+        });
+        const data = await res.json();
+        logResponse(data, data.status, data.duration_ms, data.endpoint);
+
+        if (data.status === 200 && data.data && data.data.data) {
+          const models = data.data.data.map(m => m.id);
+          alert(`API'den ${models.length} model başarıyla alındı:\n\n${models.join("\n")}`);
+        } else {
+          alert("Modeller alınamadı:\n" + JSON.stringify(data));
+        }
+      } catch (e) {
+        alert("Hata: " + e.message);
+      } finally {
+        btn.innerHTML = `<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>API'den Canlı Modelleri Çek (/v1/models)</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    // 5. RUNTIME STATE SENKRONİZASYONU VE YÜKLEMESİ
+    let syncTimer = null;
+    function syncInputState() {
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(async () => {
+        try {
+          const patch = {
+            chat: {
+              model: document.getElementById("chat-model").value,
+              system_prompt: document.getElementById("chat-system").value,
+              prompt: document.getElementById("chat-prompt").value,
+              temperature: parseFloat(document.getElementById("chat-temp").value),
+              top_p: parseFloat(document.getElementById("chat-topp").value),
+              max_tokens: parseInt(document.getElementById("chat-max-tokens").value),
+              presence_penalty: parseFloat(document.getElementById("chat-presence").value || 0),
+              frequency_penalty: parseFloat(document.getElementById("chat-frequency").value || 0),
+              enable_thinking: document.getElementById("chat-thinking").checked,
+              image: chatBase64Image || document.getElementById("chat-img-url").value.trim() || null
+            },
+            image: {
+              model: document.getElementById("image-model").value,
+              mode: currentImageMode,
+              prompt: document.getElementById("image-prompt").value,
+              negative_prompt: document.getElementById("image-negative-prompt").value,
+              size: document.getElementById("image-size").value,
+              ratio: document.getElementById("image-ratio").value,
+              format: document.querySelector('input[name="img_format"]:checked')?.value || "url",
+              seed: document.getElementById("image-seed").value,
+              guidance_scale: document.getElementById("image-cfg").value,
+              steps: document.getElementById("image-steps").value,
+              image_strength: document.getElementById("image-strength").value,
+              ref_image: imageRefBase64 || document.getElementById("image-ref-url").value.trim() || null
+            },
+            video: {
+              model: document.getElementById("video-model").value,
+              mode: currentVideoMode,
+              prompt: document.getElementById("video-prompt").value,
+              negative_prompt: document.getElementById("video-negative-prompt").value,
+              first_frame: document.getElementById("video-first-frame").value,
+              last_frame: document.getElementById("video-last-frame").value,
+              ref_images: document.getElementById("video-ref-images").value,
+              ref_audios: document.getElementById("video-ref-audios").value,
+              ref_videos: document.getElementById("video-ref-videos").value,
+              seconds: document.getElementById("video-seconds").value,
+              aspect_ratio: document.getElementById("video-ratio").value,
+              size: document.getElementById("video-size").value,
+              seed: document.getElementById("video-seed").value,
+              fps: document.getElementById("video-fps").value
+            }
+          };
+          await fetch("/api/state", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(patch)
+          });
+        } catch (e) {
+          // Sessiz hata yönetimi
+        }
+      }, 400);
+    }
+
+    // Form elementleri dinleyicisi
+    document.addEventListener("input", (e) => {
+      if (e.target.matches("input, textarea, select")) {
+        syncInputState();
+      }
+    });
+    document.addEventListener("change", (e) => {
+      if (e.target.matches("input, textarea, select")) {
+        syncInputState();
+      }
+    });
+
+    // Sunucudaki Geçici Bellekten Geri Yükleme
+    async function loadRuntimeState() {
+      try {
+        const res = await fetch("/api/state");
+        const data = await res.json();
+        if (data.status === 200 && data.state) {
+          const state = data.state;
+
+          // 1. Sekme
+          if (state.active_tab) {
+            switchTab(state.active_tab, false);
+          }
+
+          // 2. Chat
+          if (state.chat) {
+            if (state.chat.model) document.getElementById("chat-model").value = state.chat.model;
+            if (state.chat.system_prompt !== undefined) document.getElementById("chat-system").value = state.chat.system_prompt;
+            if (state.chat.prompt !== undefined) document.getElementById("chat-prompt").value = state.chat.prompt;
+            if (state.chat.temperature !== undefined) {
+              document.getElementById("chat-temp").value = state.chat.temperature;
+              document.getElementById("chat-temp-val").innerText = state.chat.temperature;
+            }
+            if (state.chat.top_p !== undefined) {
+              document.getElementById("chat-topp").value = state.chat.top_p;
+              document.getElementById("chat-topp-val").innerText = state.chat.top_p;
+            }
+            if (state.chat.max_tokens !== undefined) document.getElementById("chat-max-tokens").value = state.chat.max_tokens;
+            if (state.chat.presence_penalty !== undefined) document.getElementById("chat-presence").value = state.chat.presence_penalty;
+            if (state.chat.frequency_penalty !== undefined) document.getElementById("chat-frequency").value = state.chat.frequency_penalty;
+            if (state.chat.enable_thinking !== undefined) document.getElementById("chat-thinking").checked = !!state.chat.enable_thinking;
+
+            if (state.chat.image) {
+              chatBase64Image = state.chat.image;
+              if (chatBase64Image.startsWith("http")) {
+                document.getElementById("chat-img-url").value = chatBase64Image;
+              }
+              document.getElementById("chat-img-preview").src = chatBase64Image;
+              document.getElementById("chat-img-preview-wrap").classList.remove("hidden");
+              document.getElementById("chat-img-clear").classList.remove("hidden");
+            }
+
+            if (state.chat.has_output && state.chat.output) {
+              document.getElementById("chat-output").innerText = state.chat.output;
+              const stats = state.chat.stats || {};
+              document.getElementById("chat-stats-bar").classList.remove("hidden");
+              document.getElementById("stat-chat-time").innerText = `${stats.duration_ms || 0} ms`;
+              document.getElementById("stat-chat-prompt").innerText = stats.prompt_tokens || 0;
+              document.getElementById("stat-chat-completion").innerText = stats.completion_tokens || 0;
+              if (stats.reasoning_tokens) {
+                document.getElementById("stat-chat-reasoning-wrap").classList.remove("hidden");
+                document.getElementById("stat-chat-reasoning").innerText = stats.reasoning_tokens;
+              }
+            }
+          }
+
+          // 3. Image
+          if (state.image) {
+            if (state.image.model) document.getElementById("image-model").value = state.image.model;
+            if (state.image.mode) setImageMode(state.image.mode, false);
+            if (state.image.prompt !== undefined) document.getElementById("image-prompt").value = state.image.prompt;
+            if (state.image.negative_prompt !== undefined) document.getElementById("image-negative-prompt").value = state.image.negative_prompt;
+            if (state.image.size) document.getElementById("image-size").value = state.image.size;
+            if (state.image.ratio) document.getElementById("image-ratio").value = state.image.ratio;
+            if (state.image.seed !== undefined) document.getElementById("image-seed").value = state.image.seed;
+            if (state.image.guidance_scale !== undefined) {
+              document.getElementById("image-cfg").value = state.image.guidance_scale;
+              document.getElementById("image-cfg-val").innerText = state.image.guidance_scale;
+            }
+            if (state.image.steps !== undefined) document.getElementById("image-steps").value = state.image.steps;
+            if (state.image.image_strength !== undefined) {
+              document.getElementById("image-strength").value = state.image.image_strength;
+              document.getElementById("image-strength-val").innerText = state.image.image_strength;
+            }
+            if (state.image.format) {
+              const radio = document.querySelector(`input[name="img_format"][value="${state.image.format}"]`);
+              if (radio) radio.checked = true;
+            }
+
+            if (state.image.ref_image) {
+              imageRefBase64 = state.image.ref_image;
+              if (imageRefBase64.startsWith("http")) {
+                document.getElementById("image-ref-url").value = imageRefBase64;
+              }
+              document.getElementById("image-ref-preview").src = imageRefBase64;
+              document.getElementById("image-ref-preview-wrap").classList.remove("hidden");
+            }
+
+            if (state.image.has_result && state.image.result_url) {
+              document.getElementById("image-placeholder").classList.add("hidden");
+              const resultImg = document.getElementById("image-result");
+              resultImg.src = state.image.result_url;
+              resultImg.classList.remove("hidden");
+
+              document.getElementById("image-actions").classList.remove("hidden");
+              document.getElementById("image-download-btn").href = state.image.result_url;
+              document.getElementById("image-open-btn").href = state.image.result_url;
+            }
+          }
+
+          // 4. Video
+          if (state.video) {
+            if (state.video.model) document.getElementById("video-model").value = state.video.model;
+            if (state.video.mode) setVideoMode(state.video.mode, false);
+            if (state.video.prompt !== undefined) document.getElementById("video-prompt").value = state.video.prompt;
+            if (state.video.negative_prompt !== undefined) document.getElementById("video-negative-prompt").value = state.video.negative_prompt;
+            if (state.video.first_frame !== undefined) document.getElementById("video-first-frame").value = state.video.first_frame;
+            if (state.video.last_frame !== undefined) document.getElementById("video-last-frame").value = state.video.last_frame;
+            if (state.video.ref_images !== undefined) document.getElementById("video-ref-images").value = state.video.ref_images;
+            if (state.video.ref_audios !== undefined) document.getElementById("video-ref-audios").value = state.video.ref_audios;
+            if (state.video.ref_videos !== undefined) document.getElementById("video-ref-videos").value = state.video.ref_videos;
+            if (state.video.seconds) document.getElementById("video-seconds").value = state.video.seconds;
+            if (state.video.aspect_ratio) document.getElementById("video-ratio").value = state.video.aspect_ratio;
+            if (state.video.size) document.getElementById("video-size").value = state.video.size;
+            if (state.video.seed !== undefined) document.getElementById("video-seed").value = state.video.seed;
+            if (state.video.fps !== undefined) document.getElementById("video-fps").value = state.video.fps;
+
+            if (state.video.has_task && state.video.task_id) {
+              document.getElementById("video-progress-card").classList.remove("hidden");
+              document.getElementById("video-task-id-txt").innerText = state.video.task_id;
+              document.getElementById("video-progress-pct").innerText = `${state.video.progress || 0}%`;
+              document.getElementById("video-progress-bar").style.width = `${state.video.progress || 0}%`;
+              document.getElementById("video-status-text").innerText = `Durum: ${(state.video.status || "işleniyor").toUpperCase()} (${state.video.progress || 0}%)`;
+
+              if (state.video.status === "completed" && state.video.url) {
+                document.getElementById("video-placeholder").classList.add("hidden");
+                const videoEl = document.getElementById("video-result");
+                videoEl.src = state.video.url;
+                videoEl.classList.remove("hidden");
+                document.getElementById("video-actions").classList.remove("hidden");
+                document.getElementById("video-download-btn").href = state.video.url;
+              } else if (state.video.status === "queued" || state.video.status === "in_progress") {
+                startPollingVideo(state.video.task_id, state.video.model);
+              }
+            }
+          }
+
+          // 5. Raw Response Log
+          if (state.last_log && state.last_log.raw_response) {
+            logResponse(
+              state.last_log.raw_response,
+              state.last_log.status || 200,
+              state.last_log.duration_ms || 0,
+              state.last_log.endpoint || ""
+            );
+          }
+        }
+      } catch (e) {
+        console.warn("Runtime state could not be loaded:", e);
+      }
+    }
+
+    // Geçici belleği temizleme fonksiyonu
+    async function resetRuntimeState() {
+      if (!confirm("Tüm geçici çalışma oturumunu (metinler, görevler, çıktılar) temizlemek istediğinize emin misiniz?")) {
+        return;
+      }
+      try {
+        await fetch("/api/state/reset", { method: "POST" });
+        window.location.reload();
+      } catch (e) {
+        console.error("Reset error:", e);
+      }
+    }
+
+    // Sayfa açıldığında belleği yükle
+    window.addEventListener("DOMContentLoaded", () => {
+      loadRuntimeState();
+    });
+  </script>
+</body>
+</html>
