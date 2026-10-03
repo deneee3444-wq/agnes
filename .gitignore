@@ -1,5 +1,0 @@
-GUNICORN_COMMAND.txt
-__pycache__/
-*.py[cod]
-.env
-.venv/
