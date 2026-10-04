@@ -1,1436 +1,514 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark overflow-x-hidden">
+<html lang="tr" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Agnes AI Full Suite Studio</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        screens: {
-          'xs': '420px',
-          'sm': '640px',
-          'md': '768px',
-          'lg': '1024px',
-          'xl': '1280px',
-          '2xl': '1536px',
-        },
-        extend: {
-          colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca'
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    html, body {
-      overflow-x: hidden;
-      max-width: 100vw;
-      width: 100%;
-    }
-    /* Custom scrollbars */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
-    .dark ::-webkit-scrollbar-thumb { background: rgba(75, 85, 99, 0.5); }
-    pre code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agnes Studio</title>
+<script>if(localStorage.theme==='light')document.documentElement.classList.remove('dark')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--bg:#f6f6f8;--fg:#17171c;--mut:#6b6b76;--bd:#e3e3e8;--card:#ffffffcc;--inp:#fff;--soft:#eeeef2;--on:#fff;--acc:#7c3aed;--acc2:#db2777;--sh:0 1px 2px #0000000d,0 8px 24px #0000000a}
+.dark{--bg:#08080b;--fg:#f2f2f5;--mut:#8e8e9a;--bd:#ffffff14;--card:#ffffff08;--inp:#ffffff0a;--soft:#ffffff0d;--on:#ffffff1c;--sh:0 1px 0 #ffffff08 inset}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:14px/1.5 Inter,system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+[x-cloak]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+svg.lucide{width:16px;height:16px;flex-shrink:0;stroke-width:2}
+.glow{position:fixed;inset:0 0 auto;height:520px;pointer-events:none;z-index:0;
+  background:radial-gradient(50% 60% at 20% 0%,#7c3aed2e,transparent 70%),radial-gradient(40% 50% at 85% 0%,#db277722,transparent 70%)}
+/* header */
+.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid var(--bd)}
+.top-in{max-width:1320px;margin:auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:15px}
+.logo{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 20px #7c3aed55}
+.tabs{display:flex;gap:4px;margin:0 auto;background:var(--soft);padding:4px;border-radius:14px}
+.tab{display:flex;align-items:center;gap:7px;border:0;background:none;padding:7px 14px;border-radius:10px;color:var(--mut);font-weight:500;cursor:pointer;transition:.15s}
+.tab:hover{color:var(--fg)}.tab.on{background:var(--on);color:var(--fg);box-shadow:0 1px 3px #0000001f}
+.ibtn{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--bd);border-radius:10px;background:var(--card);cursor:pointer;transition:.15s}
+.ibtn:hover{background:var(--soft)}
+.dark .i-moon,html:not(.dark) .i-sun{display:none}
+.sync{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:9px;background:#22c55e}.dot.wait{background:#f59e0b}
+/* layout */
+main{position:relative;z-index:1;max-width:1320px;margin:auto;padding:20px 16px 40px}
+.split{display:grid;gap:20px}
+@media(min-width:1024px){.split{grid-template-columns:370px 1fr;align-items:start}.split.chat{grid-template-columns:310px 1fr}
+  .side{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow-y:auto}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;box-shadow:var(--sh);backdrop-filter:blur(20px)}
+.side>*+*{margin-top:18px}.stack>*+*{margin-top:18px}
+.row{display:flex;align-items:center;gap:8px}.grow{flex:1;min-width:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lbl{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px}
+.lbl b{color:var(--fg);text-transform:none;letter-spacing:0;font-size:12px}
+.hint{font-size:11.5px;color:var(--mut);margin-top:6px}
+.sec{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+hr.sep{border:0;border-top:1px solid var(--bd);margin:18px 0}
+/* form */
+.inp{width:100%;background:var(--inp);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;outline:none;transition:.15s}
+.inp:focus{border-color:var(--acc);box-shadow:0 0 0 4px #7c3aed1f}
+textarea.inp{resize:vertical}
+select.inp{appearance:none;-webkit-appearance:none;padding-right:36px;cursor:pointer;background-repeat:no-repeat;background-position:right 12px center;background-size:16px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e9a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")}
+select.inp option{background:var(--bg)}
+.seg{display:flex;gap:3px;background:var(--soft);padding:3px;border-radius:12px;flex-wrap:wrap}
+.seg button{flex:1;border:0;background:none;padding:7px 8px;border-radius:9px;font-size:12.5px;font-weight:500;color:var(--mut);cursor:pointer;white-space:nowrap;transition:.15s}
+.seg button:hover{color:var(--fg)}.seg button.on{background:var(--on);color:var(--fg);box-shadow:0 1px 3px #0000001f}
+input[type=range]{width:100%;accent-color:var(--acc);height:20px;margin:0}
+.sw{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;user-select:none}
+.sw input{display:none}.sw i{width:34px;height:20px;border-radius:20px;background:var(--soft);border:1px solid var(--bd);position:relative;transition:.2s}
+.sw i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:14px;background:var(--mut);transition:.2s}
+.sw input:checked+i{background:var(--acc);border-color:var(--acc)}.sw input:checked+i::after{left:16px;background:#fff}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--bd);background:var(--card);padding:9px 14px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;transition:.15s;text-decoration:none}
+.btn:hover{background:var(--soft)}
+.btn.p{border:0;color:#fff;background:linear-gradient(100deg,var(--acc),var(--acc2));box-shadow:0 8px 26px #7c3aed4d;padding:10px 18px}
+.btn.p:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn.sm{padding:6px 10px;font-size:12px;border-radius:9px}
+.link{background:none;border:0;color:var(--acc);font-size:12px;font-weight:600;cursor:pointer;padding:0}
+/* drop & thumbs */
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1.5px dashed var(--bd);border-radius:12px;color:var(--mut);font-size:12px;cursor:pointer;transition:.15s;text-align:center}
+.drop:hover,.drop.over{border-color:var(--acc);color:var(--acc);background:#7c3aed0d}
+.frame{position:relative;height:110px;border-radius:12px;overflow:hidden}
+.frame img{width:100%;height:100%;object-fit:cover}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.thumb{position:relative;width:62px;height:62px;border-radius:10px;overflow:hidden;border:1px solid var(--bd)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:20px;border:0;background:#000000b3;color:#fff;cursor:pointer;display:grid;place-items:center;font-size:13px;line-height:1}
+details.box{border:1px solid var(--bd);border-radius:14px;padding:12px 14px}
+details.box summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px}
+details.box summary::-webkit-details-marker{display:none}
+details.box summary .chev{margin-left:auto;transition:.2s}details.box[open] summary .chev{transform:rotate(180deg)}
+details.box>div{margin-top:14px}details.box>div>*+*{margin-top:14px}
+/* composer */
+.composer textarea{width:100%;border:0;background:none;outline:none;resize:none;font-size:16px;line-height:1.55;min-height:96px}
+.composer textarea::placeholder{color:var(--mut)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding-top:12px;border-top:1px solid var(--bd)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:500;color:var(--mut)}
+.chip.warn{background:#f59e0b1f;color:#d97706}
+.specbox{border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,#7c3aed1a,#db27771a);border:1px solid #7c3aed33;font-size:12.5px}
+.specbox b{font-size:14px}
+/* gallery */
+.gal{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.media{position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid var(--bd)}
+.media video,.media img{display:block;width:100%;height:100%;object-fit:cover}
+.render{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;
+  background:linear-gradient(120deg,#1a1033,#2a0f2a,#0f1a33);background-size:300% 300%;animation:flow 6s ease infinite}
+@keyframes flow{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+.pct{font-size:30px;font-weight:800;letter-spacing:-.03em}
+.pbar{position:absolute;left:0;right:0;bottom:0;height:4px;background:#ffffff1a}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .8s}
+.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.meta{padding:10px 4px 2px}.meta p{margin:0 0 8px;font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty{display:grid;place-items:center;gap:8px;text-align:center;border:1.5px dashed var(--bd);border-radius:18px;padding:70px 20px;color:var(--mut)}
+.empty svg.lucide{width:30px;height:30px;opacity:.6}
+.masonry{columns:1;column-gap:16px}@media(min-width:640px){.masonry{columns:2}}@media(min-width:1200px){.masonry{columns:3}}
+.masonry>div{break-inside:avoid;margin-bottom:16px}
+.hov{position:absolute;inset:auto 0 0;display:flex;gap:6px;padding:10px;background:linear-gradient(transparent,#000c);opacity:0;transition:.2s}
+.media:hover .hov{opacity:1}@media(hover:none){.hov{opacity:1}}
+/* chat */
+.chatwrap{display:flex;flex-direction:column;height:calc(100vh - 120px);min-height:480px;padding:0}
+.msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+.msg{max-width:86%;padding:10px 14px;border-radius:16px;white-space:pre-wrap;word-break:break-word}
+.msg.u{align-self:flex-end;color:#fff;background:linear-gradient(135deg,var(--acc),#9333ea);border-bottom-right-radius:5px}
+.msg.a{align-self:flex-start;background:var(--soft);border-bottom-left-radius:5px}
+.msg img{max-height:120px;border-radius:10px;margin:0 6px 6px 0}
+.typing{display:inline-flex;gap:4px}.typing i{width:6px;height:6px;border-radius:6px;background:var(--mut);animation:bl 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}@keyframes bl{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.inbar{border-top:1px solid var(--bd);padding:12px}
+.inrow{display:flex;align-items:flex-end;gap:8px;background:var(--inp);border:1px solid var(--bd);border-radius:16px;padding:6px}
+.inrow textarea{flex:1;border:0;background:none;outline:none;resize:none;padding:8px;max-height:160px}
+/* models / raw */
+.mgrid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.mitem{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--bd);border-radius:14px}
+.mic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--soft)}
+.badge{font-size:10px;font-weight:700;letter-spacing:.05em;padding:3px 7px;border-radius:7px}
+.b-FREE{background:#22c55e1f;color:#16a34a}.b-PRO,.b-TOKEN{background:#f59e0b1f;color:#d97706}.b-UNKNOWN{background:var(--soft);color:var(--mut)}
+pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-height:70vh;white-space:pre-wrap;word-break:break-all}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:500;box-shadow:0 10px 30px #0000004d;max-width:90vw}
+/* mobile */
+@media(max-width:760px){
+  .tabs{position:fixed;left:10px;right:10px;bottom:10px;margin:0;justify-content:space-around;z-index:50;border:1px solid var(--bd);
+    background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(18px);padding:5px;margin-bottom:env(safe-area-inset-bottom)}
+  .tab{flex-direction:column;gap:2px;font-size:10.5px;padding:6px 4px;flex:1}
+  .brand span,.sync span{display:none}.top-in{justify-content:space-between}
+  main{padding-bottom:100px}.toast{bottom:90px}
+  .chatwrap{height:calc(100vh - 170px)}.gal{grid-template-columns:1fr}
+}
+</style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-[#0c0d12] dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200 overflow-x-hidden w-full max-w-full">
+<body x-data="studio()" x-init="init()">
+<div class="glow"></div>
 
-  <!-- NAVBAR -->
-  <header class="sticky top-0 z-40 bg-white/90 dark:bg-[#12141c]/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 w-full">
-    <div class="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1 sm:gap-4">
-      
-      <!-- Logo & Title -->
-      <div class="flex items-center space-x-2 shrink-0">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
-          <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-        </div>
-        <div>
-          <div class="flex items-center space-x-1.5">
-            <span class="font-bold text-base sm:text-lg tracking-tight">Agnes AI</span>
-            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium hidden xs:inline-block">Free Suite</span>
-          </div>
-          <p class="text-[10px] text-gray-500 dark:text-gray-400 hidden md:block">Metin, Görsel ve Video Stüdyosu</p>
-        </div>
+<header class="top"><div class="top-in">
+  <div class="brand"><div class="logo"><i data-lucide="clapperboard"></i></div><span>Agnes Studio</span></div>
+  <nav class="tabs">
+    <button class="tab" :class="tab==='video'&&'on'" @click="tab='video'"><i data-lucide="film"></i>Video</button>
+    <button class="tab" :class="tab==='image'&&'on'" @click="tab='image'"><i data-lucide="image"></i>Resim</button>
+    <button class="tab" :class="tab==='chat'&&'on'" @click="tab='chat'"><i data-lucide="message-circle"></i>Sohbet</button>
+    <button class="tab" :class="tab==='models'&&'on'" @click="tab='models'"><i data-lucide="layers"></i>Modeller</button>
+    <button class="tab" :class="tab==='raw'&&'on'" @click="tab='raw'"><i data-lucide="terminal"></i>API</button>
+  </nav>
+  <div class="row">
+    <div class="sync" :title="dirty?'Kaydediliyor':'Oturum kaydedildi'"><i class="dot" :class="dirty&&'wait'"></i><span x-text="dirty?'Kaydediliyor':'Kaydedildi'"></span></div>
+    <button class="ibtn" @click="resetAll()" title="Oturumu sıfırla"><i data-lucide="rotate-ccw"></i></button>
+    <button class="ibtn" @click="toggleTheme()" title="Tema"><i data-lucide="sun" class="i-sun"></i><i data-lucide="moon" class="i-moon"></i></button>
+  </div>
+</div></header>
+
+<main x-show="ready" x-cloak>
+
+<!-- ============================ VIDEO ============================ -->
+<section x-show="tab==='video'" class="split">
+  <aside class="card side">
+    <div><div class="lbl">Model</div>
+      <select class="inp" x-model="v.model"><template x-for="m in byCat('video')" :key="m.id"><option :value="m.id" :selected="m.id===v.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
+
+    <div><div class="lbl">En-boy oranı</div>
+      <div class="seg"><template x-for="o in ['16:9','9:16','1:1']"><button :class="v.ar===o&&'on'" @click="v.ar=o" x-text="o"></button></template></div></div>
+
+    <template x-if="isFrame()"><div class="stack">
+      <div><div class="lbl">Çözünürlük</div>
+        <div class="seg"><template x-for="o in ['480p','720p','1080p','custom']"><button :class="v.res===o&&'on'" @click="v.res=o" x-text="o==='custom'?'Özel':o"></button></template></div>
+        <input x-show="v.res==='custom'" class="inp mono" style="margin-top:8px" x-model="v.custom" placeholder="örn: 1000x600"></div>
+
+      <div><div class="lbl">Süre <span class="seg" style="padding:2px"><button style="padding:3px 10px" :class="v.mode==='seconds'&&'on'" @click="v.mode='seconds'">Saniye</button><button style="padding:3px 10px" :class="v.mode==='frames'&&'on'" @click="v.mode='frames'">Kare</button></span></div>
+        <div x-show="v.mode==='seconds'"><div class="lbl" style="margin:4px 0"><span>Uzunluk</span><b x-text="v.seconds+' sn'"></b></div>
+          <input type="range" min="1" :max="Math.max(1,Math.floor(spec().max/v.fps))" step="0.5" x-model.number="v.seconds">
+          <div class="seg" style="margin-top:8px"><template x-for="s in [3,5,8,10,15,20]"><button :class="v.seconds===s&&'on'" @click="v.seconds=s" x-text="s+'s'"></button></template></div></div>
+        <div x-show="v.mode==='frames'"><input type="number" class="inp" x-model.number="v.frames" step="8" min="9">
+          <div class="seg" style="margin-top:8px"><template x-for="f in [81,121,161,241,441]"><button :class="v.frames===f&&'on'" @click="v.frames=f" x-text="f"></button></template></div>
+          <p class="hint">8n+1 kuralına otomatik yuvarlanır.</p></div></div>
+
+      <div><div class="lbl"><span>Kare hızı</span><b x-text="v.fps+' fps'"></b></div>
+        <input type="range" min="1" max="60" x-model.number="v.fps">
+        <div class="seg" style="margin-top:8px"><template x-for="o in [24,30,60]"><button :class="v.fps===o&&'on'" @click="v.fps=o" x-text="o+(o===24?' · sinema':o===30?' · akıcı':' · ultra')"></button></template></div></div>
+
+      <div class="specbox">
+        <div class="row"><i data-lucide="gauge"></i><b x-text="`${spec().w}×${spec().h}`"></b><span class="grow"></span><b x-text="`~${spec().sec} sn`"></b></div>
+        <div class="hint" style="margin-top:4px" x-text="`${spec().f} kare @ ${spec().fps}fps · bu çözünürlükte maks ${spec().max} kare`"></div>
+        <div x-show="spec().clamped" class="chip warn" style="margin-top:8px"><i data-lucide="triangle-alert"></i>Sınıra kırpıldı</div>
       </div>
+    </div></template>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex items-center space-x-0.5 sm:space-x-1 bg-gray-100 dark:bg-[#181b24] p-1 rounded-xl border border-gray-200 dark:border-gray-800 text-xs sm:text-sm font-medium shrink-0">
-        <button onclick="switchTab('chat')" id="tab-btn-chat" class="tab-btn active px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-indigo-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm">
-          <i data-lucide="message-square-text" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-          <span class="text-xs sm:text-sm">Metin</span>
-        </button>
-        <button onclick="switchTab('image')" id="tab-btn-image" class="tab-btn px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-          <i data-lucide="image" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-          <span class="text-xs sm:text-sm">Görsel</span>
-        </button>
-        <button onclick="switchTab('video')" id="tab-btn-video" class="tab-btn px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-          <i data-lucide="clapperboard" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-          <span class="text-xs sm:text-sm">Video</span>
-        </button>
-      </nav>
+    <template x-if="!isFrame()"><div>
+      <div class="lbl"><span>Süre</span><b x-text="v.duration+' sn'"></b></div>
+      <input type="range" min="4" max="12" x-model.number="v.duration"><p class="hint">2.5 ailesi: 4–12 sn, çözünürlük sunucuda belirlenir.</p></div></template>
 
-      <!-- Actions (Reset State, Settings & Theme) -->
-      <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
-        <button onclick="resetRuntimeState()" class="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-rose-500 dark:text-gray-400 dark:hover:text-rose-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Geçici Belleği Temizle (Reset State)">
-          <i data-lucide="rotate-ccw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-        </button>
-        <button onclick="openSettingsModal()" class="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="API Ayarları">
-          <i data-lucide="settings" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-        </button>
-        <button onclick="toggleTheme()" class="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Karanlık/Aydınlık Tema">
-          <i id="theme-icon" data-lucide="moon" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-        </button>
-      </div>
+    <div><div class="lbl">Başlangıç / bitiş karesi</div>
+      <div class="g2"><template x-for="k in ['start','end']" :key="k"><div>
+        <label class="drop frame" x-show="!v[k]" @dragover.prevent="$el.classList.add('over')" @dragleave="$el.classList.remove('over')" @drop.prevent="$el.classList.remove('over');setOne($event.dataTransfer.files,v,k)">
+          <i data-lucide="image-plus"></i><span x-text="k==='start'?'İlk kare':'Son kare'"></span>
+          <input type="file" accept="image/*" hidden @change="setOne($event.target.files,v,k);$event.target.value=''"></label>
+        <div class="frame" x-show="v[k]"><img :src="v[k]"><button class="x" @click="v[k]=null">×</button></div>
+      </div></template></div>
+      <p class="hint">Sadece ilk kare → image-to-video. İkisi birlikte → keyframe geçişi.</p></div>
 
-    </div>
-  </header>
+    <details class="box"><summary><i data-lucide="sparkles" style="color:var(--acc2)"></i>Çoklu referans · R2V<i data-lucide="chevron-down" class="chev"></i></summary><div>
+      <div><div class="lbl"><span>Karakter / stil</span><b x-text="v.refs.length+'/5'"></b></div>
+        <div class="thumbs"><template x-for="(s,k) in v.refs" :key="k"><div class="thumb"><img :src="s"><button class="x" @click="v.refs.splice(k,1)">×</button></div></template>
+          <label class="drop thumb" x-show="v.refs.length<5" @dragover.prevent @drop.prevent="addMany($event.dataTransfer.files,v.refs,5)"><i data-lucide="plus"></i>
+            <input type="file" accept="image/*" multiple hidden @change="addMany($event.target.files,v.refs,5);$event.target.value=''"></label></div></div>
+      <div><div class="lbl"><span>Ses / müzik URL</span><b x-text="v.audios.length+'/3'"></b></div>
+        <template x-for="(a,k) in v.audios" :key="k"><div class="row" style="margin-bottom:6px"><input class="inp" x-model="v.audios[k]" placeholder="https://…/muzik.mp3"><button class="ibtn" @click="v.audios.splice(k,1)"><i data-lucide="x"></i></button></div></template>
+        <button class="link" x-show="v.audios.length<3" @click="v.audios.push('')">+ ses ekle</button></div>
+      <div><div class="lbl">Hareket videosu URL</div><input class="inp" x-model="v.refVideo" placeholder="https://…/hareket.mp4"></div>
+    </div></details>
 
-  <!-- MAIN CONTENT CONTAINER -->
-  <main class="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full flex flex-col space-y-5 sm:space-y-6 min-w-0 overflow-x-hidden">
+    <details class="box"><summary><i data-lucide="sliders-horizontal"></i>Gelişmiş<i data-lucide="chevron-down" class="chev"></i></summary><div>
+      <div><div class="lbl">Negative prompt</div><input class="inp" x-model="v.negative" placeholder="blur, low quality, watermark"></div>
+      <div class="g2"><div><div class="lbl">Seed</div><input class="inp" type="number" x-model="v.seed" placeholder="rastgele"></div>
+        <div><div class="lbl">Steps</div><input class="inp" type="number" min="1" x-model="v.steps" placeholder="8"></div></div>
+    </div></details>
+  </aside>
 
-    <!-- TAB 1: METİN & AKIL YÜRÜTME (CHAT / MULTIMODAL) -->
-    <div id="tab-content-chat" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 min-w-0 w-full">
-      
-      <!-- Sol Panel: Form ve Parametreler -->
-      <div class="lg:col-span-5 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 min-w-0 w-full overflow-hidden">
-        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
-          <h2 class="text-sm sm:text-base font-semibold flex items-center gap-2">
-            <i data-lucide="sliders" class="w-4 h-4 text-indigo-500"></i> Metin & Vision Yapılandırması
-          </h2>
-          <span class="text-[11px] text-emerald-500 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Ücretsiz Modeller</span>
-        </div>
-
-        <!-- Model Seçici -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Model Seçimi</label>
-          <select id="chat-model" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="agnes-3.0-flash">agnes-3.0-flash (En Yeni Nesil / Önerilen / Ajan & Kodlama)</option>
-            <option value="agnes-2.5-flash">agnes-2.5-flash (GA Kararlı / Reasoning & Multimodal)</option>
-            <option value="agnes-2.0-flash">agnes-2.0-flash (v2.0 Geriye Dönük Uyumluluk)</option>
-          </select>
-        </div>
-
-        <!-- Sistem Talimatı -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Sistem Talimatı (System Prompt - İsteğe Bağlı)</label>
-          <textarea id="chat-system" rows="2" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Sen yardımcı ve teknik konularda uzman bir yapay zekasın..."></textarea>
-        </div>
-
-        <!-- Kullanıcı İstemi (Prompt) -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">İstem (Prompt) *</label>
-          <textarea id="chat-prompt" rows="4" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-sans" placeholder="Bir soru sorun, kod yazdırın veya analizi yapılacak konuyu belirtin..."></textarea>
-        </div>
-
-        <!-- Görsel Ekleme (Multimodal Input) -->
-        <div class="border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-gray-50/50 dark:bg-[#151821]/50 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-              <i data-lucide="image-plus" class="w-3.5 h-3.5 text-indigo-400"></i> Görsel Ekle (Multimodal Vision)
-            </span>
-            <button onclick="clearChatImage()" id="chat-img-clear" class="text-[11px] text-red-500 hover:underline hidden">Temizle</button>
-          </div>
-          
-          <div class="flex flex-col sm:flex-row gap-2">
-            <input type="file" id="chat-img-file" accept="image/*" class="text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 dark:file:bg-indigo-950 dark:file:text-indigo-300 hover:file:bg-indigo-100 cursor-pointer">
-            <span class="text-xs text-gray-400 self-center hidden sm:inline">veya</span>
-            <input type="text" id="chat-img-url" class="text-xs flex-1 bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none" placeholder="Görsel URL'si yapıştırın">
-          </div>
-          <div id="chat-img-preview-wrap" class="hidden pt-1">
-            <img id="chat-img-preview" src="" class="max-h-24 rounded-lg border border-gray-200 dark:border-gray-700 object-cover">
-          </div>
-        </div>
-
-        <!-- Parametre Sürgüleri (Collapsible) -->
-        <details class="group border border-gray-200 dark:border-gray-800 rounded-xl p-3 bg-gray-50/50 dark:bg-[#181b24]/50">
-          <summary class="text-xs font-semibold cursor-pointer list-none flex items-center justify-between text-gray-600 dark:text-gray-400">
-            <span>İleri Düzey Parametreler (Temperature, Tokens, Penalties)</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i>
-          </summary>
-          <div class="pt-3 space-y-3">
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span>Temperature (Rastgelelik): <strong id="chat-temp-val">0.7</strong></span>
-              </div>
-              <input type="range" id="chat-temp" min="0" max="2" step="0.05" value="0.7" class="w-full accent-indigo-600" oninput="document.getElementById('chat-temp-val').innerText = this.value">
-            </div>
-
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span>Top_P (Nucleus Sampling): <strong id="chat-topp-val">0.9</strong></span>
-              </div>
-              <input type="range" id="chat-topp" min="0" max="1" step="0.05" value="0.9" class="w-full accent-indigo-600" oninput="document.getElementById('chat-topp-val').innerText = this.value">
-            </div>
-
-            <div class="flex items-center justify-between">
-              <label class="text-xs">Max Output Tokens:</label>
-              <input type="number" id="chat-max-tokens" value="2048" class="text-xs bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1 w-24 text-right">
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-gray-200 dark:border-gray-700">
-              <div>
-                <label class="text-[11px] block text-gray-500">Presence Penalty:</label>
-                <input type="number" id="chat-presence" value="0.0" step="0.1" min="-2" max="2" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1">
-              </div>
-              <div>
-                <label class="text-[11px] block text-gray-500">Frequency Penalty:</label>
-                <input type="number" id="chat-frequency" value="0.0" step="0.1" min="-2" max="2" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1">
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between pt-1 border-t border-gray-200 dark:border-gray-700">
-              <div>
-                <span class="text-xs font-medium block">Akıl Yürütme Modu (Thinking Mode)</span>
-                <span class="text-[10px] text-gray-500">Adım adım düşünme çıktısını etkinleştirir</span>
-              </div>
-              <input type="checkbox" id="chat-thinking" checked class="w-4 h-4 accent-indigo-600 rounded">
-            </div>
-          </div>
-        </details>
-
-        <!-- Gönder Butonu -->
-        <button onclick="sendChat()" id="chat-submit-btn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl flex items-center justify-center space-x-2 transition shadow-md shadow-indigo-600/20 active:scale-[0.99]">
-          <i data-lucide="send" class="w-4 h-4"></i>
-          <span>Yanıt Üret</span>
-        </button>
-
-      </div>
-
-      <!-- Sağ Panel: Metin Yanıtı ve İstatistikler -->
-      <div class="lg:col-span-7 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col space-y-3 min-h-[460px] min-w-0 w-full overflow-hidden">
-        
-        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
-          <div class="flex items-center gap-2">
-            <h2 class="text-sm sm:text-base font-semibold">Model Yanıtı</h2>
-            <span id="chat-status-badge" class="hidden text-[11px] px-2 py-0.5 rounded-full font-medium"></span>
-          </div>
-          <div class="flex items-center space-x-1 sm:space-x-2">
-            <button onclick="copyChatOutput()" id="chat-copy-btn" class="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Kopyala">
-              <i data-lucide="copy" class="w-4 h-4"></i>
-            </button>
-            <button onclick="clearChatOutput()" class="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Temizle">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Token & Süre Rozetleri -->
-        <div id="chat-stats-bar" class="hidden flex flex-wrap gap-2 text-[11px] text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#181b24] p-2 rounded-xl">
-          <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> <span id="stat-chat-time">0 ms</span></span>
-          <span>•</span>
-          <span>Girdi: <strong id="stat-chat-prompt" class="text-gray-700 dark:text-gray-300">0</strong></span>
-          <span>•</span>
-          <span>Çıktı: <strong id="stat-chat-completion" class="text-gray-700 dark:text-gray-300">0</strong></span>
-          <span id="stat-chat-reasoning-wrap" class="hidden">• Düşünme: <strong id="stat-chat-reasoning" class="text-indigo-400">0</strong></span>
-        </div>
-
-        <!-- Yanıt Metin Kutusu -->
-        <div class="flex-1 overflow-y-auto max-h-[500px] bg-gray-50 dark:bg-[#181b24] border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words font-sans min-w-0" id="chat-output">
-          <div class="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 py-12">
-            <i data-lucide="message-square" class="w-8 h-8 mb-2 opacity-50"></i>
-            <p class="text-xs">Sol taraftan bir istem yazıp "Yanıt Üret" butonuna basın.</p>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- TAB 2: GÖRSEL STÜDYOSU (IMAGE STUDIO) -->
-    <div id="tab-content-image" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 min-w-0 w-full">
-      
-      <!-- Sol Panel: Form -->
-      <div class="lg:col-span-5 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 min-w-0 w-full overflow-hidden">
-        
-        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
-          <h2 class="text-sm sm:text-base font-semibold flex items-center gap-2">
-            <i data-lucide="palette" class="w-4 h-4 text-purple-500"></i> Görsel Üretimi & Düzenleme
-          </h2>
-          <span class="text-[11px] text-purple-500 font-medium bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">Ücretsiz 1K-4K</span>
-        </div>
-
-        <!-- Model Seçici -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Görsel Modeli</label>
-          <select id="image-model" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
-            <option value="agnes-image-2.5-flash">agnes-image-2.5-flash (En Yeni Nesil / Yüksek Detay)</option>
-            <option value="agnes-image-2.1-flash">agnes-image-2.1-flash (Yüksek Bilgi Yoğunluğu)</option>
-            <option value="agnes-image-2.0-flash">agnes-image-2.0-flash (Hızlı v2.0 ELO 1184)</option>
-          </select>
-        </div>
-
-        <!-- Çalışma Modu (Text2Img vs Img2Img) -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Üretim Modu</label>
-          <div class="grid grid-cols-2 gap-2 bg-gray-100 dark:bg-[#181b24] p-1 rounded-xl text-xs font-medium">
-            <button type="button" onclick="setImageMode('t2i')" id="img-mode-t2i" class="py-1.5 rounded-lg text-purple-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition">Metinden Görsel</button>
-            <button type="button" onclick="setImageMode('i2i')" id="img-mode-i2i" class="py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition">Görsel Düzenleme</button>
-          </div>
-        </div>
-
-        <!-- Pozitif Prompt -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Görsel Tanımı (Prompt) *</label>
-          <textarea id="image-prompt" rows="3" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="A luminous floating city above a misty canyon at sunrise, cinematic realism, 8k detail..."></textarea>
-        </div>
-
-        <!-- NEGATİF PROMPT (Kullanıcının İstediği Özel Alan) -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400 flex items-center justify-between">
-            <span>Negatif İstem (Negative Prompt)</span>
-            <span class="text-[10px] text-gray-400">İstenmeyen ögeler</span>
-          </label>
-          <textarea id="image-negative-prompt" rows="2" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="blurry, distorted, low quality, bad anatomy, deformed limbs, watermark, text, out of focus..."></textarea>
-        </div>
-
-        <!-- Img2Img Referans Görsel Alanı (Varsa) -->
-        <div id="image-ref-box" class="hidden border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-gray-50/50 dark:bg-[#151821]/50 space-y-2">
-          <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300">Giriş / Referans Görsel (URL veya Yükleme)</label>
-          <input type="file" id="image-ref-file" accept="image/*" class="text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 dark:file:bg-purple-950 dark:file:text-purple-300 cursor-pointer w-full">
-          <input type="text" id="image-ref-url" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none" placeholder="Veya herkese açık HTTPS görsel URL'si">
-          <div id="image-ref-preview-wrap" class="hidden pt-1">
-            <img id="image-ref-preview" src="" class="max-h-20 rounded-lg border object-cover">
-          </div>
-        </div>
-
-        <!-- Çözünürlük (Size Tier) ve En-Boy Oranı (Ratio) -->
-        <div class="grid grid-cols-2 gap-2 sm:gap-3">
-          <div>
-            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Çözünürlük Seviyesi</label>
-            <select id="image-size" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-2.5 py-2 focus:outline-none">
-              <option value="1K" selected>1K (Hızlı / Standart)</option>
-              <option value="2K">2K (Yüksek Çözünürlük)</option>
-              <option value="3K">3K (Ultra Detay)</option>
-              <option value="4K">4K (Maksimum Kalite)</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">En-Boy Oranı (Ratio)</label>
-            <select id="image-ratio" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-2.5 py-2 focus:outline-none">
-              <option value="1:1" selected>1:1 (Kare - 1024x1024)</option>
-              <option value="16:9">16:9 (Geniş Ekran - 1312x736)</option>
-              <option value="9:16">9:16 (Dikey / Hikaye - 736x1312)</option>
-              <option value="4:3">4:3 (Klasik Manzara - 1152x864)</option>
-              <option value="3:4">3:4 (Dikey Portre - 864x1152)</option>
-              <option value="2:3">2:3 (Portre - 832x1248)</option>
-              <option value="3:2">3:2 (Fotoğraf - 1248x832)</option>
-              <option value="21:9">21:9 (Sinematik - 1568x672)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- İLERİ DÜZEY GÖRSEL PARAMETRELERİ (Seed, CFG, Steps, Strength) -->
-        <details class="group border border-gray-200 dark:border-gray-800 rounded-xl p-3 bg-gray-50/50 dark:bg-[#181b24]/50">
-          <summary class="text-xs font-semibold cursor-pointer list-none flex items-center justify-between text-gray-600 dark:text-gray-400">
-            <span>İleri Düzey Parametreler (Seed, CFG Scale, Adım, Format)</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i>
-          </summary>
-          <div class="pt-3 space-y-3">
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="text-[11px] block font-medium mb-1">Seed (Tohum):</label>
-                <input type="number" id="image-seed" placeholder="Örn: 42 (boş=rastgele)" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5">
-              </div>
-              <div>
-                <label class="text-[11px] block font-medium mb-1">Inference Steps:</label>
-                <input type="number" id="image-steps" value="30" min="10" max="60" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5">
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between text-[11px] mb-1">
-                <span>Guidance Scale (CFG / Prompta Bağlılık): <strong id="image-cfg-val">7.5</strong></span>
-              </div>
-              <input type="range" id="image-cfg" min="1" max="20" step="0.5" value="7.5" class="w-full accent-purple-600" oninput="document.getElementById('image-cfg-val').innerText = this.value">
-            </div>
-
-            <div>
-              <div class="flex justify-between text-[11px] mb-1">
-                <span>Dönüşüm Gücü (Image Strength - Img2Img): <strong id="image-strength-val">0.8</strong></span>
-              </div>
-              <input type="range" id="image-strength" min="0.1" max="1.0" step="0.05" value="0.8" class="w-full accent-purple-600" oninput="document.getElementById('image-strength-val').innerText = this.value">
-            </div>
-
-            <div class="flex items-center justify-between pt-1 border-t border-gray-200 dark:border-gray-700 text-xs">
-              <span>Çıktı Biçimi:</span>
-              <div class="flex items-center space-x-3">
-                <label class="flex items-center space-x-1 cursor-pointer">
-                  <input type="radio" name="img_format" value="url" checked class="accent-purple-600">
-                  <span>URL</span>
-                </label>
-                <label class="flex items-center space-x-1 cursor-pointer">
-                  <input type="radio" name="img_format" value="b64_json" class="accent-purple-600">
-                  <span>Base64</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </details>
-
-        <!-- Üret Butonu -->
-        <button onclick="generateImage()" id="image-submit-btn" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm rounded-xl flex items-center justify-center space-x-2 transition shadow-md shadow-purple-600/20 active:scale-[0.99]">
-          <i data-lucide="sparkles" class="w-4 h-4"></i>
-          <span>Görsel Oluştur</span>
-        </button>
-
-      </div>
-
-      <!-- Sağ Panel: Sonuç Önizleme -->
-      <div class="lg:col-span-7 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col space-y-3 min-h-[460px] min-w-0 w-full overflow-hidden">
-        
-        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
-          <h2 class="text-sm sm:text-base font-semibold">Oluşturulan Görsel</h2>
-          <div id="image-actions" class="hidden flex items-center space-x-2">
-            <a id="image-download-btn" href="#" download="agnes_image.png" class="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-xs font-medium rounded-lg flex items-center gap-1 transition">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i> İndir
-            </a>
-            <a id="image-open-btn" href="#" target="_blank" class="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-xs font-medium rounded-lg flex items-center gap-1 transition">
-              <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Yeni Sekme
-            </a>
-          </div>
-        </div>
-
-        <!-- Görsel Görüntüleme Alanı -->
-        <div class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-[#181b24] border border-gray-200 dark:border-gray-800 rounded-xl p-3 sm:p-4 overflow-hidden relative min-w-0" id="image-output-container">
-          <div id="image-placeholder" class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 py-12">
-            <i data-lucide="image" class="w-10 h-10 mb-2 opacity-50"></i>
-            <p class="text-xs">İstediğiniz görsel ayarlarını seçip "Görsel Oluştur"a tıklayın.</p>
-          </div>
-          <img id="image-result" src="" class="hidden max-h-[480px] max-w-full rounded-lg shadow-md object-contain transition-transform hover:scale-[1.01]">
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- TAB 3: VİDEO STÜDYOSU (VIDEO STUDIO) -->
-    <div id="tab-content-video" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 min-w-0 w-full">
-      
-      <!-- Sol Panel: Form -->
-      <div class="lg:col-span-5 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 min-w-0 w-full overflow-hidden">
-        
-        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
-          <h2 class="text-sm sm:text-base font-semibold flex items-center gap-2">
-            <i data-lucide="video" class="w-4 h-4 text-rose-500"></i> Video Üretimi (Asenkron)
-          </h2>
-          <span class="text-[11px] text-rose-500 font-medium bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">Ücretsiz 720P</span>
-        </div>
-
-        <!-- Model Seçimi -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Video Modeli</label>
-          <select id="video-model" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-500">
-            <option value="agnes-video-2.5-flash">agnes-video-2.5-flash (Ücretsiz Promosyon / Hızlı 720P)</option>
-            <option value="agnes-video-v2.0">agnes-video-v2.0 (Klasik v2.0 Video Modeli)</option>
-            <option value="agnes-video-2.5">agnes-video-2.5 (Pro Ücretli Model - Bakiye İster)</option>
-          </select>
-        </div>
-
-        <!-- Üretim Modu (text, keyframe, reference) -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Çalışma Modu</label>
-          <div class="grid grid-cols-3 gap-1 bg-gray-100 dark:bg-[#181b24] p-1 rounded-xl text-xs font-medium text-center">
-            <button type="button" onclick="setVideoMode('text')" id="vid-mode-text" class="py-1.5 rounded-lg text-rose-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition">Metin</button>
-            <button type="button" onclick="setVideoMode('keyframe')" id="vid-mode-keyframe" class="py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition">Keyframe</button>
-            <button type="button" onclick="setVideoMode('reference')" id="vid-mode-reference" class="py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition">Referans</button>
-          </div>
-        </div>
-
-        <!-- Video Sahne Promptu -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Video Sahne Açıklaması (Prompt) *</label>
-          <textarea id="video-prompt" rows="3" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="A futuristic car driving through a neon-lit cyber city in rain, slow camera pan, cinematic lighting..."></textarea>
-        </div>
-
-        <!-- NEGATİF PROMPT (Video için) -->
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400 flex items-center justify-between">
-            <span>Video Negatif İstem (Negative Prompt)</span>
-            <span class="text-[10px] text-gray-400">İstenmeyen hareketler</span>
-          </label>
-          <textarea id="video-negative-prompt" rows="2" class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="blurry, jitter, flickering, low quality, morphing, static image, sudden cuts..."></textarea>
-        </div>
-
-        <!-- Keyframe Alanları (Keyframe modunda açılır) -->
-        <div id="video-keyframe-box" class="hidden border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-gray-50/50 dark:bg-[#151821]/50 space-y-2">
-          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 block">İlk & Son Kare Resim URL'leri</span>
-          <input type="text" id="video-first-frame" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="İlk Kare (First Frame) HTTPS URL">
-          <input type="text" id="video-last-frame" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="Son Kare (Last Frame) HTTPS URL">
-        </div>
-
-        <!-- Referans Alanları (Reference modunda açılır) -->
-        <div id="video-ref-box" class="hidden border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-3 bg-gray-50/50 dark:bg-[#151821]/50 space-y-2">
-          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 block">Referans Medya URL'leri</span>
-          <input type="text" id="video-ref-images" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="Görsel URL'leri (virgülle ayırın, maks. 5)">
-          <input type="text" id="video-ref-audios" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="Ses URL'leri (isteğe bağlı, virgülle ayırın, maks. 3)">
-          <input type="text" id="video-ref-videos" class="w-full text-xs bg-white dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5" placeholder="Video URL'leri (yalnızca v2.5 Pro için)">
-        </div>
-
-        <!-- Video Süresi, Oran, Çözünürlük -->
-        <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
-          <div>
-            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Süre</label>
-            <select id="video-seconds" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-1.5 sm:px-2 py-2 focus:outline-none">
-              <option value="4" selected>4 Saniye</option>
-              <option value="5">5 Saniye</option>
-              <option value="6">6 Saniye</option>
-              <option value="8">8 Saniye</option>
-              <option value="10">10 Saniye</option>
-              <option value="12">12 Saniye</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Oran</label>
-            <select id="video-ratio" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-1.5 sm:px-2 py-2 focus:outline-none">
-              <option value="16:9" selected>16:9 (Yatay)</option>
-              <option value="9:16">9:16 (Dikey)</option>
-              <option value="1:1">1:1 (Kare)</option>
-              <option value="4:3">4:3 (Klasik)</option>
-              <option value="21:9">21:9 (Sinema)</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Çözünürlük</label>
-            <select id="video-size" class="w-full text-xs bg-gray-50 dark:bg-[#181b24] border border-gray-300 dark:border-gray-700 rounded-xl px-1.5 sm:px-2 py-2 focus:outline-none">
-              <option value="720P" selected>720P (Standart)</option>
-              <option value="1080P">1080P (Full HD)</option>
-              <option value="1K">1K (Kare 1024)</option>
-              <option value="2K">2K (Ultra HD)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- İLERİ DÜZEY VİDEO PARAMETRELERİ (Seed, FPS) -->
-        <details class="group border border-gray-200 dark:border-gray-800 rounded-xl p-3 bg-gray-50/50 dark:bg-[#181b24]/50">
-          <summary class="text-xs font-semibold cursor-pointer list-none flex items-center justify-between text-gray-600 dark:text-gray-400">
-            <span>İleri Düzey Parametreler (Seed, FPS)</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i>
-          </summary>
-          <div class="pt-3 grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[11px] block font-medium mb-1">Seed (Tohum):</label>
-              <input type="number" id="video-seed" placeholder="Örn: 1101" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-1.5">
-            </div>
-            <div>
-              <label class="text-[11px] block font-medium mb-1">Kare Hızı (FPS):</label>
-              <select id="video-fps" class="text-xs w-full bg-white dark:bg-[#12141c] border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1.5">
-                <option value="" selected>Varsayılan</option>
-                <option value="24">24 FPS</option>
-                <option value="30">30 FPS</option>
-              </select>
-            </div>
-          </div>
-        </details>
-
-        <!-- Video Oluştur Butonu -->
-        <button onclick="createVideoTask()" id="video-submit-btn" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-xl flex items-center justify-center space-x-2 transition shadow-md shadow-rose-600/20 active:scale-[0.99]">
-          <i data-lucide="film" class="w-4 h-4"></i>
-          <span>Video Görevi Başlat</span>
-        </button>
-
-      </div>
-
-      <!-- Sağ Panel: İlerleme & Video Oynatıcı -->
-      <div class="lg:col-span-7 bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col space-y-4 min-h-[460px] min-w-0 w-full overflow-hidden">
-        
-        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
-          <h2 class="text-sm sm:text-base font-semibold">Video Durumu & Çıktısı</h2>
-          <div id="video-actions" class="hidden flex items-center space-x-2">
-            <a id="video-download-btn" href="#" download="agnes_video.mp4" class="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-xs font-medium rounded-lg flex items-center gap-1 transition">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i> İndir (.mp4)
-            </a>
-          </div>
-        </div>
-
-        <!-- İlerleme Çubuğu ve Görev Durumu (CSS TAŞMA HATASI DÜZELTİLDİ) -->
-        <div id="video-progress-card" class="hidden p-3.5 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#181b24] space-y-2.5 max-w-full overflow-hidden">
-          <div class="flex items-center justify-between text-xs">
-            <div class="flex items-center space-x-2">
-              <div class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></div>
-              <span id="video-status-text" class="font-semibold text-gray-700 dark:text-gray-300">İşleniyor...</span>
-            </div>
-            <span id="video-progress-pct" class="font-mono font-bold text-rose-500">0%</span>
-          </div>
-
-          <div class="w-full bg-gray-200 dark:bg-gray-700 h-2.5 rounded-full overflow-hidden">
-            <div id="video-progress-bar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-
-          <!-- Görev ID ve Sayaç Satırı: Taşan uzun Base64 string'i artık break-all ve kopyalama butonu ile güvenli sarılır -->
-          <div class="mt-2 pt-2 border-t border-gray-200/50 dark:border-gray-800/50 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-gray-400 gap-1.5 min-w-0">
-            <div class="min-w-0 flex-1 flex items-start sm:items-center gap-1">
-              <span class="font-medium shrink-0">Görev ID:</span>
-              <span id="video-task-id-txt" class="font-mono text-gray-500 dark:text-gray-400 break-all select-all text-[11px] leading-relaxed">-</span>
-              <button type="button" onclick="copyTaskId()" class="shrink-0 p-1 text-gray-400 hover:text-indigo-400 transition" title="ID Kopyala">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-              </button>
-            </div>
-            <div class="shrink-0 flex items-center gap-1 self-end sm:self-auto">
-              <span>Geçen Süre:</span>
-              <span id="video-timer-txt" class="font-mono text-gray-600 dark:text-gray-300">0s</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Video Player Alanı -->
-        <div class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-[#181b24] border border-gray-200 dark:border-gray-800 rounded-xl p-3 sm:p-4 overflow-hidden min-w-0" id="video-player-wrap">
-          <div id="video-placeholder" class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 py-12">
-            <i data-lucide="clapperboard" class="w-10 h-10 mb-2 opacity-50"></i>
-            <p class="text-xs">Video görevini başlattığınızda durum canlı olarak burada takip edilecektir.</p>
-          </div>
-          <video id="video-result" controls autoplay loop class="hidden max-h-[460px] max-w-full rounded-lg shadow-md"></video>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- LOG KUTUSU / RAW API RESPONSE -->
-    <div class="bg-white dark:bg-[#12141c] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden transition-all min-w-0 w-full">
-      <div class="px-4 sm:px-5 py-3 sm:py-3.5 bg-gray-50/80 dark:bg-[#161922] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between min-w-0">
-        <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
-          <div class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div>
-          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 truncate">Canlı API Yanıtı & Ham Log</span>
-          <span id="log-status-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0"></span>
-          <span id="log-duration-badge" class="hidden text-[10px] text-gray-400 font-mono hidden sm:inline-block"></span>
-        </div>
-
-        <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
-          <button onclick="copyRawLog()" class="px-2 sm:px-2.5 py-1 text-[11px] bg-white dark:bg-[#1f2330] hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center gap-1 transition">
-            <i data-lucide="copy" class="w-3 h-3"></i> <span class="hidden xs:inline">Kopyala</span>
-          </button>
-          <button onclick="toggleLogPanel()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
-            <i id="log-toggle-icon" data-lucide="chevron-down" class="w-4 h-4"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Log İçeriği -->
-      <div id="log-panel-body" class="p-3 sm:p-4 bg-gray-900 text-emerald-400 font-mono text-xs overflow-x-auto max-h-56 min-w-0 w-full">
-        <pre id="log-pre" class="whitespace-pre-wrap break-all leading-relaxed font-mono">// API'ye gönderilen isteklerin ve dönen ham JSON yanıtlarının detayları burada anlık olarak görünecektir...</pre>
+  <div class="stack">
+    <div class="card composer">
+      <textarea x-model="v.prompt" placeholder="Sahneyi anlat… örn: yağmurlu neon sokakta yürüyen samuray, yavaş dolly-in, 35mm, sinematik ışık" @keydown.ctrl.enter="makeVideo()" @keydown.meta.enter="makeVideo()"></textarea>
+      <div class="bar">
+        <span class="chip"><i data-lucide="monitor"></i><span x-text="isFrame()?`${spec().w}×${spec().h}`:v.ar"></span></span>
+        <span class="chip"><i data-lucide="timer"></i><span x-text="isFrame()?`${spec().sec} sn · ${spec().fps}fps`:v.duration+' sn'"></span></span>
+        <span class="chip" x-show="v.start"><i data-lucide="image"></i><span x-text="v.end?'Keyframe':'Img2Vid'"></span></span>
+        <span class="grow"></span>
+        <label class="sw" title="Göndermeden önce AI ile genişlet"><input type="checkbox" x-model="v.autoExpand"><i></i>Oto-genişlet</label>
+        <button class="btn" @click="expand()" :disabled="busy.expand||!v.prompt.trim()"><i data-lucide="wand-sparkles" :class="busy.expand&&'spin'"></i>Genişlet</button>
+        <button class="btn p" @click="makeVideo()" :disabled="busy.video||!v.prompt.trim()"><i data-lucide="clapperboard"></i><span x-text="busy.video?'Gönderiliyor…':'Video üret'"></span></button>
       </div>
     </div>
 
-  </main>
-
-  <!-- AYARLAR MODALI (SETTINGS) -->
-  <div id="settings-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white dark:bg-[#161922] border border-gray-200 dark:border-gray-800 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl space-y-4 mx-3">
-      <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
-        <h3 class="text-sm sm:text-base font-semibold flex items-center gap-2">
-          <i data-lucide="key" class="w-4 h-4 text-indigo-500"></i> API Ayarları & Bağlantı
-        </h3>
-        <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="space-y-3">
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Agnes API Key</label>
-          <input type="text" id="setting-api-key" class="w-full text-xs font-mono bg-gray-50 dark:bg-[#1c202c] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none" placeholder="sk-...">
+    <div class="gal" x-show="jobs.length">
+      <template x-for="j in jobs" :key="j.id"><div>
+        <div class="media" :style="`aspect-ratio:${ratio(j)}`">
+          <template x-if="j.url"><video :src="j.url" controls playsinline loop preload="metadata"></video></template>
+          <template x-if="!j.url"><div class="render">
+            <template x-if="j.status!=='failed'"><div style="text-align:center"><div class="pct" x-text="pct(j)+'%'"></div>
+              <div style="font-size:12px;opacity:.75" x-text="statusText(j)+' · '+elapsed(j)"></div></div></template>
+            <template x-if="j.status==='failed'"><div style="text-align:center;padding:16px"><i data-lucide="circle-x" style="width:28px;height:28px;color:#f87171"></i>
+              <div style="font-size:12.5px;margin-top:6px" x-text="j.error||'Başarısız'"></div></div></template>
+            <div class="pbar" x-show="j.status!=='failed'"><i :style="`width:${Math.max(3,pct(j))}%`"></i></div>
+          </div></template>
         </div>
+        <div class="meta"><p x-text="j.prompt"></p>
+          <div class="row"><span class="chip" x-text="specLabel(j)"></span><span class="grow"></span>
+            <button class="btn sm" title="Promptu kullan" @click="v.prompt=j.prompt"><i data-lucide="copy"></i></button>
+            <a class="btn sm" x-show="j.url" :href="j.url" target="_blank" download><i data-lucide="download"></i></a>
+            <button class="btn sm" title="Sil" @click="jobs.splice(jobs.indexOf(j),1)"><i data-lucide="trash-2"></i></button></div></div>
+      </div></template>
+    </div>
+    <div class="empty" x-show="!jobs.length"><i data-lucide="film"></i><div><b>Henüz video yok</b><br><small>Promptunu yaz ve “Video üret”e bas. Birden fazla görev aynı anda çalışabilir.</small></div></div>
+  </div>
+</section>
 
-        <div>
-          <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">API Base URL</label>
-          <input type="text" id="setting-base-url" class="w-full text-xs font-mono bg-gray-50 dark:bg-[#1c202c] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2.5 focus:outline-none" value="https://apihub.agnes-ai.com/v1">
-        </div>
+<!-- ============================ IMAGE ============================ -->
+<section x-show="tab==='image'" class="split">
+  <aside class="card side">
+    <div><div class="lbl">Model</div>
+      <select class="inp" x-model="i.model"><template x-for="m in byCat('image')" :key="m.id"><option :value="m.id" :selected="m.id===i.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
+    <div><div class="lbl">En-boy oranı</div>
+      <div class="seg"><template x-for="o in Object.keys(CFG.image_presets)"><button :class="i.ar===o&&'on'" @click="i.ar=o" x-text="o"></button></template></div></div>
+    <div><div class="lbl"><span>Kalite</span><b class="mono" x-text="imgSize()"></b></div>
+      <div class="seg"><template x-for="o in ['1K','2K','4K','custom']"><button :class="i.tier===o&&'on'" @click="i.tier=o" x-text="o==='custom'?'Özel':o"></button></template></div>
+      <input x-show="i.tier==='custom'" class="inp mono" style="margin-top:8px" x-model="i.custom" placeholder="örn: 3000x1200 (serbest)"></div>
+    <div class="g2">
+      <div><div class="lbl">Adet</div><input class="inp" type="number" min="1" x-model.number="i.n"></div>
+      <div><div class="lbl">Seed</div><input class="inp" type="number" min="-1" max="999" x-model="i.seed" placeholder="-1..999"></div></div>
+    <div><div class="lbl">Çıktı formatı</div><div class="seg"><button :class="i.fmt==='url'&&'on'" @click="i.fmt='url'">URL</button><button :class="i.fmt==='b64_json'&&'on'" @click="i.fmt='b64_json'">Base64</button></div></div>
+    <div><div class="lbl"><span>Referans görseller</span><b x-text="i.refs.length+'/6'"></b></div>
+      <div class="thumbs"><template x-for="(s,k) in i.refs" :key="k"><div class="thumb"><img :src="s"><button class="x" @click="i.refs.splice(k,1)">×</button></div></template>
+        <label class="drop thumb" x-show="i.refs.length<6" @dragover.prevent @drop.prevent="addMany($event.dataTransfer.files,i.refs,6)"><i data-lucide="plus"></i>
+          <input type="file" accept="image/*" multiple hidden @change="addMany($event.target.files,i.refs,6);$event.target.value=''"></label></div>
+      <input class="inp" style="margin-top:8px" placeholder="veya URL yapıştır + Enter" @keydown.enter.prevent="const u=$event.target.value.trim();if(u&&i.refs.length<6){i.refs.push(u);$event.target.value=''}">
+      <div x-show="i.refs.length" style="margin-top:12px"><div class="lbl"><span>Strength</span><b x-text="i.strength"></b></div>
+        <input type="range" min="0.1" max="1" step="0.05" x-model.number="i.strength"><p class="hint">Düşük = referansa sadık · Yüksek = prompt baskın</p></div></div>
+  </aside>
 
-        <button onclick="fetchLiveModels()" id="btn-fetch-models" class="w-full py-2 bg-gray-100 dark:bg-[#212634] hover:bg-gray-200 dark:hover:bg-[#282e3f] text-xs font-semibold rounded-xl flex items-center justify-center space-x-1.5 transition">
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-          <span>API'den Canlı Modelleri Çek (/v1/models)</span>
-        </button>
-      </div>
+  <div class="stack">
+    <div class="card composer">
+      <textarea x-model="i.prompt" placeholder="Ne görmek istiyorsun? örn: altın saatte sisli bir dağ köyü, ultra detaylı" @keydown.ctrl.enter="makeImage()" @keydown.meta.enter="makeImage()"></textarea>
+      <div class="bar"><span class="chip"><i data-lucide="ratio"></i><span x-text="imgSize()"></span></span><span class="chip" x-show="i.refs.length"><i data-lucide="images"></i><span x-text="i.refs.length+' referans'"></span></span>
+        <span class="grow"></span><button class="btn p" @click="makeImage()" :disabled="busy.image||!i.prompt.trim()"><i data-lucide="sparkles" :class="busy.image&&'spin'"></i><span x-text="busy.image?'Üretiliyor…':'Resim üret'"></span></button></div>
+    </div>
+    <div class="masonry" x-show="images.length"><template x-for="(im,k) in images" :key="im.id"><div>
+      <div class="media"><img :src="im.src" loading="lazy">
+        <div class="hov"><span class="chip" style="background:#ffffff26;color:#fff" x-text="im.size"></span><span class="grow"></span>
+          <button class="btn sm" @click="i.prompt=im.prompt"><i data-lucide="copy"></i></button>
+          <button class="btn sm" @click="i.refs.length<6&&i.refs.push(im.src)" title="Referans yap"><i data-lucide="image-plus"></i></button>
+          <a class="btn sm" :href="im.src" target="_blank" download="agnes.png"><i data-lucide="download"></i></a>
+          <button class="btn sm" @click="images.splice(k,1)"><i data-lucide="trash-2"></i></button></div></div>
+    </div></template></div>
+    <div class="empty" x-show="!images.length"><i data-lucide="image"></i><div><b>Galeri boş</b><br><small>Ürettiğin resimler burada birikir.</small></div></div>
+  </div>
+</section>
 
-      <div class="pt-2 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-800">
-        <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs font-medium bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl">Kapat</button>
-        <button onclick="saveSettings()" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm">Kaydet</button>
+<!-- ============================ CHAT ============================ -->
+<section x-show="tab==='chat'" class="split chat">
+  <aside class="card side">
+    <div><div class="lbl">Model</div>
+      <select class="inp" x-model="c.model"><template x-for="m in byCat('text')" :key="m.id"><option :value="m.id" :selected="m.id===c.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
+    <div><div class="lbl">Sistem promptu</div><textarea class="inp" rows="3" x-model="c.system"></textarea></div>
+    <template x-for="p in [['temperature',0,2,.1],['top_p',0,1,.05],['frequency_penalty',-2,2,.1],['presence_penalty',-2,2,.1]]" :key="p[0]">
+      <div><div class="lbl"><span x-text="p[0]"></span><b x-text="c[p[0]]"></b></div><input type="range" :min="p[1]" :max="p[2]" :step="p[3]" x-model.number="c[p[0]]"></div></template>
+    <div class="g2"><div><div class="lbl">Max tokens</div><input class="inp" type="number" x-model.number="c.max_tokens"></div>
+      <div><div class="lbl">Seed</div><input class="inp" type="number" x-model="c.seed" placeholder="—"></div></div>
+    <div><div class="lbl">Stop (virgülle)</div><input class="inp" x-model="c.stop" placeholder="###, END"></div>
+    <div class="row" style="gap:18px"><label class="sw"><input type="checkbox" x-model="c.stream"><i></i>Stream</label><label class="sw"><input type="checkbox" x-model="c.json_mode"><i></i>JSON</label></div>
+    <button class="btn" style="width:100%" @click="messages=[]"><i data-lucide="eraser"></i>Sohbeti temizle</button>
+  </aside>
+  <div class="card chatwrap">
+    <div class="msgs" x-ref="chatbox">
+      <template x-for="(m,k) in messages" :key="k"><div class="msg" :class="m.role==='user'?'u':'a'">
+        <div x-show="m.imgs?.length"><template x-for="s in m.imgs||[]"><img :src="s"></template></div>
+        <template x-if="!m.text&&m.role!=='user'"><span class="typing"><i></i><i></i><i></i></span></template>
+        <span x-text="m.text"></span>
+        <div x-show="m.usage" style="font-size:10.5px;opacity:.6;margin-top:4px" x-text="m.usage?m.usage.total_tokens+' token':''"></div>
+      </div></template>
+      <div class="empty" style="margin:auto;border:0" x-show="!messages.length"><i data-lucide="message-circle"></i><div><b>Sohbete başla</b><br><small>Resim ekleyip analiz de ettirebilirsin.</small></div></div>
+    </div>
+    <div class="inbar">
+      <div class="thumbs" style="margin-bottom:8px" x-show="c.pending.length"><template x-for="(s,k) in c.pending" :key="k"><div class="thumb"><img :src="s"><button class="x" @click="c.pending.splice(k,1)">×</button></div></template></div>
+      <div class="inrow" @dragover.prevent @drop.prevent="addMany($event.dataTransfer.files,c.pending,6)">
+        <label class="ibtn" style="border:0;cursor:pointer"><i data-lucide="paperclip"></i><input type="file" accept="image/*" multiple hidden @change="addMany($event.target.files,c.pending,6);$event.target.value=''"></label>
+        <textarea rows="1" x-model="c.input" placeholder="Mesaj yaz… (Shift+Enter yeni satır)" @input="$el.style.height='auto';$el.style.height=$el.scrollHeight+'px'" @keydown.enter="if(!$event.shiftKey){$event.preventDefault();send()}"></textarea>
+        <button class="btn p" style="padding:9px 12px" @click="send()" :disabled="busy.chat"><i data-lucide="arrow-up"></i></button>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- JAVASCRIPT LOGIC -->
-  <script>
-    // Lucide ikonlarını başlat
-    lucide.createIcons();
+<!-- ============================ MODELS ============================ -->
+<section x-show="tab==='models'" class="card">
+  <div class="row" style="margin-bottom:16px"><div class="sec" style="margin:0"><i data-lucide="layers"></i>Modeller <span class="chip" x-text="models.length"></span></div><span class="grow"></span>
+    <button class="btn" @click="refreshModels()" :disabled="busy.models"><i data-lucide="refresh-cw" :class="busy.models&&'spin'"></i>Canlı yenile</button></div>
+  <template x-for="cat in [['video','Video','film'],['image','Resim','image'],['text','Metin','message-circle']]" :key="cat[0]"><div style="margin-bottom:20px">
+    <div class="lbl" x-text="cat[1]"></div>
+    <div class="mgrid"><template x-for="m in byCat(cat[0])" :key="m.id"><div class="mitem">
+      <div class="mic"><i :data-lucide="cat[2]"></i></div><span class="grow mono" style="overflow:hidden;text-overflow:ellipsis" x-text="m.id"></span>
+      <span class="badge" :class="'b-'+m.tier" x-text="m.tier"></span></div></template></div>
+  </div></template>
+</section>
 
-    // Varsayılan API Anahtarı ve Base URL
-    const DEFAULT_KEY = "sk-niO32ft0zOmYOJSp0OIbPwSKdxVdBupsF6AmB0slcZMUwQjv";
-    const DEFAULT_URL = "https://apihub.agnes-ai.com/v1";
+<!-- ============================ RAW ============================ -->
+<section x-show="tab==='raw'" class="split">
+  <div class="card side">
+    <div><div class="lbl">Metot</div><div class="seg"><template x-for="o in ['GET','POST','PUT','PATCH','DELETE']"><button :class="r.method===o&&'on'" @click="r.method=o" x-text="o"></button></template></div></div>
+    <div><div class="lbl">Endpoint</div><input class="inp mono" x-model="r.endpoint" placeholder="/models"><p class="hint">/models, /chat/completions, /videos/{id} … (base: /v1)</p></div>
+    <div x-show="['POST','PUT','PATCH'].includes(r.method)"><div class="lbl">JSON gövde</div><textarea class="inp mono" rows="12" x-model="r.body" placeholder='{"model":"agnes-2.5-flash","messages":[{"role":"user","content":"selam"}]}'></textarea></div>
+    <button class="btn p" style="width:100%" @click="raw()" :disabled="busy.raw"><i data-lucide="send"></i>Gönder</button>
+  </div>
+  <div class="card"><div class="sec"><i data-lucide="braces"></i>Yanıt</div><pre class="out" x-text="r.out||'—'"></pre></div>
+</section>
+</main>
 
-    let storedKey = localStorage.getItem("agnes_api_key");
-    if (!storedKey || storedKey.includes("3uzl5L8zNFYR")) {
-      storedKey = DEFAULT_KEY;
-      localStorage.setItem("agnes_api_key", DEFAULT_KEY);
+<div class="toast" x-show="toastMsg" x-transition x-cloak x-text="toastMsg"></div>
+
+<script>
+const CFG = {{ cfg|tojson }};
+const DEF = () => ({
+  tab:'video', jobs:[], images:[], messages:[],
+  v:{model:'agnes-video-v2.0',ar:'16:9',res:'720p',custom:'',mode:'seconds',seconds:5,frames:121,fps:24,duration:5,
+     prompt:'',autoExpand:false,start:null,end:null,refs:[],audios:[],refVideo:'',negative:'',seed:'',steps:''},
+  i:{model:'agnes-image-2.5-flash',ar:'16:9',tier:'2K',custom:'',n:1,seed:'',fmt:'url',refs:[],strength:0.75,prompt:''},
+  c:{model:'agnes-2.5-flash',system:'Sen yardımsever bir yapay zeka asistanısın.',temperature:0.7,top_p:1,
+     frequency_penalty:0,presence_penalty:0,max_tokens:4096,seed:'',stop:'',stream:true,json_mode:false,input:'',pending:[]},
+  r:{method:'GET',endpoint:'/models',body:'',out:''},
+});
+const KEYS = Object.keys(DEF());
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+function studio(){ return {
+  CFG, ...DEF(), models: CFG.models, ready:false, dirty:false, busy:{}, toastMsg:'', now:Date.now(),
+
+  async init(){
+    try{
+      const d = await (await fetch('/api/state')).json();
+      if (d.state && Object.keys(d.state).length) this.load(d.state);
+    }catch(e){}
+    this.ready = true;
+    this._last = this.snap();
+    setInterval(() => this.save(), 1200);
+    setInterval(() => this.now = Date.now(), 1000);
+    this.jobs.filter(j => !this.done(j)).forEach(j => this.track(j));   // yenilemeden sonra takibe devam
+    let raf; const ic = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => lucide.createIcons()) };
+    new MutationObserver(ic).observe(document.body, {childList:true, subtree:true}); ic();
+  },
+
+  /* ---------- oturum ---------- */
+  load(s){ const d = DEF();
+    for (const k of KEYS){ if (s[k] === undefined) continue;
+      this[k] = (d[k] && typeof d[k]==='object' && !Array.isArray(d[k])) ? {...d[k], ...s[k]} : s[k] } },
+  snap(){ const o = {}; for (const k of KEYS) o[k] = this[k]; return JSON.stringify(o) },
+  async save(){
+    if (this._saving || !this.ready) return;
+    const s = this.snap(); if (s === this._last){ this.dirty = false; return }
+    this.dirty = true; this._saving = true;
+    try{ const res = await fetch('/api/state', {method:'PUT', headers:{'Content-Type':'application/json'}, body:s});
+      if (res.ok){ this._last = s; this.dirty = false } }catch(e){} finally{ this._saving = false } },
+  async resetAll(){
+    if (!confirm('Tüm ayarlar, galeri, görevler ve sohbet silinsin mi?')) return;
+    Object.assign(this, DEF()); await fetch('/api/state', {method:'DELETE'}); this._last = this.snap(); this.toast('Oturum sıfırlandı') },
+  toggleTheme(){ const d = document.documentElement.classList.toggle('dark'); localStorage.theme = d ? 'dark' : 'light' },
+  toast(m){ this.toastMsg = m; clearTimeout(this._t); this._t = setTimeout(() => this.toastMsg = '', 3800) },
+
+  /* ---------- yardımcılar ---------- */
+  byCat(c){ return this.models.filter(m => m.category === c) },
+  isFrame(){ return this.v.model.toLowerCase().includes('v2.0') },
+  spec(){ const v = this.v; let w, h; const m = /^\s*(\d+)\s*[x×]\s*(\d+)\s*$/i.exec(v.custom || '');
+    if (v.res === 'custom' && m){ w = +m[1]; h = +m[2] } else [w, h] = CFG.video_presets[v.res === 'custom' ? '720p' : v.res][v.ar];
+    const s = Math.min(w, h), max = s >= 1080 ? 241 : s > 480 ? 481 : 961;
+    const t = v.mode === 'frames' ? (+v.frames || 121) : Math.round(v.seconds * v.fps);
+    let f = 8 * Math.max(1, Math.round((t - 1) / 8)) + 1; const clamped = f > max; f = Math.min(f, max);
+    return {w, h, f, max, fps:v.fps, sec:(f / v.fps).toFixed(1), clamped} },
+  imgSize(){ return this.i.tier === 'custom' ? (this.i.custom.trim() || '—') : CFG.image_presets[this.i.ar][this.i.tier] },
+  ratio(j){ const s = j.spec || {}; if (s.width && s.height) return `${s.width}/${s.height}`;
+    return ({'9:16':'9/16','1:1':'1/1'})[s.aspect_ratio] || '16/9' },
+  specLabel(j){ const s = j.spec || {}; return s.width ? `${s.width}×${s.height} · ${s.num_frames}f · ${s.frame_rate}fps` : `${s.aspect_ratio||''} · ${s.duration||'?'} sn` },
+  done(j){ return j.status === 'completed' || j.status === 'failed' },
+  pct(j){ return Math.min(100, Math.round(Number(j.progress) || 0)) },
+  elapsed(j){ const s = Math.max(0, Math.round((this.now - j.created) / 1000)); return s >= 60 ? `${Math.floor(s/60)}dk ${s%60}sn` : `${s}sn` },
+  statusText(j){ return ({queued:'Kuyrukta', in_progress:'GPU üretiyor', unknown:'Bağlanıyor', completed:'Tamamlandı'})[j.status] || j.status },
+
+  async toData(file){ return new Promise((res, rej) => { const fr = new FileReader(); fr.onerror = rej;
+    fr.onload = () => { const img = new Image();
+      img.onload = () => { const k = Math.min(1, 2048 / Math.max(img.width, img.height)); const cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); res(cv.toDataURL('image/jpeg', 0.9)) };
+      img.onerror = () => res(fr.result); img.src = fr.result };
+    fr.readAsDataURL(file) }) },
+  async setOne(files, obj, key){ const f = [...files].find(x => x.type.startsWith('image/')); if (f) obj[key] = await this.toData(f) },
+  async addMany(files, arr, max){ for (const f of files){ if (!f.type.startsWith('image/')) continue;
+    if (arr.length >= max){ this.toast(`En fazla ${max} görsel`); break } arr.push(await this.toData(f)) } },
+
+  async api(url, body, method='POST'){
+    const res = await fetch(url, {method, headers:{'Content-Type':'application/json'}, body: body ? JSON.stringify(body) : undefined});
+    const d = await res.json().catch(() => ({error:'Sunucu yanıtı okunamadı ('+res.status+')'}));
+    if (!res.ok) throw new Error(d.error || res.statusText); return d },
+  async run(key, fn){ this.busy[key] = true; try{ await fn() }catch(e){ this.toast(e.message) }finally{ this.busy[key] = false } },
+
+  /* ---------- video ---------- */
+  expand(){ return this.run('expand', async () => { this.v.prompt = (await this.api('/api/expand', {prompt:this.v.prompt})).prompt }) },
+  makeVideo(){ if (!this.v.prompt.trim()) return; return this.run('video', async () => { const v = this.v, s = this.spec();
+    if (v.res === 'custom' && this.isFrame() && !/^\s*\d+\s*[x×]\s*\d+\s*$/i.test(v.custom)) throw new Error('Özel boyut GxY olmalı (örn 1000x600)');
+    const body = {model:v.model, prompt:v.prompt, expand:v.autoExpand, aspect_ratio:v.ar,
+      resolution: v.res === 'custom' ? v.custom.replace('×','x') : v.res, fps:v.fps, duration:v.duration,
+      ...(v.mode === 'frames' ? {num_frames:s.f} : {seconds:v.seconds}),
+      start_image:v.start, end_image:v.end, ref_images:v.refs, ref_audio_urls:v.audios.filter(a => a.trim()),
+      ref_video_url:v.refVideo, negative_prompt:v.negative, seed:v.seed, num_inference_steps:v.steps};
+    const d = await this.api('/api/video', body);
+    this.jobs.unshift({id:uid(), ...d, status:'queued', progress:0, url:null, error:null, created:Date.now()});
+    this.track(this.jobs[0]); this.toast('Görev kuyruğa alındı') }) },
+  async track(job){
+    while (!this.done(job)){
+      await sleep(5000);
+      if (!this.jobs.includes(job)) return;
+      if (Date.now() - job.created > 15 * 60 * 1000){ job.status = 'failed'; job.error = 'Zaman aşımı (15 dk)'; break }
+      try{
+        const q = new URLSearchParams({task_id:job.task_id || '', video_id:job.video_id || '', model:job.model});
+        const st = await this.api('/api/video/status?' + q, null, 'GET');
+        job.progress = st.progress; job.error = st.error;
+        if (st.url) job.url = st.url;
+        job.status = (st.status === 'completed' && !st.url) ? 'in_progress' : st.status;
+      }catch(e){}
     }
-    let currentApiKey = storedKey;
-    let currentBaseUrl = localStorage.getItem("agnes_base_url") || DEFAULT_URL;
-
-    document.getElementById("setting-api-key").value = currentApiKey;
-    document.getElementById("setting-base-url").value = currentBaseUrl;
-
-    // TEMA AYARI (DARK / LIGHT)
-    function initTheme() {
-      const savedTheme = localStorage.getItem("agnes_theme") || "dark";
-      if (savedTheme === "dark") {
-        document.documentElement.classList.add("dark");
-        document.getElementById("theme-icon").setAttribute("data-lucide", "sun");
-      } else {
-        document.documentElement.classList.remove("dark");
-        document.getElementById("theme-icon").setAttribute("data-lucide", "moon");
-      }
-      lucide.createIcons();
-    }
-    initTheme();
-
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.toggle("dark");
-      localStorage.setItem("agnes_theme", isDark ? "dark" : "light");
-      document.getElementById("theme-icon").setAttribute("data-lucide", isDark ? "sun" : "moon");
-      lucide.createIcons();
-    }
-
-    // TAB DEĞİŞTİRME
-    function switchTab(tabId, sync = true) {
-      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
-      document.querySelectorAll(".tab-btn").forEach(el => {
-        el.className = "tab-btn px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white";
-      });
-
-      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
-      if (activeBtn) {
-        activeBtn.className = "tab-btn active px-2 sm:px-3.5 py-1.5 rounded-lg flex items-center space-x-1 transition-all text-indigo-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm";
-      }
-      const activeContent = document.getElementById(`tab-content-${tabId}`);
-      if (activeContent) {
-        activeContent.classList.remove("hidden");
-      }
-
-      if (sync) {
-        fetch("/api/state", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ active_tab: tabId })
-        }).catch(() => {});
-      }
-    }
-
-    // AYARLAR MODALI
-    function openSettingsModal() { document.getElementById("settings-modal").classList.remove("hidden"); }
-    function closeSettingsModal() { document.getElementById("settings-modal").classList.add("hidden"); }
-    function saveSettings() {
-      currentApiKey = document.getElementById("setting-api-key").value.trim() || DEFAULT_KEY;
-      currentBaseUrl = document.getElementById("setting-base-url").value.trim() || DEFAULT_URL;
-      localStorage.setItem("agnes_api_key", currentApiKey);
-      localStorage.setItem("agnes_base_url", currentBaseUrl);
-      closeSettingsModal();
-      logResponse({ message: "Ayarlar başarıyla kaydedildi.", api_key: currentApiKey.substring(0, 8) + "...", base_url: currentBaseUrl }, 200, 0, "SETTINGS");
-    }
-
-    // LOG PANELİ GÜNCELLEME
-    function logResponse(jsonObj, statusCode = 200, durationMs = 0, endpoint = "") {
-      const logPre = document.getElementById("log-pre");
-      const statusBadge = document.getElementById("log-status-badge");
-      const durBadge = document.getElementById("log-duration-badge");
-
-      statusBadge.classList.remove("hidden", "bg-emerald-500/10", "text-emerald-500", "bg-red-500/10", "text-red-500", "bg-amber-500/10", "text-amber-500");
-      if (statusCode >= 200 && statusCode < 300) {
-        statusBadge.classList.add("bg-emerald-500/20", "text-emerald-400");
-        statusBadge.innerText = `${statusCode} OK`;
-      } else if (statusCode === 429) {
-        statusBadge.classList.add("bg-amber-500/20", "text-amber-400");
-        statusBadge.innerText = `${statusCode} Rate Limited`;
-      } else {
-        statusBadge.classList.add("bg-red-500/20", "text-red-400");
-        statusBadge.innerText = `${statusCode} Error`;
-      }
-
-      if (durationMs > 0) {
-        durBadge.classList.remove("hidden");
-        durBadge.innerText = `${durationMs} ms ${endpoint ? `(${endpoint})` : ''}`;
-      } else if (endpoint) {
-        durBadge.classList.remove("hidden");
-        durBadge.innerText = endpoint;
-      }
-
-      logPre.innerText = JSON.stringify(jsonObj, null, 2);
-    }
-
-    function toggleLogPanel() {
-      const body = document.getElementById("log-panel-body");
-      const icon = document.getElementById("log-toggle-icon");
-      body.classList.toggle("hidden");
-      icon.setAttribute("data-lucide", body.classList.contains("hidden") ? "chevron-up" : "chevron-down");
-      lucide.createIcons();
-    }
-
-    function copyRawLog() {
-      const txt = document.getElementById("log-pre").innerText;
-      navigator.clipboard.writeText(txt);
-      alert("Ham JSON logu panoya kopyalandı!");
-    }
-
-    function copyTaskId() {
-      const id = document.getElementById("video-task-id-txt").innerText;
-      if (id && id !== "-") {
-        navigator.clipboard.writeText(id);
-        alert("Görev ID panoya kopyalandı: " + id);
-      }
-    }
-
-    // 1. METİN / VISION (CHAT) LOGIC
-    let chatBase64Image = null;
-    document.getElementById("chat-img-file").addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          chatBase64Image = evt.target.result;
-          document.getElementById("chat-img-preview").src = chatBase64Image;
-          document.getElementById("chat-img-preview-wrap").classList.remove("hidden");
-          document.getElementById("chat-img-clear").classList.remove("hidden");
-          syncInputState();
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    function clearChatImage() {
-      chatBase64Image = null;
-      document.getElementById("chat-img-file").value = "";
-      document.getElementById("chat-img-url").value = "";
-      document.getElementById("chat-img-preview-wrap").classList.add("hidden");
-      document.getElementById("chat-img-clear").classList.add("hidden");
-      syncInputState();
-    }
-
-    async function sendChat() {
-      const prompt = document.getElementById("chat-prompt").value.trim();
-      if (!prompt && !chatBase64Image && !document.getElementById("chat-img-url").value.trim()) {
-        alert("Lütfen bir metin istemi veya görsel girin!");
-        return;
-      }
-
-      const submitBtn = document.getElementById("chat-submit-btn");
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>İşleniyor...</span>`;
-      lucide.createIcons();
-
-      const outputEl = document.getElementById("chat-output");
-      outputEl.innerText = "Model yanıtı bekleniyor...";
-
-      const imgInput = chatBase64Image || document.getElementById("chat-img-url").value.trim();
-
-      const payload = {
-        api_key: currentApiKey,
-        base_url: currentBaseUrl,
-        model: document.getElementById("chat-model").value,
-        prompt: prompt,
-        system_prompt: document.getElementById("chat-system").value.trim(),
-        image: imgInput || null,
-        temperature: parseFloat(document.getElementById("chat-temp").value),
-        top_p: parseFloat(document.getElementById("chat-topp").value),
-        max_tokens: parseInt(document.getElementById("chat-max-tokens").value),
-        presence_penalty: parseFloat(document.getElementById("chat-presence").value || 0),
-        frequency_penalty: parseFloat(document.getElementById("chat-frequency").value || 0),
-        enable_thinking: document.getElementById("chat-thinking").checked
-      };
-
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        logResponse(data, data.status, data.duration_ms, data.endpoint);
-
-        if (data.status === 200 && data.raw_response && data.raw_response.choices) {
-          const choice = data.raw_response.choices[0];
-          outputEl.innerText = choice.message.content || "(Yanıt boş)";
-          
-          document.getElementById("chat-stats-bar").classList.remove("hidden");
-          document.getElementById("stat-chat-time").innerText = `${data.duration_ms} ms`;
-          const usage = data.raw_response.usage || {};
-          document.getElementById("stat-chat-prompt").innerText = usage.prompt_tokens || 0;
-          document.getElementById("stat-chat-completion").innerText = usage.completion_tokens || 0;
-
-          if (usage.completion_tokens_details && usage.completion_tokens_details.reasoning_tokens) {
-            document.getElementById("stat-chat-reasoning-wrap").classList.remove("hidden");
-            document.getElementById("stat-chat-reasoning").innerText = usage.completion_tokens_details.reasoning_tokens;
-          } else {
-            document.getElementById("stat-chat-reasoning-wrap").classList.add("hidden");
-          }
-        } else {
-          outputEl.innerText = `Hata (${data.status}):\n${JSON.stringify(data.raw_response || data.error, null, 2)}`;
-        }
-      } catch (err) {
-        outputEl.innerText = `İstek Hatası: ${err.message}`;
-        logResponse({ error: err.message }, 500);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Yanıt Üret</span>`;
-        lucide.createIcons();
-      }
-    }
-
-    function copyChatOutput() {
-      navigator.clipboard.writeText(document.getElementById("chat-output").innerText);
-      alert("Metin panoya kopyalandı!");
-    }
-    function clearChatOutput() {
-      document.getElementById("chat-output").innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 py-12"><i data-lucide="message-square" class="w-8 h-8 mb-2 opacity-50"></i><p class="text-xs">Temizlendi.</p></div>`;
-      document.getElementById("chat-stats-bar").classList.add("hidden");
-      lucide.createIcons();
-      fetch("/api/state", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat: { output: "", has_output: false } })
-      }).catch(() => {});
-    }
-
-    // 2. GÖRSEL (IMAGE) LOGIC
-    let currentImageMode = "t2i";
-    let imageRefBase64 = null;
-
-    function setImageMode(mode, sync = true) {
-      currentImageMode = mode;
-      const t2iBtn = document.getElementById("img-mode-t2i");
-      const i2iBtn = document.getElementById("img-mode-i2i");
-      const refBox = document.getElementById("image-ref-box");
-
-      if (mode === "t2i") {
-        t2iBtn.className = "py-1.5 rounded-lg text-purple-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition";
-        i2iBtn.className = "py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition";
-        refBox.classList.add("hidden");
-      } else {
-        i2iBtn.className = "py-1.5 rounded-lg text-purple-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition";
-        t2iBtn.className = "py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition";
-        refBox.classList.remove("hidden");
-      }
-      if (sync) syncInputState();
-    }
-
-    document.getElementById("image-ref-file").addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          imageRefBase64 = evt.target.result;
-          document.getElementById("image-ref-preview").src = imageRefBase64;
-          document.getElementById("image-ref-preview-wrap").classList.remove("hidden");
-          syncInputState();
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    async function generateImage() {
-      const prompt = document.getElementById("image-prompt").value.trim();
-      if (!prompt) { alert("Lütfen bir görsel tanımı (prompt) girin!"); return; }
-
-      const submitBtn = document.getElementById("image-submit-btn");
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Görsel Oluşturuluyor...</span>`;
-      lucide.createIcons();
-
-      const format = document.querySelector('input[name="img_format"]:checked').value;
-      const refImg = imageRefBase64 || document.getElementById("image-ref-url").value.trim();
-
-      const payload = {
-        api_key: currentApiKey,
-        base_url: currentBaseUrl,
-        model: document.getElementById("image-model").value,
-        prompt: prompt,
-        negative_prompt: document.getElementById("image-negative-prompt").value.trim(),
-        size: document.getElementById("image-size").value,
-        ratio: document.getElementById("image-ratio").value,
-        response_format: format,
-        seed: document.getElementById("image-seed").value,
-        guidance_scale: document.getElementById("image-cfg").value,
-        steps: document.getElementById("image-steps").value,
-        image_strength: document.getElementById("image-strength").value,
-        single_image: currentImageMode === "i2i" && refImg ? refImg : null
-      };
-
-      try {
-        const res = await fetch("/api/image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        logResponse(data, data.status, data.duration_ms, data.endpoint);
-
-        if (data.status === 200 && data.raw_response && data.raw_response.data && data.raw_response.data.length > 0) {
-          const item = data.raw_response.data[0];
-          const imgSrc = item.url ? item.url : (item.b64_json ? `data:image/png;base64,${item.b64_json}` : null);
-          
-          if (imgSrc) {
-            document.getElementById("image-placeholder").classList.add("hidden");
-            const resultImg = document.getElementById("image-result");
-            resultImg.src = imgSrc;
-            resultImg.classList.remove("hidden");
-
-            document.getElementById("image-actions").classList.remove("hidden");
-            document.getElementById("image-download-btn").href = imgSrc;
-            document.getElementById("image-open-btn").href = imgSrc;
-          }
-        } else {
-          alert(`Görsel üretimi başarısız oldu:\n${JSON.stringify(data.raw_response || data.error)}`);
-        }
-      } catch (err) {
-        alert("Bağlantı hatası: " + err.message);
-        logResponse({ error: err.message }, 500);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i><span>Görsel Oluştur</span>`;
-        lucide.createIcons();
-      }
-    }
-
-    // 3. VİDEO LOGIC
-    let currentVideoMode = "text";
-    let videoPollInterval = null;
-    let videoSecondsElapsed = 0;
-    let videoTimerInterval = null;
-
-    function setVideoMode(mode, sync = true) {
-      currentVideoMode = mode;
-      ["text", "keyframe", "reference"].forEach(m => {
-        const btn = document.getElementById(`vid-mode-${m}`);
-        btn.className = (m === mode)
-          ? "py-1.5 rounded-lg text-rose-600 dark:text-white bg-white dark:bg-gray-800 shadow-sm transition"
-          : "py-1.5 rounded-lg text-gray-500 dark:text-gray-400 transition";
-      });
-
-      document.getElementById("video-keyframe-box").classList.toggle("hidden", mode !== "keyframe");
-      document.getElementById("video-ref-box").classList.toggle("hidden", mode !== "reference");
-
-      if (sync) syncInputState();
-    }
-
-    async function createVideoTask() {
-      const prompt = document.getElementById("video-prompt").value.trim();
-      if (!prompt) { alert("Lütfen bir video sahne açıklaması girin!"); return; }
-
-      const submitBtn = document.getElementById("video-submit-btn");
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Görev Başlatılıyor...</span>`;
-      lucide.createIcons();
-
-      const payload = {
-        api_key: currentApiKey,
-        base_url: currentBaseUrl,
-        model: document.getElementById("video-model").value,
-        prompt: prompt,
-        negative_prompt: document.getElementById("video-negative-prompt").value.trim(),
-        mode: currentVideoMode,
-        seconds: document.getElementById("video-seconds").value,
-        aspect_ratio: document.getElementById("video-ratio").value,
-        size: document.getElementById("video-size").value,
-        seed: document.getElementById("video-seed").value,
-        fps: document.getElementById("video-fps").value
-      };
-
-      if (currentVideoMode === "keyframe") {
-        payload.first_frame = document.getElementById("video-first-frame").value.trim() || null;
-        payload.last_frame = document.getElementById("video-last-frame").value.trim() || null;
-      } else if (currentVideoMode === "reference") {
-        const imgs = document.getElementById("video-ref-images").value.trim();
-        if (imgs) payload.images = imgs.split(",").map(s => s.trim());
-        const auds = document.getElementById("video-ref-audios").value.trim();
-        if (auds) payload.audios = auds.split(",").map(s => s.trim());
-        const vids = document.getElementById("video-ref-videos").value.trim();
-        if (vids) payload.ref_videos = vids;
-      }
-
-      try {
-        const res = await fetch("/api/video/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        logResponse(data, data.status, data.duration_ms, data.endpoint);
-
-        if (data.status === 200 && data.raw_response && (data.raw_response.video_id || data.raw_response.id)) {
-          const videoId = data.raw_response.video_id || data.raw_response.id;
-          startPollingVideo(videoId, payload.model);
-        } else {
-          alert(`Video görevi başlatılamadı:\n${JSON.stringify(data.raw_response || data.error)}`);
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = `<i data-lucide="film" class="w-4 h-4"></i><span>Video Görevi Başlat</span>`;
-          lucide.createIcons();
-        }
-      } catch (err) {
-        alert("Hata: " + err.message);
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i data-lucide="film" class="w-4 h-4"></i><span>Video Görevi Başlat</span>`;
-        lucide.createIcons();
-      }
-    }
-
-    function startPollingVideo(videoId, modelName) {
-      document.getElementById("video-progress-card").classList.remove("hidden");
-      document.getElementById("video-task-id-txt").innerText = videoId;
-      document.getElementById("video-placeholder").classList.remove("hidden");
-      document.getElementById("video-result").classList.add("hidden");
-      document.getElementById("video-actions").classList.add("hidden");
-
-      const submitBtn = document.getElementById("video-submit-btn");
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Oluşturuluyor...</span>`;
-      lucide.createIcons();
-
-      videoSecondsElapsed = 0;
-      clearInterval(videoTimerInterval);
-      videoTimerInterval = setInterval(() => {
-        videoSecondsElapsed++;
-        document.getElementById("video-timer-txt").innerText = `${videoSecondsElapsed}s`;
-      }, 1000);
-
-      clearInterval(videoPollInterval);
-      videoPollInterval = setInterval(async () => {
-        try {
-          const res = await fetch(`/api/video/status?video_id=${encodeURIComponent(videoId)}&model_name=${encodeURIComponent(modelName)}&api_key=${encodeURIComponent(currentApiKey)}`);
-          const data = await res.json();
-          logResponse(data, data.status, data.duration_ms, "GET /agnesapi");
-
-          if (data.status === 200 && data.raw_response) {
-            const r = data.raw_response;
-            const progress = r.progress || 0;
-            const status = r.status || "queued";
-
-            document.getElementById("video-progress-pct").innerText = `${progress}%`;
-            document.getElementById("video-progress-bar").style.width = `${progress}%`;
-            document.getElementById("video-status-text").innerText = `Durum: ${status.toUpperCase()} (${progress}%)`;
-
-            if (status === "completed") {
-              clearInterval(videoPollInterval);
-              clearInterval(videoTimerInterval);
-
-              const videoUrl = r.url;
-              if (videoUrl) {
-                document.getElementById("video-placeholder").classList.add("hidden");
-                const videoEl = document.getElementById("video-result");
-                videoEl.src = videoUrl;
-                videoEl.classList.remove("hidden");
-
-                document.getElementById("video-actions").classList.remove("hidden");
-                document.getElementById("video-download-btn").href = videoUrl;
-              }
-
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = `<i data-lucide="film" class="w-4 h-4"></i><span>Video Görevi Başlat</span>`;
-              lucide.createIcons();
-            } else if (status === "failed") {
-              clearInterval(videoPollInterval);
-              clearInterval(videoTimerInterval);
-              alert("Video üretimi başarısız oldu: " + JSON.stringify(r.error));
-
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = `<i data-lucide="film" class="w-4 h-4"></i><span>Video Görevi Başlat</span>`;
-              lucide.createIcons();
-            }
-          }
-        } catch (err) {
-          console.error("Poll err:", err);
-        }
-      }, 2000);
-    }
-
-    // 4. CANLI MODELLERİ ÇEKME
-    async function fetchLiveModels() {
-      const btn = document.getElementById("btn-fetch-models");
-      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Çekiliyor...</span>`;
-      lucide.createIcons();
-
-      try {
-        const res = await fetch("/api/models", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ api_key: currentApiKey, base_url: currentBaseUrl })
-        });
-        const data = await res.json();
-        logResponse(data, data.status, data.duration_ms, data.endpoint);
-
-        if (data.status === 200 && data.data && data.data.data) {
-          const models = data.data.data.map(m => m.id);
-          alert(`API'den ${models.length} model başarıyla alındı:\n\n${models.join("\n")}`);
-        } else {
-          alert("Modeller alınamadı:\n" + JSON.stringify(data));
-        }
-      } catch (e) {
-        alert("Hata: " + e.message);
-      } finally {
-        btn.innerHTML = `<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>API'den Canlı Modelleri Çek (/v1/models)</span>`;
-        lucide.createIcons();
-      }
-    }
-
-    // 5. RUNTIME STATE SENKRONİZASYONU VE YÜKLEMESİ
-    let syncTimer = null;
-    function syncInputState() {
-      clearTimeout(syncTimer);
-      syncTimer = setTimeout(async () => {
-        try {
-          const patch = {
-            chat: {
-              model: document.getElementById("chat-model").value,
-              system_prompt: document.getElementById("chat-system").value,
-              prompt: document.getElementById("chat-prompt").value,
-              temperature: parseFloat(document.getElementById("chat-temp").value),
-              top_p: parseFloat(document.getElementById("chat-topp").value),
-              max_tokens: parseInt(document.getElementById("chat-max-tokens").value),
-              presence_penalty: parseFloat(document.getElementById("chat-presence").value || 0),
-              frequency_penalty: parseFloat(document.getElementById("chat-frequency").value || 0),
-              enable_thinking: document.getElementById("chat-thinking").checked,
-              image: chatBase64Image || document.getElementById("chat-img-url").value.trim() || null
-            },
-            image: {
-              model: document.getElementById("image-model").value,
-              mode: currentImageMode,
-              prompt: document.getElementById("image-prompt").value,
-              negative_prompt: document.getElementById("image-negative-prompt").value,
-              size: document.getElementById("image-size").value,
-              ratio: document.getElementById("image-ratio").value,
-              format: document.querySelector('input[name="img_format"]:checked')?.value || "url",
-              seed: document.getElementById("image-seed").value,
-              guidance_scale: document.getElementById("image-cfg").value,
-              steps: document.getElementById("image-steps").value,
-              image_strength: document.getElementById("image-strength").value,
-              ref_image: imageRefBase64 || document.getElementById("image-ref-url").value.trim() || null
-            },
-            video: {
-              model: document.getElementById("video-model").value,
-              mode: currentVideoMode,
-              prompt: document.getElementById("video-prompt").value,
-              negative_prompt: document.getElementById("video-negative-prompt").value,
-              first_frame: document.getElementById("video-first-frame").value,
-              last_frame: document.getElementById("video-last-frame").value,
-              ref_images: document.getElementById("video-ref-images").value,
-              ref_audios: document.getElementById("video-ref-audios").value,
-              ref_videos: document.getElementById("video-ref-videos").value,
-              seconds: document.getElementById("video-seconds").value,
-              aspect_ratio: document.getElementById("video-ratio").value,
-              size: document.getElementById("video-size").value,
-              seed: document.getElementById("video-seed").value,
-              fps: document.getElementById("video-fps").value
-            }
-          };
-          await fetch("/api/state", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(patch)
-          });
-        } catch (e) {
-          // Sessiz hata yönetimi
-        }
-      }, 400);
-    }
-
-    // Form elementleri dinleyicisi
-    document.addEventListener("input", (e) => {
-      if (e.target.matches("input, textarea, select")) {
-        syncInputState();
-      }
-    });
-    document.addEventListener("change", (e) => {
-      if (e.target.matches("input, textarea, select")) {
-        syncInputState();
-      }
-    });
-
-    // Sunucudaki Geçici Bellekten Geri Yükleme
-    async function loadRuntimeState() {
-      try {
-        const res = await fetch("/api/state");
-        const data = await res.json();
-        if (data.status === 200 && data.state) {
-          const state = data.state;
-
-          // 1. Sekme
-          if (state.active_tab) {
-            switchTab(state.active_tab, false);
-          }
-
-          // 2. Chat
-          if (state.chat) {
-            if (state.chat.model) document.getElementById("chat-model").value = state.chat.model;
-            if (state.chat.system_prompt !== undefined) document.getElementById("chat-system").value = state.chat.system_prompt;
-            if (state.chat.prompt !== undefined) document.getElementById("chat-prompt").value = state.chat.prompt;
-            if (state.chat.temperature !== undefined) {
-              document.getElementById("chat-temp").value = state.chat.temperature;
-              document.getElementById("chat-temp-val").innerText = state.chat.temperature;
-            }
-            if (state.chat.top_p !== undefined) {
-              document.getElementById("chat-topp").value = state.chat.top_p;
-              document.getElementById("chat-topp-val").innerText = state.chat.top_p;
-            }
-            if (state.chat.max_tokens !== undefined) document.getElementById("chat-max-tokens").value = state.chat.max_tokens;
-            if (state.chat.presence_penalty !== undefined) document.getElementById("chat-presence").value = state.chat.presence_penalty;
-            if (state.chat.frequency_penalty !== undefined) document.getElementById("chat-frequency").value = state.chat.frequency_penalty;
-            if (state.chat.enable_thinking !== undefined) document.getElementById("chat-thinking").checked = !!state.chat.enable_thinking;
-
-            if (state.chat.image) {
-              chatBase64Image = state.chat.image;
-              if (chatBase64Image.startsWith("http")) {
-                document.getElementById("chat-img-url").value = chatBase64Image;
-              }
-              document.getElementById("chat-img-preview").src = chatBase64Image;
-              document.getElementById("chat-img-preview-wrap").classList.remove("hidden");
-              document.getElementById("chat-img-clear").classList.remove("hidden");
-            }
-
-            if (state.chat.has_output && state.chat.output) {
-              document.getElementById("chat-output").innerText = state.chat.output;
-              const stats = state.chat.stats || {};
-              document.getElementById("chat-stats-bar").classList.remove("hidden");
-              document.getElementById("stat-chat-time").innerText = `${stats.duration_ms || 0} ms`;
-              document.getElementById("stat-chat-prompt").innerText = stats.prompt_tokens || 0;
-              document.getElementById("stat-chat-completion").innerText = stats.completion_tokens || 0;
-              if (stats.reasoning_tokens) {
-                document.getElementById("stat-chat-reasoning-wrap").classList.remove("hidden");
-                document.getElementById("stat-chat-reasoning").innerText = stats.reasoning_tokens;
-              }
-            }
-          }
-
-          // 3. Image
-          if (state.image) {
-            if (state.image.model) document.getElementById("image-model").value = state.image.model;
-            if (state.image.mode) setImageMode(state.image.mode, false);
-            if (state.image.prompt !== undefined) document.getElementById("image-prompt").value = state.image.prompt;
-            if (state.image.negative_prompt !== undefined) document.getElementById("image-negative-prompt").value = state.image.negative_prompt;
-            if (state.image.size) document.getElementById("image-size").value = state.image.size;
-            if (state.image.ratio) document.getElementById("image-ratio").value = state.image.ratio;
-            if (state.image.seed !== undefined) document.getElementById("image-seed").value = state.image.seed;
-            if (state.image.guidance_scale !== undefined) {
-              document.getElementById("image-cfg").value = state.image.guidance_scale;
-              document.getElementById("image-cfg-val").innerText = state.image.guidance_scale;
-            }
-            if (state.image.steps !== undefined) document.getElementById("image-steps").value = state.image.steps;
-            if (state.image.image_strength !== undefined) {
-              document.getElementById("image-strength").value = state.image.image_strength;
-              document.getElementById("image-strength-val").innerText = state.image.image_strength;
-            }
-            if (state.image.format) {
-              const radio = document.querySelector(`input[name="img_format"][value="${state.image.format}"]`);
-              if (radio) radio.checked = true;
-            }
-
-            if (state.image.ref_image) {
-              imageRefBase64 = state.image.ref_image;
-              if (imageRefBase64.startsWith("http")) {
-                document.getElementById("image-ref-url").value = imageRefBase64;
-              }
-              document.getElementById("image-ref-preview").src = imageRefBase64;
-              document.getElementById("image-ref-preview-wrap").classList.remove("hidden");
-            }
-
-            if (state.image.has_result && state.image.result_url) {
-              document.getElementById("image-placeholder").classList.add("hidden");
-              const resultImg = document.getElementById("image-result");
-              resultImg.src = state.image.result_url;
-              resultImg.classList.remove("hidden");
-
-              document.getElementById("image-actions").classList.remove("hidden");
-              document.getElementById("image-download-btn").href = state.image.result_url;
-              document.getElementById("image-open-btn").href = state.image.result_url;
-            }
-          }
-
-          // 4. Video
-          if (state.video) {
-            if (state.video.model) document.getElementById("video-model").value = state.video.model;
-            if (state.video.mode) setVideoMode(state.video.mode, false);
-            if (state.video.prompt !== undefined) document.getElementById("video-prompt").value = state.video.prompt;
-            if (state.video.negative_prompt !== undefined) document.getElementById("video-negative-prompt").value = state.video.negative_prompt;
-            if (state.video.first_frame !== undefined) document.getElementById("video-first-frame").value = state.video.first_frame;
-            if (state.video.last_frame !== undefined) document.getElementById("video-last-frame").value = state.video.last_frame;
-            if (state.video.ref_images !== undefined) document.getElementById("video-ref-images").value = state.video.ref_images;
-            if (state.video.ref_audios !== undefined) document.getElementById("video-ref-audios").value = state.video.ref_audios;
-            if (state.video.ref_videos !== undefined) document.getElementById("video-ref-videos").value = state.video.ref_videos;
-            if (state.video.seconds) document.getElementById("video-seconds").value = state.video.seconds;
-            if (state.video.aspect_ratio) document.getElementById("video-ratio").value = state.video.aspect_ratio;
-            if (state.video.size) document.getElementById("video-size").value = state.video.size;
-            if (state.video.seed !== undefined) document.getElementById("video-seed").value = state.video.seed;
-            if (state.video.fps !== undefined) document.getElementById("video-fps").value = state.video.fps;
-
-            if (state.video.has_task && state.video.task_id) {
-              document.getElementById("video-progress-card").classList.remove("hidden");
-              document.getElementById("video-task-id-txt").innerText = state.video.task_id;
-              document.getElementById("video-progress-pct").innerText = `${state.video.progress || 0}%`;
-              document.getElementById("video-progress-bar").style.width = `${state.video.progress || 0}%`;
-              document.getElementById("video-status-text").innerText = `Durum: ${(state.video.status || "işleniyor").toUpperCase()} (${state.video.progress || 0}%)`;
-
-              if (state.video.status === "completed" && state.video.url) {
-                document.getElementById("video-placeholder").classList.add("hidden");
-                const videoEl = document.getElementById("video-result");
-                videoEl.src = state.video.url;
-                videoEl.classList.remove("hidden");
-                document.getElementById("video-actions").classList.remove("hidden");
-                document.getElementById("video-download-btn").href = state.video.url;
-              } else if (state.video.status === "queued" || state.video.status === "in_progress") {
-                startPollingVideo(state.video.task_id, state.video.model);
-              }
-            }
-          }
-
-          // 5. Raw Response Log
-          if (state.last_log && state.last_log.raw_response) {
-            logResponse(
-              state.last_log.raw_response,
-              state.last_log.status || 200,
-              state.last_log.duration_ms || 0,
-              state.last_log.endpoint || ""
-            );
-          }
-        }
-      } catch (e) {
-        console.warn("Runtime state could not be loaded:", e);
-      }
-    }
-
-    // Geçici belleği temizleme fonksiyonu
-    async function resetRuntimeState() {
-      if (!confirm("Tüm geçici çalışma oturumunu (metinler, görevler, çıktılar) temizlemek istediğinize emin misiniz?")) {
-        return;
-      }
-      try {
-        await fetch("/api/state/reset", { method: "POST" });
-        window.location.reload();
-      } catch (e) {
-        console.error("Reset error:", e);
-      }
-    }
-
-    // Sayfa açıldığında belleği yükle
-    window.addEventListener("DOMContentLoaded", () => {
-      loadRuntimeState();
-    });
-  </script>
+    this.toast(job.status === 'completed' ? 'Video hazır 🎬' : 'Video başarısız: ' + (job.error || 'bilinmeyen hata')) },
+
+  /* ---------- resim ---------- */
+  makeImage(){ if (!this.i.prompt.trim()) return; return this.run('image', async () => { const i = this.i, size = this.imgSize();
+    const d = await this.api('/api/image', {model:i.model, prompt:i.prompt, size, n:i.n, seed:i.seed,
+      response_format:i.fmt, reference_images:i.refs, strength:i.strength});
+    d.images.forEach(x => this.images.unshift({id:uid(), src: x.url || ('data:image/png;base64,' + x.b64_json), prompt:i.prompt, size}));
+    this.toast(d.images.length + ' resim üretildi') }) },
+
+  /* ---------- sohbet ---------- */
+  send(){ const c = this.c; if (this.busy.chat || (!c.input.trim() && !c.pending.length)) return;
+    this.messages.push({role:'user', text:c.input, imgs:[...c.pending]}); c.input = ''; c.pending = [];
+    return this.run('chat', async () => {
+      const msgs = [{role:'system', content:c.system}, ...this.messages.map(m => ({role:m.role,
+        content: m.imgs?.length ? [...m.imgs.map(u => ({type:'image_url', image_url:{url:u}})), {type:'text', text:m.text || 'Bu resmi detaylı analiz et.'}] : m.text}))];
+      const body = {model:c.model, messages:msgs, temperature:c.temperature, top_p:c.top_p, max_tokens:c.max_tokens,
+        frequency_penalty:c.frequency_penalty, presence_penalty:c.presence_penalty, seed:c.seed, stop:c.stop, json_mode:c.json_mode, stream:c.stream};
+      this.messages.push({role:'assistant', text:''}); const out = this.messages[this.messages.length - 1];
+      const box = this.$refs.chatbox; const down = () => this.$nextTick(() => box.scrollTop = box.scrollHeight); down();
+      try{
+        if (!c.stream){ const d = await this.api('/api/chat', body); out.text = d.content; out.usage = d.usage; down(); return }
+        const res = await fetch('/api/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText);
+        const rd = res.body.getReader(), dec = new TextDecoder();
+        for (;;){ const {done, value} = await rd.read(); if (done) break; out.text += dec.decode(value, {stream:true}); down() }
+      }catch(e){ this.messages.splice(-1, 1); throw e } }) },
+
+  /* ---------- modeller / raw ---------- */
+  refreshModels(){ return this.run('models', async () => { this.models = await this.api('/api/models', null, 'GET'); this.toast(this.models.length + ' model yüklendi') }) },
+  raw(){ return this.run('raw', async () => { let body = null;
+    if (['POST','PUT','PATCH'].includes(this.r.method) && this.r.body.trim()){
+      try{ body = JSON.parse(this.r.body) }catch(e){ throw new Error('Geçersiz JSON: ' + e.message) } }
+    try{ this.r.out = JSON.stringify(await this.api('/api/raw', {method:this.r.method, endpoint:this.r.endpoint, body}), null, 2) }
+    catch(e){ this.r.out = 'HATA: ' + e.message } }) },
+}}
+</script>
 </body>
 </html>
