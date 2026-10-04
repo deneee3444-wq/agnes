@@ -4,7 +4,7 @@
 Agnes Studio — Flask backend (tek dosya, API istemcisi dahil)
 ==============================================================================
 ORTAM DEĞİŞKENLERİ
-  AGNES_API_KEY  (zorunlu)   sk-...
+  AGNES_API_KEY  (opsiyonel) Tanımlıysa koddaki anahtarın yerine bu kullanılır.
   APP_PASSWORD   (opsiyonel) Tanımlıysa site Basic Auth şifresi ister. Public deploy'da AYARLA.
 
 OTURUM DEPOLAMA
@@ -28,11 +28,19 @@ RESİM  POST /v1/images/generations
 VİDEO  POST /v1/videos (asenkron)
   v2.0: width, height, num_frames (8n+1), frame_rate (1-60), aspect_ratio
         480p 854x480 maks 961 kare | 720p 1280x704 maks 481 | 1080p 1920x1088 maks 241
-        Örn: 720p 10 sn 24fps -> 241 kare ; 1080p 20 sn -> 241'e kırpılır (~10 sn)
         Sınır kısa kenara göre belirlenir.
   2.5 : duration 4-12 sn, aspect_ratio 16:9|9:16|1:1
   Ortak: negative_prompt, seed, num_inference_steps (vars. 8). CFG sabit.
-  Referans: başlangıç 1 görsel (image) | first_frame+last_frame | R2V: 5 görsel, 3 ses, 1 video
+
+  KARE ALANLARI (v2.0):
+    Sadece başlangıç (image-to-video):
+      image = "<ilk>"                       (tek string)
+    Başlangıç + bitiş (keyframe geçişi):
+      mode  = "keyframes"
+      image = ["<ilk>", "<son>"]            (dizi: [başlangıç, bitiş])
+    R2V (2.5): references = [{type:image_url, role:style} x5, {type:audio_url, role:audio} x3,
+                             {type:video_url, role:motion} x1]
+
   Polling: GET /agnesapi?video_id=&model_name= (canlı %), yedek GET /v1/videos/{task_id}
 ==============================================================================
 """
@@ -47,7 +55,7 @@ from typing import Any
 import requests
 from flask import Flask, Response, jsonify, render_template, request, stream_with_context
 
-API_KEY = os.environ.get("AGNES_API_KEY", "sk-KZhob2kogDQGnUhsOvm3U1254J4BTQ9oRjZrwuRcgtR8vWeA")
+API_KEY = os.environ.get("AGNES_API_KEY") or "sk-KZhob2kogDQGnUhsOvm3U1254J4BTQ9oRjZrwuRcgtR8vWeA"
 APP_PASSWORD = os.environ.get("APP_PASSWORD", "")
 API_ROOT = "https://apihub.agnes-ai.com"
 BASE_URL = f"{API_ROOT}/v1"
@@ -90,7 +98,7 @@ class AgnesError(Exception):
 # ------------------------------------------------------------------ HTTP
 def _req(method: str, path: str, body: Any = None, timeout: int = 60, stream: bool = False):
     if not API_KEY:
-        raise AgnesError("AGNES_API_KEY tanımlı değil.", 500)
+        raise AgnesError("API anahtarı tanımlı değil.", 500)
     url = path if path.startswith("http") else f"{BASE_URL}/{path.lstrip('/')}"
     try:
         r = requests.request(method, url, json=body, timeout=timeout, stream=stream,
@@ -138,6 +146,17 @@ def _img(s) -> str:
     if not s.startswith(("http://", "https://", "data:")):
         raise AgnesError("Görsel URL veya data URI olmalı.")
     return s
+
+
+def _short(x):
+    """Debug için base64 verileri kısaltır."""
+    if isinstance(x, str) and x.startswith("data:"):
+        return x[:40] + "…[base64]"
+    if isinstance(x, dict):
+        return {k: _short(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [_short(v) for v in x]
+    return x
 
 
 # ------------------------------------------------------------------ MODELLER
@@ -293,15 +312,21 @@ def create_video(d: dict) -> dict:
             raise AgnesError("duration 4-12 sn, aspect_ratio 16:9|9:16|1:1 olmalı.")
         p.update({"duration": dur, "aspect_ratio": ar})
 
+    # Başlangıç / bitiş karesi
+    #   sadece başlangıç -> image = "<ilk>"
+    #   başlangıç + bitiş -> mode = "keyframes", image = ["<ilk>", "<son>"]
     start, end = d.get("start_image"), d.get("end_image")
-    if end:
-        if not start:
-            raise AgnesError("Bitiş karesi için başlangıç karesi de gerekli.")
-        p["first_frame"] = {"type": "image_url", "image_url": {"url": _img(start)}}
-        p["last_frame"] = {"type": "image_url", "image_url": {"url": _img(end)}}
-    elif start:
-        p["image"] = _img(start)
+    if end and not start:
+        raise AgnesError("Bitiş karesi için başlangıç karesi de gerekli.")
+    if start:
+        s = _img(start)
+        if end:
+            p["mode"] = "keyframes"
+            p["image"] = [s, _img(end)]
+        else:
+            p["image"] = s
 
+    # R2V multimodal referanslar
     imgs = d.get("ref_images") or []
     auds = [a.strip() for a in d.get("ref_audio_urls") or [] if a and a.strip()]
     vid = (d.get("ref_video_url") or "").strip()
@@ -327,8 +352,10 @@ def create_video(d: dict) -> dict:
     task_id, video_id = data.get("id") or data.get("task_id"), data.get("video_id")
     if not task_id and not video_id:
         raise AgnesError("Görev ID'si alınamadı.", 502, data)
-    spec = {k: p[k] for k in ("width", "height", "num_frames", "frame_rate", "duration", "aspect_ratio") if k in p}
-    return {"task_id": task_id, "video_id": video_id, "model": model, "prompt": prompt, "spec": spec}
+    spec = {k: p[k] for k in ("width", "height", "num_frames", "frame_rate", "duration",
+                              "aspect_ratio", "mode") if k in p}
+    return {"task_id": task_id, "video_id": video_id, "model": model, "prompt": prompt,
+            "spec": spec, "sent": _short(p), "server": data}
 
 
 _STATUS = {"queued": "queued", "pending": "queued", "inference": "in_progress",
