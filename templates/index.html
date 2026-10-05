@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Agnes Studio</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%237c3aed'/%3E%3Cstop offset='100%25' stop-color='%23db2777'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Crect x='5.5' y='7.5' width='21' height='17' rx='4' stroke='%23ffffff' stroke-width='2' fill='none'/%3E%3Cpath d='M13.5 12.5l7 3.5-7 3.5V12.5z' fill='%23ffffff'/%3E%3Ccircle cx='23' cy='11.5' r='1.8' fill='%23fbbf24'/%3E%3C/svg%3E">
 <script>if(localStorage.theme==='light')document.documentElement.classList.remove('dark')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,7 +17,10 @@
 body{background:var(--bg);color:var(--fg);font:14px/1.5 Inter,system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 [x-cloak]{display:none!important}
 button,input,select,textarea{font:inherit;color:inherit}
-svg.lucide{width:16px;height:16px;flex-shrink:0;stroke-width:2}
+/* Crucial: Prevent SVG icons from stealing or canceling click/pointer events */
+svg.lucide,[data-lucide],.lucide{width:16px;height:16px;flex-shrink:0;stroke-width:2;pointer-events:none!important}
+button,.btn,.ibtn,.tab,.seg button,.send-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;cursor:pointer}
+button:active:not(:disabled),.btn:active:not(:disabled),.ibtn:active,.tab:active:not(.on),.seg button:active:not(.on),.send-btn:active:not(:disabled){transform:scale(0.96)!important}
 .glow{position:fixed;inset:0 0 auto;height:520px;pointer-events:none;z-index:0;
   background:radial-gradient(50% 60% at 20% 0%,#7c3aed2e,transparent 70%),radial-gradient(40% 50% at 85% 0%,#db277722,transparent 70%)}
 
@@ -34,8 +38,10 @@ svg.lucide{width:16px;height:16px;flex-shrink:0;stroke-width:2}
 .top{position:sticky;top:0;z-index:40;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--bd)}
 .top-in{max-width:1320px;margin:auto;padding:8px 16px}
 .top-bar-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:15px;white-space:nowrap;flex-shrink:0}
-.logo{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 20px #7c3aed55}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em;font-size:15px;white-space:nowrap;flex-shrink:0;cursor:pointer;user-select:none;transition:opacity .15s}
+.brand:hover{opacity:.88}
+.brand:active{transform:scale(0.98)}
+.logo{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 6px 20px #7c3aed55;position:relative;overflow:hidden;flex-shrink:0}
 .tabs-wrap{display:flex;align-items:center;margin:0 auto;overflow:visible}
 .tabs{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:14px}
 .tab{display:inline-flex;align-items:center;gap:7px;border:0;background:none;padding:7px 13px;border-radius:10px;color:var(--mut);font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap;font-size:13px}
@@ -43,7 +49,7 @@ svg.lucide{width:16px;height:16px;flex-shrink:0;stroke-width:2}
 .top-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .ibtn{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--bd);border-radius:10px;background:var(--card);cursor:pointer;transition:.15s}
 .ibtn:hover{background:var(--soft)}
-.dark .i-moon,html:not(.dark) .i-sun{display:none}
+.dark .i-moon,html:not(.dark) .i-sun{display:none!important}
 .sync{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:6px}
 .dot{width:7px;height:7px;border-radius:9px;background:#22c55e}.dot.wait{background:#f59e0b}
 
@@ -66,9 +72,48 @@ hr.sep{border:0;border-top:1px solid var(--bd);margin:18px 0}
 .inp{width:100%;background:var(--inp);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;outline:none;transition:.15s}
 .inp:focus{border-color:var(--acc);box-shadow:0 0 0 4px #7c3aed1f}
 textarea.inp{resize:vertical}
-select.inp{appearance:none;-webkit-appearance:none;padding-right:36px;cursor:pointer;background-repeat:no-repeat;background-position:right 12px center;background-size:16px;
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type="number"]{-moz-appearance:textfield;appearance:textfield}
+select.inp{appearance:none;-webkit-appearance:none;padding-right:36px;cursor:pointer;color-scheme:dark light;background-repeat:no-repeat;background-position:right 12px center;background-size:16px;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e9a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")}
-select.inp option{background:var(--bg)}
+select.inp option{background:var(--bg);color:var(--fg);padding:8px 10px}
+.dark select.inp option{background:#15151b;color:#f2f2f5}
+
+/* custom combobox / dropdown */
+.c-select-wrap{position:relative;width:100%}
+.c-select-trigger{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  text-align:left;cursor:pointer;padding:10px 12px;border-radius:12px;
+  background:var(--inp);border:1px solid var(--bd);color:var(--fg);
+  transition:border-color .15s,box-shadow .15s;user-select:none;
+}
+.c-select-trigger:hover{border-color:color-mix(in srgb,var(--acc) 45%,var(--bd))}
+.c-select-trigger.active,.c-select-trigger:focus-visible{border-color:var(--acc);box-shadow:0 0 0 4px #7c3aed1f}
+.c-select-val{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.c-select-title{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-select-arrow{flex-shrink:0;color:var(--mut);transition:transform .2s ease;pointer-events:none}
+.c-select-arrow.open{transform:rotate(180deg);color:var(--acc)}
+
+.c-select-menu{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:90;
+  border-radius:14px;padding:6px;max-height:280px;overflow-y:auto;
+  box-shadow:0 18px 48px #0000004d, 0 4px 12px #0000001f;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--bd);background:var(--card);
+}
+.dark .c-select-menu{background:#111116f5;border-color:#ffffff1c}
+html:not(.dark) .c-select-menu{background:#fffffffa;border-color:#e3e3e8}
+
+.c-select-item{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+  cursor:pointer;transition:background .15s,color .15s;user-select:none;
+}
+.c-select-item:hover{background:var(--soft)}
+.c-select-item.selected{background:color-mix(in srgb,var(--acc) 14%,transparent)}
+.c-select-name{font-size:13px;font-weight:600;color:var(--fg)}
+.c-select-id{font-size:11px;color:var(--mut);margin-top:1px}
+.c-select-check{color:var(--acc);flex-shrink:0}
 .seg{display:flex;gap:3px;background:var(--soft);padding:3px;border-radius:12px;flex-wrap:wrap}
 .seg button{flex:1;border:0;background:none;padding:7px 8px;border-radius:9px;font-size:12.5px;font-weight:500;color:var(--mut);cursor:pointer;white-space:nowrap;transition:.15s}
 .seg button:hover{color:var(--fg)}.seg button.on{background:var(--on);color:var(--fg);box-shadow:0 1px 3px #0000001f}
@@ -130,31 +175,38 @@ details.box>div{margin-top:14px}details.box>div>*+*{margin-top:14px}
 .hov{position:absolute;inset:auto 0 0;display:flex;gap:6px;padding:10px;background:linear-gradient(transparent,#000c);opacity:0;transition:.2s}
 .media:hover .hov{opacity:1}@media(hover:none){.hov{opacity:1}}
 
-/* chat */
+/* chat - standardized & balanced sizing across tabs */
 .chatwrap{display:flex;flex-direction:column;height:calc(100vh - 120px);min-height:500px;padding:0;overflow:hidden}
-.chat-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bd);background:color-mix(in srgb,var(--card) 95%,transparent)}
-.chat-header-title{display:flex;align-items:center;gap:8px;font-size:13px}
+.chat-header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bd);background:color-mix(in srgb,var(--card) 95%,transparent)}
+.chat-header-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
 .chat-toggle-btn{display:none}
-.chat-mobile-drawer{border-bottom:1px solid var(--bd);padding:12px 14px;background:var(--soft)}
-.msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
-.msg{max-width:86%;padding:10px 14px;border-radius:16px;white-space:pre-wrap;word-break:break-word}
-.msg.u{align-self:flex-end;color:#fff;background:linear-gradient(135deg,var(--acc),#9333ea);border-bottom-right-radius:5px}
-.msg.a{align-self:flex-start;background:var(--soft);border-bottom-left-radius:5px}
-.msg img{max-height:120px;border-radius:10px;margin:0 6px 6px 0}
-.typing{display:inline-flex;gap:4px}.typing i{width:6px;height:6px;border-radius:6px;background:var(--mut);animation:bl 1.2s infinite}
+.chat-mobile-drawer{border-bottom:1px solid var(--bd);padding:14px;background:var(--soft)}
+.chat-settings-side{padding:18px}
+.chat-settings-side>*{margin-top:14px}
+.msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;overflow-anchor:none}
+.msg{display:flex;flex-direction:column;max-width:min(78%, 640px);min-width:52px;width:fit-content;padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.5;box-sizing:border-box;position:relative}
+.msg.u{align-self:flex-end;color:#fff;background:linear-gradient(135deg,var(--acc),#8b5cf6);border-bottom-right-radius:4px;box-shadow:0 2px 8px #7c3aed33}
+.msg.a{align-self:flex-start;background:var(--soft);color:var(--fg);border:1px solid var(--bd);border-bottom-left-radius:4px;box-shadow:0 1px 3px #0000000d}
+.msg-text{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+.msg-meta{font-size:10px;opacity:.7;margin-top:4px;display:flex;align-items:center;gap:4px}
+.msg.u .msg-meta{justify-content:flex-end;color:#ffffffcc}
+.msg.a .msg-meta{justify-content:flex-start;color:var(--mut)}
+.msg img{max-height:88px;border-radius:8px;margin:3px 4px 6px 0;border:1px solid var(--bd);object-fit:cover;display:inline-block}
+.typing{display:inline-flex;gap:4px;padding:4px 0}.typing i{width:6px;height:6px;border-radius:6px;background:var(--mut);animation:bl 1.2s infinite}
 .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}@keyframes bl{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.chatwrap .empty{padding:30px 16px;border:0;gap:8px;font-size:13px}
+.chatwrap .empty svg.lucide{width:26px;height:26px;opacity:.5}
 .inbar{border-top:1px solid var(--bd);padding:10px 14px;background:color-mix(in srgb,var(--card) 95%,transparent)}
-.inrow{display:flex;align-items:flex-end;gap:8px;background:var(--inp);border:1px solid var(--bd);border-radius:16px;padding:6px 8px;transition:border-color .15s,box-shadow .15s}
+.inrow{display:flex;align-items:center;gap:8px;background:var(--inp);border:1px solid var(--bd);border-radius:14px;padding:6px 10px;transition:border-color .15s,box-shadow .15s}
 .inrow:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px #7c3aed1a}
-.inrow textarea{flex:1;min-width:0;border:0;background:none;outline:none;resize:none;padding:8px 6px;font-size:14px;line-height:1.45;max-height:160px;color:var(--fg)}
-.upload-clip{width:34px;height:34px;border-radius:10px;flex-shrink:0}
-.send-btn{width:38px;height:38px;min-width:38px;border-radius:12px;border:0;display:grid;place-items:center;
-  color:#fff;cursor:pointer;transition:all .18s cubic-bezier(0.16,1,0.3,1);padding:0;
+.inrow textarea{flex:1;min-width:0;border:0;background:none;outline:none;resize:none;padding:8px 8px;font-size:14px;line-height:22px;min-height:38px;height:38px;max-height:160px;color:var(--fg);box-sizing:border-box;display:block}
+.upload-clip{width:38px;height:38px;border-radius:10px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center}
+.send-btn{width:38px;height:38px;min-width:38px;border-radius:10px;border:0;display:inline-flex;align-items:center;justify-content:center;
+  color:#fff;cursor:pointer;transition:all .15s ease;padding:0;
   background:linear-gradient(135deg,var(--acc),var(--acc2));flex-shrink:0}
-.send-btn.muted{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
-.send-btn.ready{opacity:1;cursor:pointer;transform:scale(1.02);box-shadow:0 4px 18px #7c3aed55}
-.send-btn.ready:hover{transform:scale(1.06);filter:brightness(1.1)}
-.send-btn.busy{background:#ef4444;opacity:1;cursor:pointer;box-shadow:0 4px 16px #ef444455}
+.send-btn.muted{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none}
+.send-btn.ready{opacity:1;cursor:pointer;box-shadow:0 2px 10px #7c3aed44}
+.send-btn.busy{background:#ef4444;opacity:1;cursor:pointer;box-shadow:0 2px 10px #ef444455}
 .send-btn.busy:hover{filter:brightness(1.15)}
 
 /* models / raw */
@@ -165,7 +217,52 @@ details.box>div{margin-top:14px}details.box>div>*+*{margin-top:14px}
 .b-FREE{background:#22c55e1f;color:#16a34a}.b-PRO,.b-TOKEN{background:#f59e0b1f;color:#d97706}.b-UNKNOWN{background:var(--soft);color:var(--mut)}
 pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-height:70vh;white-space:pre-wrap;word-break:break-all}
 .mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:500;box-shadow:0 10px 30px #0000004d;max-width:90vw}
+/* toast - modern top-right notification */
+.toast-wrap{
+  position:fixed;
+  top:24px;
+  right:24px;
+  bottom:auto;
+  left:auto;
+  display:flex;
+  justify-content:flex-end;
+  align-items:flex-start;
+  pointer-events:none;
+  z-index:99999;
+}
+.toast-card{
+  pointer-events:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:rgba(18, 18, 24, 0.94);
+  color:#f4f4f6;
+  padding:10px 18px;
+  border-radius:14px;
+  font-size:13.5px;
+  font-weight:600;
+  box-shadow:0 12px 36px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.12);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  max-width:min(90vw, 420px);
+  animation:toastSlideIn .2s cubic-bezier(0.16,1,0.3,1);
+}
+.toast-ic{
+  width:22px;
+  height:22px;
+  border-radius:7px;
+  background:linear-gradient(135deg, #10b981, #059669);
+  color:#fff;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 2px 8px rgba(16,185,129,0.35);
+}
+@keyframes toastSlideIn{
+  from{opacity:0;transform:translateY(-8px) scale(0.96)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
 
 /* mobile responsive */
 @media(max-width:860px){
@@ -179,12 +276,21 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
   .tabs-wrap::-webkit-scrollbar{display:none}
   .tabs{width:max-content;padding:3px;gap:4px}
   .tab{padding:6px 12px;font-size:12.5px;gap:5px}
-  main{padding:12px 10px 32px}
-  .split{display:grid;grid-template-columns:1fr;gap:16px}
+  main{padding:10px 10px max(32px, env(safe-area-inset-bottom))}
+  .toast-wrap{top:max(16px, env(safe-area-inset-top));right:16px;left:16px;justify-content:center}
+  .toast-card{font-size:12.5px;padding:9px 14px}
+  .split{display:grid;grid-template-columns:1fr;gap:14px}
   .chat-settings-side{display:none}
   .chat-toggle-btn{display:inline-flex}
   .split.chat{display:block}
-  .chatwrap{height:calc(100dvh - 140px);min-height:460px}
+  .chatwrap{height:calc(100dvh - 120px);min-height:0;max-height:calc(100dvh - 60px)}
+  .msgs{padding:10px 12px;gap:8px}
+  .msg{max-width:86%;padding:8px 11px;font-size:13px;line-height:1.45;border-radius:12px}
+  .inbar{padding:8px 10px;padding-bottom:max(8px, env(safe-area-inset-bottom))}
+  .inrow{padding:4px 6px;border-radius:12px;gap:6px;align-items:center}
+  .inrow textarea{font-size:13.5px;padding:6px 6px;min-height:34px;height:34px;line-height:20px}
+  .upload-clip{width:34px;height:34px;border-radius:8px}
+  .send-btn{width:34px;height:34px;min-width:34px;border-radius:8px}
   .gal{grid-template-columns:1fr}
 }
 @media(min-width:861px){
@@ -192,25 +298,41 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
 }
 </style>
 </head>
-<body x-data="studio()" x-init="init()">
+<body x-data="studio()">
 <div class="glow"></div>
 
 <header class="top"><div class="top-in">
   <div class="top-bar-row">
-    <div class="brand"><div class="logo"><i data-lucide="clapperboard"></i></div><span>Agnes Studio</span></div>
+    <div class="brand" @click="location.reload()" title="Sayfayı Yenile" role="button">
+      <div class="logo">
+        <svg width="34" height="34" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="agnesLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#db2777"/>
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="9" fill="url(#agnesLogoGrad)"/>
+          <rect x="5.5" y="7.5" width="21" height="17" rx="4" stroke="#ffffff" stroke-width="2" fill="none"/>
+          <path d="M13.5 12.5l7 3.5-7 3.5V12.5z" fill="#ffffff"/>
+          <circle cx="23" cy="11.5" r="1.8" fill="#fbbf24"/>
+        </svg>
+      </div>
+      <span>Agnes Studio</span>
+    </div>
     <nav class="tabs-wrap">
       <div class="tabs">
-        <button class="tab" :class="tab==='video'&&'on'" @click="tab='video'"><i data-lucide="film"></i><span>Video</span></button>
-        <button class="tab" :class="tab==='image'&&'on'" @click="tab='image'"><i data-lucide="image"></i><span>Resim</span></button>
-        <button class="tab" :class="tab==='chat'&&'on'" @click="tab='chat'"><i data-lucide="message-circle"></i><span>Sohbet</span></button>
-        <button class="tab" :class="tab==='models'&&'on'" @click="tab='models'"><i data-lucide="layers"></i><span>Modeller</span></button>
-        <button class="tab" :class="tab==='raw'&&'on'" @click="tab='raw'"><i data-lucide="terminal"></i><span>API</span></button>
+        <button type="button" class="tab" :class="tab==='video'&&'on'" @click="tab='video'; refreshIcons()"><i data-lucide="film"></i><span>Video</span></button>
+        <button type="button" class="tab" :class="tab==='image'&&'on'" @click="tab='image'; refreshIcons()"><i data-lucide="image"></i><span>Resim</span></button>
+        <button type="button" class="tab" :class="tab==='chat'&&'on'" @click="tab='chat'; refreshIcons()"><i data-lucide="message-circle"></i><span>Sohbet</span></button>
+        <button type="button" class="tab" :class="tab==='models'&&'on'" @click="tab='models'; refreshIcons()"><i data-lucide="layers"></i><span>Modeller</span></button>
+        <button type="button" class="tab" :class="tab==='raw'&&'on'" @click="tab='raw'; refreshIcons()"><i data-lucide="terminal"></i><span>API</span></button>
       </div>
     </nav>
     <div class="top-actions">
       <div class="sync" :title="dirty?'Kaydediliyor':'Oturum kaydedildi'"><i class="dot" :class="dirty&&'wait'"></i><span class="sync-label" x-text="dirty?'Kaydediliyor':'Kaydedildi'"></span></div>
-      <button class="ibtn" @click="resetAll()" title="Oturumu sıfırla"><i data-lucide="rotate-ccw"></i></button>
-      <button class="ibtn" @click="toggleTheme()" title="Tema"><i data-lucide="sun" class="i-sun"></i><i data-lucide="moon" class="i-moon"></i></button>
+      <button type="button" class="ibtn" @click="resetAll()" title="Oturumu sıfırla" aria-label="Sıfırla"><i data-lucide="rotate-ccw"></i></button>
+      <button type="button" class="ibtn" @click="toggleTheme()" title="Tema" aria-label="Tema Değiştir"><i data-lucide="sun" class="i-sun"></i><i data-lucide="moon" class="i-moon"></i></button>
     </div>
   </div>
 </div></header>
@@ -221,7 +343,28 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
 <section x-show="tab==='video'" class="split">
   <aside class="card side">
     <div><div class="lbl">Model</div>
-      <select class="inp" x-model="v.model"><template x-for="m in byCat('video')" :key="m.id"><option :value="m.id" :selected="m.id===v.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
+      <div class="c-select-wrap" x-data="{ open: false }" @click.outside="open = false">
+        <button type="button" class="c-select-trigger" :class="open && 'active'" @click="open = !open">
+          <div class="c-select-val">
+            <span class="c-select-title" x-text="modelLabel(v.model)"></span>
+            <span class="badge" :class="'b-' + getModelTier(v.model)" x-text="getModelTier(v.model)"></span>
+          </div>
+          <svg class="c-select-arrow" :class="open && 'open'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="c-select-menu" x-show="open" x-transition.opacity.duration.150ms x-cloak>
+          <template x-for="m in byCat('video')" :key="m.id">
+            <div class="c-select-item" :class="m.id === v.model && 'selected'" @click="v.model = m.id; open = false; persistNow()">
+              <div class="grow">
+                <div class="c-select-name" x-text="modelLabel(m.id)"></div>
+                <div class="c-select-id mono" x-text="m.id"></div>
+              </div>
+              <span class="badge" :class="'b-' + m.tier" x-text="m.tier"></span>
+              <svg x-show="m.id === v.model" class="c-select-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
 
     <div><div class="lbl">En-boy oranı</div>
       <div class="seg"><template x-for="o in ['16:9','9:16','1:1']"><button :class="v.ar===o&&'on'" @click="v.ar=o" x-text="o"></button></template></div></div>
@@ -250,34 +393,50 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
       </div>
     </div></template>
 
-    <template x-if="!isFrame()"><div>
-      <div class="lbl"><span>Süre</span><b x-text="v.duration+' sn'"></b></div>
-      <input type="range" min="4" max="12" x-model.number="v.duration"><p class="hint">2.5 ailesi: 4–12 sn, çözünürlük sunucuda belirlenir.</p></div></template>
+    <template x-if="!isFrame()"><div class="stack">
+      <div>
+        <div class="lbl"><span>Süre</span><b x-text="v.duration+' sn'"></b></div>
+        <input type="range" min="4" max="12" x-model.number="v.duration">
+        <div class="seg" style="margin-top:8px"><template x-for="s in [4,5,6,8,10,12]"><button :class="v.duration===s&&'on'" @click="v.duration=s" x-text="s+'s'"></button></template></div>
+        <p class="hint">2.5 serisi: 4–12 saniye (resmi API standardı: seconds).</p>
+      </div>
+      <div>
+        <div class="lbl">Çözünürlük (Size)</div>
+        <div class="seg" x-show="v.model!=='agnes-video-2.5-flash'">
+          <template x-for="o in ['720p','1080p','1K','2K']"><button :class="v.res===o&&'on'" @click="v.res=o" x-text="o"></button></template>
+        </div>
+        <div x-show="v.model==='agnes-video-2.5-flash'" class="chip">720P (Flash modelinde 720P zorunludur)</div>
+      </div>
+    </div></template>
 
     <div><div class="lbl">Başlangıç / bitiş karesi</div>
       <div class="g2"><template x-for="k in ['start','end']" :key="k"><div>
         <label class="drop frame" x-show="!v[k]" @dragover.prevent="$el.classList.add('over')" @dragleave="$el.classList.remove('over')" @drop.prevent="$el.classList.remove('over');setOne($event.dataTransfer.files,v,k)">
           <i data-lucide="image-plus"></i><span x-text="k==='start'?'İlk kare':'Son kare'"></span>
           <input type="file" accept="image/*" hidden @change="setOne($event.target.files,v,k);$event.target.value=''"></label>
-        <div class="frame" x-show="v[k]"><img :src="v[k]"><button class="x" @click="v[k]=null">×</button></div>
+        <div class="frame" x-show="v[k]"><img :src="v[k]"><button class="x" @click="v[k]=null; persistNow()">×</button></div>
       </div></template></div>
       <p class="hint">Sadece ilk kare → image-to-video. İkisi birlikte → keyframe geçişi.</p></div>
 
     <details class="box"><summary><i data-lucide="sparkles" style="color:var(--acc2)"></i>Çoklu referans · R2V<i data-lucide="chevron-down" class="chev"></i></summary><div>
       <div><div class="lbl"><span>Karakter / stil</span><b x-text="v.refs.length+'/5'"></b></div>
-        <div class="thumbs"><template x-for="(s,k) in v.refs" :key="k"><div class="thumb"><img :src="s"><button class="x" @click="v.refs.splice(k,1)">×</button></div></template>
+        <div class="thumbs"><template x-for="(s,k) in v.refs" :key="k"><div class="thumb"><img :src="s"><button class="x" @click="v.refs.splice(k,1); persistNow()">×</button></div></template>
           <label class="drop thumb" x-show="v.refs.length<5" @dragover.prevent @drop.prevent="addMany($event.dataTransfer.files,v.refs,5)"><i data-lucide="plus"></i>
             <input type="file" accept="image/*" multiple hidden @change="addMany($event.target.files,v.refs,5);$event.target.value=''"></label></div></div>
       <div><div class="lbl"><span>Ses / müzik URL</span><b x-text="v.audios.length+'/3'"></b></div>
-        <template x-for="(a,k) in v.audios" :key="k"><div class="row" style="margin-bottom:6px"><input class="inp" x-model="v.audios[k]" placeholder="https://…/muzik.mp3"><button class="ibtn" @click="v.audios.splice(k,1)"><i data-lucide="x"></i></button></div></template>
-        <button class="link" x-show="v.audios.length<3" @click="v.audios.push('')">+ ses ekle</button></div>
+        <template x-for="(a,k) in v.audios" :key="k"><div class="row" style="margin-bottom:6px">
+          <input class="inp" x-model="v.audios[k]" placeholder="https://…/muzik.mp3">
+          <button type="button" class="ibtn" @click="removeAudio(k)" title="Kaldır" aria-label="Kaldır">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div></template>
+        <button type="button" class="link" x-show="v.audios.length<3" @click="addAudio()">+ ses ekle</button></div>
       <div><div class="lbl">Hareket videosu URL</div><input class="inp" x-model="v.refVideo" placeholder="https://…/hareket.mp4"></div>
     </div></details>
 
     <details class="box"><summary><i data-lucide="sliders-horizontal"></i>Gelişmiş<i data-lucide="chevron-down" class="chev"></i></summary><div>
       <div><div class="lbl">Negative prompt</div><input class="inp" x-model="v.negative" placeholder="blur, low quality, watermark"></div>
-      <div class="g2"><div><div class="lbl">Seed</div><input class="inp" type="number" x-model="v.seed" placeholder="rastgele"></div>
-        <div><div class="lbl">Steps</div><input class="inp" type="number" min="1" x-model="v.steps" placeholder="8"></div></div>
+      <div><div class="lbl">Seed</div><input class="inp" type="number" x-model="v.seed" placeholder="rastgele"></div>
     </div></details>
   </aside>
 
@@ -298,7 +457,7 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
     <div class="gal" x-show="jobs.length">
       <template x-for="j in jobs" :key="j.id"><div>
         <div class="media" :style="`aspect-ratio:${ratio(j)}`">
-          <template x-if="j.url"><video :src="j.url" controls playsinline loop preload="metadata"></video></template>
+          <template x-if="j.url"><video :src="j.url" controls playsinline loop muted preload="metadata"></video></template>
           <template x-if="!j.url"><div class="render">
             <template x-if="j.status!=='failed'"><div style="text-align:center"><div class="pct" x-text="pct(j)+'%'"></div>
               <div style="font-size:12px;opacity:.75" x-text="statusText(j)+' · '+elapsed(j)"></div></div></template>
@@ -307,11 +466,11 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
             <div class="pbar" x-show="j.status!=='failed'"><i :style="`width:${Math.max(3,pct(j))}%`"></i></div>
           </div></template>
         </div>
-        <div class="meta"><p x-text="j.prompt"></p>
-          <div class="row"><span class="chip" x-text="specLabel(j)"></span><span class="grow"></span>
-            <button class="btn sm" title="Promptu kullan" @click="v.prompt=j.prompt"><i data-lucide="copy"></i></button>
+        <div class="meta"><p x-text="getJobPrompt(j)"></p>
+          <div class="row"><span class="chip" x-text="modelLabel(j.model)"></span><span class="chip" x-text="specLabel(j)"></span><span class="grow"></span>
+            <button type="button" class="btn sm" title="Promptu kopyala" @click.stop="copyPrompt(getJobPrompt(j), 'video')"><i data-lucide="copy"></i></button>
             <a class="btn sm" x-show="j.url" :href="j.url" target="_blank" download><i data-lucide="download"></i></a>
-            <button class="btn sm" title="Sil" @click="jobs.splice(jobs.indexOf(j),1)"><i data-lucide="trash-2"></i></button></div></div>
+            <button type="button" class="btn sm" title="Sil" @click.stop="deleteJob(j)"><i data-lucide="trash-2"></i></button></div></div>
       </div></template>
     </div>
     <div class="empty" x-show="!jobs.length"><i data-lucide="film"></i><div><b>Henüz video yok</b><br><small>Promptunu yaz ve “Video üret”e bas. Birden fazla görev aynı anda çalışabilir.</small></div></div>
@@ -322,21 +481,43 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
 <section x-show="tab==='image'" class="split">
   <aside class="card side">
     <div><div class="lbl">Model</div>
-      <select class="inp" x-model="i.model"><template x-for="m in byCat('image')" :key="m.id"><option :value="m.id" :selected="m.id===i.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
-    <div><div class="lbl">En-boy oranı</div>
-      <div class="seg"><template x-for="o in Object.keys(CFG.image_presets)"><button :class="i.ar===o&&'on'" @click="i.ar=o" x-text="o"></button></template></div></div>
-    <div><div class="lbl"><span>Kalite</span><b class="mono" x-text="imgSize()"></b></div>
-      <div class="seg"><template x-for="o in ['1K','2K','4K','custom']"><button :class="i.tier===o&&'on'" @click="i.tier=o" x-text="o==='custom'?'Özel':o"></button></template></div>
+      <div class="c-select-wrap" x-data="{ open: false }" @click.outside="open = false">
+        <button type="button" class="c-select-trigger" :class="open && 'active'" @click="open = !open">
+          <div class="c-select-val">
+            <span class="c-select-title" x-text="modelLabel(i.model)"></span>
+            <span class="badge" :class="'b-' + getModelTier(i.model)" x-text="getModelTier(i.model)"></span>
+          </div>
+          <svg class="c-select-arrow" :class="open && 'open'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="c-select-menu" x-show="open" x-transition.opacity.duration.150ms x-cloak>
+          <template x-for="m in byCat('image')" :key="m.id">
+            <div class="c-select-item" :class="m.id === i.model && 'selected'" @click="i.model = m.id; open = false; persistNow()">
+              <div class="grow">
+                <div class="c-select-name" x-text="modelLabel(m.id)"></div>
+                <div class="c-select-id mono" x-text="m.id"></div>
+              </div>
+              <span class="badge" :class="'b-' + m.tier" x-text="m.tier"></span>
+              <svg x-show="m.id === i.model" class="c-select-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+    <div><div class="lbl">En-boy oranı (Ratio)</div>
+      <div class="seg"><template x-for="o in ['1:1','16:9','9:16','4:3','3:4','2:3','3:2','21:9']"><button :class="i.ar===o&&'on'" @click="i.ar=o" x-text="o"></button></template></div></div>
+    <div><div class="lbl"><span>Kalite (Tier)</span><b class="mono" x-text="imgSize()"></b></div>
+      <div class="seg"><template x-for="o in ['1K','2K','3K','4K','custom']"><button :class="i.tier===o&&'on'" @click="i.tier=o" x-text="o==='custom'?'Özel':o"></button></template></div>
       <input x-show="i.tier==='custom'" class="inp mono" style="margin-top:8px" x-model="i.custom" placeholder="örn: 3000x1200 (serbest)"></div>
     <div class="g2">
-      <div><div class="lbl">Adet</div><input class="inp" type="number" min="1" x-model.number="i.n"></div>
+      <div><div class="lbl">Adet (n)</div><input class="inp" type="number" min="1" max="4" x-model.number="i.n"></div>
       <div><div class="lbl">Seed</div><input class="inp" type="number" min="-1" max="999" x-model="i.seed" placeholder="-1..999"></div></div>
+    <div><div class="lbl">Negative prompt</div><input class="inp" x-model="i.negative" placeholder="blurry, distorted, low quality, watermark"></div>
     <div><div class="lbl">Çıktı formatı</div><div class="seg"><button :class="i.fmt==='url'&&'on'" @click="i.fmt='url'">URL</button><button :class="i.fmt==='b64_json'&&'on'" @click="i.fmt='b64_json'">Base64</button></div></div>
-    <div><div class="lbl"><span>Referans görseller</span><b x-text="i.refs.length+'/6'"></b></div>
-      <div class="thumbs"><template x-for="(s,k) in i.refs" :key="k"><div class="thumb"><img :src="s"><button class="x" @click="i.refs.splice(k,1)">×</button></div></template>
+    <div><div class="lbl"><span>Referans görseller (Img2Img / Kompozisyon)</span><b x-text="i.refs.length+'/6'"></b></div>
+      <div class="thumbs"><template x-for="(s,k) in i.refs" :key="k"><div class="thumb"><img :src="s"><button class="x" @click="i.refs.splice(k,1); persistNow()">×</button></div></template>
         <label class="drop thumb" x-show="i.refs.length<6" @dragover.prevent @drop.prevent="addMany($event.dataTransfer.files,i.refs,6)"><i data-lucide="plus"></i>
           <input type="file" accept="image/*" multiple hidden @change="addMany($event.target.files,i.refs,6);$event.target.value=''"></label></div>
-      <input class="inp" style="margin-top:8px" placeholder="veya URL yapıştır + Enter" @keydown.enter.prevent="const u=$event.target.value.trim();if(u&&i.refs.length<6){i.refs.push(u);$event.target.value=''}">
+      <input class="inp" style="margin-top:8px" placeholder="veya URL yapıştır + Enter" @keydown.enter.prevent="const u=$event.target.value.trim();if(u&&i.refs.length<6){i.refs.push(u);$event.target.value='';persistNow()}">
       <div x-show="i.refs.length" style="margin-top:12px"><div class="lbl"><span>Strength</span><b x-text="i.strength"></b></div>
         <input type="range" min="0.1" max="1" step="0.05" x-model.number="i.strength"><p class="hint">Düşük = referansa sadık · Yüksek = prompt baskın</p></div></div>
   </aside>
@@ -344,17 +525,17 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
   <div class="stack">
     <div class="card composer">
       <textarea x-model="i.prompt" placeholder="Ne görmek istiyorsun? örn: altın saatte sisli bir dağ köyü, ultra detaylı" @keydown.ctrl.enter="makeImage()" @keydown.meta.enter="makeImage()"></textarea>
-      <div class="bar"><span class="chip"><i data-lucide="ratio"></i><span x-text="imgSize()"></span></span><span class="chip" x-show="i.refs.length"><i data-lucide="images"></i><span x-text="i.refs.length+' referans'"></span></span>
+      <div class="bar"><span class="chip"><i data-lucide="ratio"></i><span x-text="i.ar+' · '+imgSize()"></span></span><span class="chip" x-show="i.refs.length"><i data-lucide="images"></i><span x-text="i.refs.length+' referans'"></span></span>
         <span class="grow"></span><button class="btn p" @click="makeImage()" :disabled="busy.image||!i.prompt.trim()"><i data-lucide="sparkles" :class="busy.image&&'spin'"></i><span x-text="busy.image?'Üretiliyor…':'Resim üret'"></span></button></div>
     </div>
     <div class="masonry" x-show="images.length"><template x-for="(im,k) in images" :key="im.id"><div>
       <div class="media"><img :src="im.src" loading="lazy">
         <div class="hov"><span class="chip" style="background:#ffffff26;color:#fff" x-text="im.size"></span><span class="grow"></span>
-          <button class="btn sm" @click="i.prompt=im.prompt"><i data-lucide="copy"></i></button>
-          <button class="btn sm" @click="i.refs.length<6&&i.refs.push(im.src)" title="Referans yap"><i data-lucide="image-plus"></i></button>
+          <button type="button" class="btn sm" title="Promptu kopyala" @click.stop="copyPrompt(im.prompt, 'image')"><i data-lucide="copy"></i></button>
+          <button type="button" class="btn sm" @click.stop="i.refs.length<6&&i.refs.push(im.src);persistNow()" title="Referans yap"><i data-lucide="image-plus"></i></button>
           <a class="btn sm" :href="im.src" target="_blank" download="agnes.png"><i data-lucide="download"></i></a>
-          <button class="btn sm" @click="images.splice(k,1)"><i data-lucide="trash-2"></i></button></div></div>
-    </div></template></div>
+          <button type="button" class="btn sm" title="Sil" @click.stop="deleteImage(im)"><i data-lucide="trash-2"></i></button></div></div>
+      </div></template></div>
     <div class="empty" x-show="!images.length"><i data-lucide="image"></i><div><b>Galeri boş</b><br><small>Ürettiğin resimler burada birikir.</small></div></div>
   </div>
 </section>
@@ -364,15 +545,36 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
   <aside class="card side chat-settings-side">
     <div class="sec"><i data-lucide="sliders"></i><span>Model & Parametreler</span></div>
     <div><div class="lbl">Model</div>
-      <select class="inp" x-model="c.model"><template x-for="m in byCat('text')" :key="m.id"><option :value="m.id" :selected="m.id===c.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
-    <div><div class="lbl">Sistem promptu</div><textarea class="inp" rows="3" x-model="c.system"></textarea></div>
+      <div class="c-select-wrap" x-data="{ open: false }" @click.outside="open = false">
+        <button type="button" class="c-select-trigger" :class="open && 'active'" @click="open = !open">
+          <div class="c-select-val">
+            <span class="c-select-title" x-text="modelLabel(c.model)"></span>
+            <span class="badge" :class="'b-' + getModelTier(c.model)" x-text="getModelTier(c.model)"></span>
+          </div>
+          <svg class="c-select-arrow" :class="open && 'open'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="c-select-menu" x-show="open" x-transition.opacity.duration.150ms x-cloak>
+          <template x-for="m in byCat('text')" :key="m.id">
+            <div class="c-select-item" :class="m.id === c.model && 'selected'" @click="c.model = m.id; open = false; persistNow()">
+              <div class="grow">
+                <div class="c-select-name" x-text="modelLabel(m.id)"></div>
+                <div class="c-select-id mono" x-text="m.id"></div>
+              </div>
+              <span class="badge" :class="'b-' + m.tier" x-text="m.tier"></span>
+              <svg x-show="m.id === c.model" class="c-select-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+    <div><div class="lbl">Sistem promptu</div><textarea class="inp" rows="2" x-model="c.system"></textarea></div>
     <template x-for="p in [['temperature',0,2,.1],['top_p',0,1,.05],['frequency_penalty',-2,2,.1],['presence_penalty',-2,2,.1]]" :key="p[0]">
       <div><div class="lbl"><span x-text="p[0]"></span><b x-text="c[p[0]]"></b></div><input type="range" :min="p[1]" :max="p[2]" :step="p[3]" x-model.number="c[p[0]]"></div></template>
     <div class="g2"><div><div class="lbl">Max tokens</div><input class="inp" type="number" x-model.number="c.max_tokens"></div>
       <div><div class="lbl">Seed</div><input class="inp" type="number" x-model="c.seed" placeholder="—"></div></div>
     <div><div class="lbl">Stop (virgülle)</div><input class="inp" x-model="c.stop" placeholder="###, END"></div>
     <div class="row" style="gap:18px"><label class="sw"><input type="checkbox" x-model="c.stream"><i></i>Stream</label><label class="sw"><input type="checkbox" x-model="c.json_mode"><i></i>JSON</label></div>
-    <button class="btn" style="width:100%" @click="messages=[]"><i data-lucide="eraser"></i>Sohbeti temizle</button>
+    <button type="button" class="btn" style="width:100%" @click="clearChat()"><i data-lucide="eraser"></i>Sohbeti temizle</button>
   </aside>
 
   <div class="card chatwrap">
@@ -380,14 +582,14 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
     <div class="chat-header">
       <div class="chat-header-title">
         <i data-lucide="bot"></i>
-        <span class="mono" style="font-weight:600" x-text="c.model"></span>
+        <span style="font-weight:600" x-text="modelLabel(c.model)"></span>
         <span class="badge b-FREE" style="margin-left:4px">Canlı</span>
       </div>
       <span class="grow"></span>
-      <button class="btn sm chat-toggle-btn" @click="chatSettingsOpen = !chatSettingsOpen" title="Parametreleri Aç/Kapat">
+      <button type="button" class="btn sm chat-toggle-btn" @click="chatSettingsOpen = !chatSettingsOpen" title="Parametreleri Aç/Kapat">
         <i data-lucide="sliders"></i><span x-text="chatSettingsOpen ? 'Ayarları Kapat' : 'Ayarlar'"></span>
       </button>
-      <button class="btn sm" @click="messages=[]" title="Sohbeti temizle"><i data-lucide="trash-2"></i></button>
+      <button type="button" class="btn sm" @click="clearChat()" title="Sohbeti temizle"><i data-lucide="trash-2"></i></button>
     </div>
 
     <!-- Mobile collapsible settings drawer -->
@@ -396,7 +598,28 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
         <i data-lucide="sliders"></i><span>Sohbet Parametreleri</span>
       </div>
       <div><div class="lbl">Model</div>
-        <select class="inp" x-model="c.model"><template x-for="m in byCat('text')" :key="m.id"><option :value="m.id" :selected="m.id===c.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
+        <div class="c-select-wrap" x-data="{ open: false }" @click.outside="open = false">
+          <button type="button" class="c-select-trigger" :class="open && 'active'" @click="open = !open">
+            <div class="c-select-val">
+              <span class="c-select-title" x-text="modelLabel(c.model)"></span>
+              <span class="badge" :class="'b-' + getModelTier(c.model)" x-text="getModelTier(c.model)"></span>
+            </div>
+            <svg class="c-select-arrow" :class="open && 'open'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="c-select-menu" x-show="open" x-transition.opacity.duration.150ms x-cloak>
+            <template x-for="m in byCat('text')" :key="m.id">
+              <div class="c-select-item" :class="m.id === c.model && 'selected'" @click="c.model = m.id; open = false; persistNow()">
+                <div class="grow">
+                  <div class="c-select-name" x-text="modelLabel(m.id)"></div>
+                  <div class="c-select-id mono" x-text="m.id"></div>
+                </div>
+                <span class="badge" :class="'b-' + m.tier" x-text="m.tier"></span>
+                <svg x-show="m.id === c.model" class="c-select-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
       <div style="margin-top:8px"><div class="lbl">Sistem promptu</div><textarea class="inp" rows="2" x-model="c.system"></textarea></div>
       <div class="g2" style="margin-top:8px">
         <div><div class="lbl"><span>Temperature</span><b x-text="c.temperature"></b></div><input type="range" min="0" max="2" step="0.1" x-model.number="c.temperature"></div>
@@ -410,21 +633,34 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
 
     <!-- Chat Messages -->
     <div class="msgs" x-ref="chatbox">
-      <template x-for="(m,k) in messages" :key="k"><div class="msg" :class="m.role==='user'?'u':'a'">
-        <div x-show="m.imgs?.length"><template x-for="s in m.imgs||[]"><img :src="s"></template></div>
-        <template x-if="!m.text&&m.role!=='user'"><span class="typing"><i></i><i></i><i></i></span></template>
-        <span x-text="m.text"></span>
-        <div x-show="m.usage" style="font-size:10.5px;opacity:.6;margin-top:4px" x-text="m.usage?m.usage.total_tokens+' token':''"></div>
-      </div></template>
-      <div class="empty" style="margin:auto;border:0" x-show="!messages.length"><i data-lucide="message-circle"></i><div><b>Sohbete başla</b><br><small>Resim ekleyip analiz de ettirebilirsin.</small></div></div>
+      <template x-for="(m,k) in messages" :key="k">
+        <div class="msg" :class="m.role==='user'?'u':'a'">
+          <template x-if="m.imgs && m.imgs.length">
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+              <template x-for="s in m.imgs"><img :src="s"></template>
+            </div>
+          </template>
+          <template x-if="!cleanMsg(m.text) && m.role !== 'user'">
+            <span class="typing"><i></i><i></i><i></i></span>
+          </template>
+          <div class="msg-text" x-text="cleanMsg(m.text)" x-show="cleanMsg(m.text)"></div>
+          <template x-if="m.usage && m.usage.total_tokens">
+            <div class="msg-meta" x-text="m.usage.total_tokens + ' token'"></div>
+          </template>
+        </div>
+      </template>
+      <div class="empty" style="margin:auto;border:0" x-show="!messages.length">
+        <i data-lucide="message-circle"></i>
+        <div><b>Sohbete başla</b><br><small>Resim ekleyip analiz de ettirebilirsin.</small></div>
+      </div>
     </div>
 
     <!-- Chat Input Area -->
     <div class="inbar">
-      <div class="thumbs" style="margin-bottom:8px" x-show="c.pending.length"><template x-for="(s,k) in c.pending" :key="k"><div class="thumb"><img :src="s"><button type="button" class="x" @click="c.pending.splice(k,1)">×</button></div></template></div>
+      <div class="thumbs" style="margin-bottom:8px" x-show="c.pending.length"><template x-for="(s,k) in c.pending" :key="k"><div class="thumb"><img :src="s"><button type="button" class="x" @click="c.pending.splice(k,1); persistNow()">×</button></div></template></div>
       <div class="inrow" @dragover.prevent @drop.prevent="addMany($event.dataTransfer.files,c.pending,6)">
         <label class="ibtn upload-clip" style="border:0;cursor:pointer" title="Görsel ekle"><i data-lucide="paperclip"></i><input type="file" accept="image/*" multiple hidden @change="addMany($event.target.files,c.pending,6);$event.target.value=''"></label>
-        <textarea rows="1" x-ref="chatInput" x-model="c.input" placeholder="Mesaj yaz… (Enter: gönder, Shift+Enter: yeni satır)" @input="$el.style.height='auto';$el.style.height=Math.min($el.scrollHeight,180)+'px'" @keydown.enter="if(!$event.shiftKey){$event.preventDefault();send()}"></textarea>
+        <textarea rows="1" x-ref="chatInput" x-model="c.input" placeholder="Mesaj yazın…" @focus="setTimeout(() => { $el.scrollIntoView({behavior:'smooth', block:'nearest'}); down(); }, 250)" @input="$el.style.height='38px'; if($el.scrollHeight>38)$el.style.height=Math.min($el.scrollHeight,160)+'px'" @keydown.enter="if(!$event.shiftKey && !busy.chat){$event.preventDefault();send()}"></textarea>
         <button type="button" class="send-btn"
                 :class="{
                   'ready': (c.input.trim().length > 0 || c.pending.length > 0) && !busy.chat,
@@ -434,8 +670,13 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
                 @click="busy.chat ? abortChat() : send()"
                 :disabled="!busy.chat && !c.input.trim().length && !c.pending.length"
                 :title="busy.chat ? 'Durdur' : 'Gönder (Enter)'">
-          <template x-if="!busy.chat"><i data-lucide="arrow-up"></i></template>
-          <template x-if="busy.chat"><i data-lucide="square" style="width:12px;height:12px;fill:currentColor"></i></template>
+          <svg x-show="!busy.chat" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+          <svg x-show="busy.chat" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:block">
+            <rect width="18" height="18" x="3" y="3" rx="3"></rect>
+          </svg>
         </button>
       </div>
     </div>
@@ -449,7 +690,11 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
   <template x-for="cat in [['video','Video','film'],['image','Resim','image'],['text','Metin','message-circle']]" :key="cat[0]"><div style="margin-bottom:20px">
     <div class="lbl" x-text="cat[1]"></div>
     <div class="mgrid"><template x-for="m in byCat(cat[0])" :key="m.id"><div class="mitem">
-      <div class="mic"><i :data-lucide="cat[2]"></i></div><span class="grow mono" style="overflow:hidden;text-overflow:ellipsis" x-text="m.id"></span>
+      <div class="mic"><i :data-lucide="cat[2]"></i></div>
+      <div class="grow" style="overflow:hidden">
+        <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="modelLabel(m.id)"></div>
+        <div class="mono hint" style="margin:0;font-size:11px" x-text="m.id"></div>
+      </div>
       <span class="badge" :class="'b-'+m.tier" x-text="m.tier"></span></div></template></div>
   </div></template>
 </section>
@@ -466,15 +711,24 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
 </section>
 </main>
 
-<div class="toast" x-show="toastMsg" x-transition x-cloak x-text="toastMsg"></div>
+<div class="toast-wrap" x-show="toastMsg" x-cloak>
+  <div class="toast-card" x-show="toastMsg">
+    <div class="toast-ic">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <span x-text="toastMsg"></span>
+  </div>
+</div>
 
 <script>
 const CFG = {{ cfg|tojson }};
 const DEF = () => ({
   tab:'video', jobs:[], images:[], messages:[],
   v:{model:'agnes-video-v2.0',ar:'16:9',res:'720p',custom:'',mode:'seconds',seconds:5,frames:121,fps:24,duration:5,
-     prompt:'',autoExpand:false,start:null,end:null,refs:[],audios:[],refVideo:'',negative:'',seed:'',steps:''},
-  i:{model:'agnes-image-2.5-flash',ar:'16:9',tier:'2K',custom:'',n:1,seed:'',fmt:'url',refs:[],strength:0.75,prompt:''},
+     prompt:'',autoExpand:false,start:null,end:null,refs:[],audios:[],refVideo:'',negative:'',seed:''},
+  i:{model:'agnes-image-2.5-flash',ar:'16:9',tier:'2K',custom:'',n:1,seed:'',negative:'',fmt:'url',refs:[],strength:0.75,prompt:''},
   c:{model:'agnes-2.5-flash',system:'Sen yardımsever bir yapay zeka asistanısın.',temperature:0.7,top_p:1,
      frequency_penalty:0,presence_penalty:0,max_tokens:4096,seed:'',stop:'',stream:true,json_mode:false,input:'',pending:[]},
   r:{method:'GET',endpoint:'/models',body:'',out:''},
@@ -483,56 +737,260 @@ const KEYS = Object.keys(DEF());
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
+function renderIcons(){
+  if (!window.lucide || typeof lucide.createIcons !== 'function') return;
+  try{
+    lucide.createIcons();
+    // Replaced <svg> elements inherit data-lucide in Lucide UMD.
+    // Strip data-lucide from all <svg> tags so they are never re-rendered or destroyed on future passes!
+    document.querySelectorAll('svg[data-lucide]').forEach(el => el.removeAttribute('data-lucide'));
+  }catch(e){}
+}
+
+const MODEL_LABELS = {
+  // Video Modelleri
+  'agnes-video-v2.0': 'Agnes Video v2.0',
+  'agnes-video-2.5-flash': 'Agnes Video 2.5 Flash',
+  'agnes-video-2.5': 'Agnes Video 2.5 Pro',
+  // Resim Modelleri
+  'agnes-image-2.5-flash': 'Agnes Image 2.5 Flash',
+  'agnes-image-2.1-flash': 'Agnes Image 2.1 Flash',
+  'agnes-image-2.0-flash': 'Agnes Image 2.0 Flash',
+  // Sohbet Modelleri
+  'agnes-3.0-flash': 'Agnes 3.0 Flash',
+  'agnes-2.5-flash': 'Agnes 2.5 Flash',
+  'agnes-2.0-flash': 'Agnes 2.0 Flash',
+  'agnes-2.5-pro': 'Agnes 2.5 Pro',
+  'agnes-2.5-pro-alpha': 'Agnes 2.5 Pro Alpha',
+  'agnes-2.5-pro-beta': 'Agnes 2.5 Pro Beta',
+};
+
 function studio(){ return {
   CFG, ...DEF(), models: CFG.models, ready:false, dirty:false,
   chatSettingsOpen: false, chatAbortCtrl: null,
   busy: { chat: false, video: false, image: false, models: false, raw: false, expand: false },
-  toastMsg:'', now:Date.now(),
+  toastMsg:'', now:Date.now(), _last:'', _saving:false,
 
   async init(){
+    // 1. Önce anında localStorage'dan yükle (Sayfa yenilendiğinde sıfır gecikme ve veri kaybını önler)
     try{
-      const d = await (await fetch('/api/state')).json();
-      if (d.state && Object.keys(d.state).length) this.load(d.state);
+      const local = localStorage.getItem('agnes_studio_state');
+      if (local){
+        const parsed = JSON.parse(local);
+        if (parsed && typeof parsed === 'object') this.load(parsed);
+      }
     }catch(e){}
+
+    // 2. Sunucu durumu ile senkronize et
+    try{
+      const res = await fetch('/api/state');
+      if (res.ok){
+        const d = await res.json();
+        if (d.state && Object.keys(d.state).length){
+          // Sunucuda kayıtlı durum varsa ve local boşsa veya ilk defa açılıyorsa sunucudan yükle
+          if (!localStorage.getItem('agnes_studio_state')){
+            this.load(d.state);
+            try{ localStorage.setItem('agnes_studio_state', JSON.stringify(d.state)) }catch(e){}
+          }
+        } else {
+          // Sunucuda state boş ama local doluysa (sunucu yeni başlamışsa) hemen sunucuya kaydet
+          const local = localStorage.getItem('agnes_studio_state');
+          if (local){
+            fetch('/api/state', {method:'PUT', headers:{'Content-Type':'application/json'}, body:local}).catch(()=>{});
+          }
+        }
+      }
+    }catch(e){}
+
     this.ready = true;
     this._last = this.snap();
-    setInterval(() => this.save(), 1200);
-    setInterval(() => this.now = Date.now(), 1000);
-    this.jobs.filter(j => !this.done(j)).forEach(j => this.track(j));   // yenilemeden sonra takibe devam
-    let raf; const ic = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => lucide.createIcons()) };
-    new MutationObserver(ic).observe(document.body, {childList:true, subtree:true}); ic();
+
+    // Arka plan yedekleme: sadece veri değiştiğinde (dirty) çalışır, ana iş parçacığını boşa yormaz
+    setInterval(() => {
+      if (this.dirty) this.save();
+    }, 4000);
+
+    // Süre sayacı: sadece devam eden görev varsa çalışır
+    setInterval(() => {
+      if (this.jobs.some(j => !this.done(j))) this.now = Date.now();
+    }, 1000);
+
+    this.jobs.filter(j => !this.done(j)).forEach(j => this.track(j));
+
+    // Lucide ikonlarını güvenli başlat (sonsuz MutationObserver döngüsü YOK, tek tıkla anında tepki)
+    this.$nextTick(() => {
+      renderIcons();
+      this.$watch('tab', () => this.refreshIcons());
+      this.$watch('jobs.length', () => this.refreshIcons());
+      this.$watch('images.length', () => this.refreshIcons());
+    });
   },
 
-  /* ---------- oturum ---------- */
+  refreshIcons(){
+    this.$nextTick(() => requestAnimationFrame(renderIcons));
+  },
+
+  /* ---------- oturum ve kalıcılık ---------- */
+  cleanMsg(t){
+    if (!t) return '';
+    return t.replace(/^\s*[\r\n]+/, '').trimEnd();
+  },
   load(s){ const d = DEF();
     for (const k of KEYS){ if (s[k] === undefined) continue;
-      this[k] = (d[k] && typeof d[k]==='object' && !Array.isArray(d[k])) ? {...d[k], ...s[k]} : s[k] } },
+      this[k] = (d[k] && typeof d[k]==='object' && !Array.isArray(d[k])) ? {...d[k], ...s[k]} : s[k] }
+    if (Array.isArray(this.messages)) {
+      this.messages.forEach(m => {
+        if (typeof m.text === 'string') {
+          m.text = m.text.replace(/^\s*[\r\n]+/, '').trimEnd();
+        }
+      });
+    }
+  },
   snap(){ const o = {}; for (const k of KEYS) o[k] = this[k]; return JSON.stringify(o) },
-  async save(){
-    if (this._saving || !this.ready) return;
-    const s = this.snap(); if (s === this._last){ this.dirty = false; return }
+  persistNow(){
+    const s = this.snap();
+    try{ localStorage.setItem('agnes_studio_state', s) }catch(e){}
+    this.save(true);
+  },
+  async save(force = false){
+    if (!this.ready) return;
+    const s = this.snap();
+    // LocalStorage'a her zaman anında yaz (tarayıcı yenilendiğinde veriler güvende kalır)
+    try{ localStorage.setItem('agnes_studio_state', s) }catch(e){}
+    if (!force && s === this._last){ this.dirty = false; return }
+    if (this._saving && !force) return;
     this.dirty = true; this._saving = true;
     try{ const res = await fetch('/api/state', {method:'PUT', headers:{'Content-Type':'application/json'}, body:s});
       if (res.ok){ this._last = s; this.dirty = false } }catch(e){} finally{ this._saving = false } },
+  deleteImage(im){
+    const idx = this.images.findIndex(x => x === im || x.id === im.id);
+    if (idx !== -1){
+      this.images.splice(idx, 1);
+      this.persistNow();
+      this.refreshIcons();
+      this.toast('Görsel silindi');
+    }
+  },
+  deleteJob(j){
+    const idx = this.jobs.findIndex(x => x === j || x.id === j.id);
+    if (idx !== -1){
+      this.jobs.splice(idx, 1);
+      this.persistNow();
+      this.refreshIcons();
+      this.toast('Görev silindi');
+    }
+  },
+  clearChat(){
+    this.messages = [];
+    this.persistNow();
+    this.toast('Sohbet temizlendi');
+  },
   async resetAll(){
-    if (!confirm('Tüm ayarlar, galeri, görevler ve sohbet silinsin mi?')) return;
-    Object.assign(this, DEF()); await fetch('/api/state', {method:'DELETE'}); this._last = this.snap(); this.toast('Oturum sıfırlandı') },
+    if (!confirm('Tüm ayarlar, galeri, görevler ve sohbet sıfırlansın mı?')) return;
+    try{ localStorage.removeItem('agnes_studio_state') }catch(e){}
+    Object.assign(this, DEF());
+    try{ await fetch('/api/state', {method:'DELETE'}) }catch(e){}
+    this._last = this.snap();
+    this.dirty = false;
+    this.refreshIcons();
+    this.toast('Oturum sıfırlandı');
+  },
   toggleTheme(){ const d = document.documentElement.classList.toggle('dark'); localStorage.theme = d ? 'dark' : 'light' },
   toast(m){ this.toastMsg = m; clearTimeout(this._t); this._t = setTimeout(() => this.toastMsg = '', 3800) },
 
   /* ---------- yardımcılar ---------- */
+  getModelTier(id){
+    if (!id) return 'FREE';
+    const m = (this.models || []).find(x => x.id === id);
+    return m ? m.tier : 'FREE';
+  },
+  modelLabel(id){
+    if (!id) return '';
+    if (MODEL_LABELS[id]) return MODEL_LABELS[id];
+    return id
+      .replace(/^agnes-/, 'Agnes ')
+      .replace(/-(flash|pro|alpha|beta)/gi, ' $1')
+      .replace(/-/g, ' ')
+      .split(' ')
+      .map(w => w.toLowerCase().startsWith('v') ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  },
+  getJobPrompt(j){
+    if (!j) return '';
+    return (j.prompt || (j.sent && j.sent.prompt) || (j.server && j.server.prompt) || '').trim();
+  },
+  copyPrompt(text, target = null){
+    const val = (text || '').trim();
+    if (!val){
+      this.toast('Kopyalanacak prompt bulunamadı');
+      return;
+    }
+    let ok = false;
+    if (navigator.clipboard && window.isSecureContext && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(val).then(() => {
+        this.toast('Prompt panoya kopyalandı');
+      }).catch(() => {
+        this._fallbackCopy(val);
+      });
+      ok = true;
+    } else {
+      ok = this._fallbackCopy(val);
+    }
+    if (target === 'video' || (!target && this.tab === 'video')){
+      this.v.prompt = val;
+    } else if (target === 'image' || (!target && this.tab === 'image')){
+      this.i.prompt = val;
+    }
+    if (!ok) this.toast('Prompt forma aktarıldı');
+  },
+  _fallbackCopy(val){
+    try{
+      const ta = document.createElement('textarea');
+      ta.value = val;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const res = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (res) this.toast('Prompt panoya kopyalandı');
+      return res;
+    }catch(e){
+      return false;
+    }
+  },
   byCat(c){ return this.models.filter(m => m.category === c) },
   isFrame(){ return this.v.model.toLowerCase().includes('v2.0') },
-  spec(){ const v = this.v; let w, h; const m = /^\s*(\d+)\s*[x×]\s*(\d+)\s*$/i.exec(v.custom || '');
-    if (v.res === 'custom' && m){ w = +m[1]; h = +m[2] } else [w, h] = CFG.video_presets[v.res === 'custom' ? '720p' : v.res][v.ar];
-    const s = Math.min(w, h), max = s >= 1080 ? 241 : s > 480 ? 481 : 961;
-    const t = v.mode === 'frames' ? (+v.frames || 121) : Math.round(v.seconds * v.fps);
-    let f = 8 * Math.max(1, Math.round((t - 1) / 8)) + 1; const clamped = f > max; f = Math.min(f, max);
-    return {w, h, f, max, fps:v.fps, sec:(f / v.fps).toFixed(1), clamped} },
-  imgSize(){ return this.i.tier === 'custom' ? (this.i.custom.trim() || '—') : CFG.image_presets[this.i.ar][this.i.tier] },
+  spec(){
+    const v = this.v;
+    let w, h;
+    const m = /^\s*(\d+)\s*[x×]\s*(\d+)\s*$/i.exec(v.custom || '');
+    if (v.res === 'custom' && m){
+      w = Math.max(256, Math.round(+m[1] / 64) * 64);
+      h = Math.max(256, Math.round(+m[2] / 64) * 64);
+    } else {
+      const preset = (CFG.video_presets && CFG.video_presets[v.res]) ? CFG.video_presets[v.res][v.ar] : null;
+      [w, h] = preset || (v.ar === '9:16' ? [704, 1280] : v.ar === '1:1' ? [768, 768] : [1280, 704]);
+    }
+    const s = Math.min(w, h);
+    const max = s >= 1080 ? 241 : (s > 480 ? 481 : 961);
+    const target = v.mode === 'frames' ? (+v.frames || 121) : Math.round(v.seconds * v.fps);
+    const ALLOWED = [81, 121, 161, 241, 441, 481, 961];
+    const valid = ALLOWED.filter(f => f <= max);
+    const f = valid.reduce((prev, curr) => Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev, valid[0] || 121);
+    const clamped = target > max;
+    return { w, h, f, max, fps: v.fps, sec: (f / v.fps).toFixed(1), clamped };
+  },
+  imgSize(){
+    if (this.i.tier === 'custom') return (this.i.custom.trim() || '—');
+    const p = (CFG.image_presets && CFG.image_presets[this.i.ar]) ? CFG.image_presets[this.i.ar][this.i.tier] : null;
+    return p || this.i.tier;
+  },
   ratio(j){ const s = j.spec || {}; if (s.width && s.height) return `${s.width}/${s.height}`;
     return ({'9:16':'9/16','1:1':'1/1'})[s.aspect_ratio] || '16/9' },
-  specLabel(j){ const s = j.spec || {}; return s.width ? `${s.width}×${s.height} · ${s.num_frames}f · ${s.frame_rate}fps` : `${s.aspect_ratio||''} · ${s.duration||'?'} sn` },
+  specLabel(j){ const s = j.spec || {}; return s.width ? `${s.width}×${s.height} · ${s.num_frames}f · ${s.frame_rate}fps` : `${s.size||'720P'} · ${s.aspect_ratio||'16:9'} · ${s.seconds||s.duration||'?'} sn` },
   done(j){ return j.status === 'completed' || j.status === 'failed' },
   pct(j){ return Math.min(100, Math.round(Number(j.progress) || 0)) },
   elapsed(j){ const s = Math.max(0, Math.round((this.now - j.created) / 1000)); return s >= 60 ? `${Math.floor(s/60)}dk ${s%60}sn` : `${s}sn` },
@@ -545,9 +1003,9 @@ function studio(){ return {
         cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); res(cv.toDataURL('image/jpeg', 0.9)) };
       img.onerror = () => res(fr.result); img.src = fr.result };
     fr.readAsDataURL(file) }) },
-  async setOne(files, obj, key){ const f = [...files].find(x => x.type.startsWith('image/')); if (f) obj[key] = await this.toData(f) },
+  async setOne(files, obj, key){ const f = [...files].find(x => x.type.startsWith('image/')); if (f){ obj[key] = await this.toData(f); this.persistNow() } },
   async addMany(files, arr, max){ for (const f of files){ if (!f.type.startsWith('image/')) continue;
-    if (arr.length >= max){ this.toast(`En fazla ${max} görsel`); break } arr.push(await this.toData(f)) } },
+    if (arr.length >= max){ this.toast(`En fazla ${max} görsel`); break } arr.push(await this.toData(f)); this.persistNow() } },
 
   async api(url, body, method='POST'){
     const res = await fetch(url, {method, headers:{'Content-Type':'application/json'}, body: body ? JSON.stringify(body) : undefined});
@@ -556,16 +1014,33 @@ function studio(){ return {
   async run(key, fn){ this.busy[key] = true; try{ await fn() }catch(e){ this.toast(e.message) }finally{ this.busy[key] = false } },
 
   /* ---------- video ---------- */
-  expand(){ return this.run('expand', async () => { this.v.prompt = (await this.api('/api/expand', {prompt:this.v.prompt})).prompt }) },
+  addAudio(){
+    if (this.v.audios.length < 3){
+      this.v.audios.push('');
+      this.persistNow();
+      this.refreshIcons();
+    }
+  },
+  removeAudio(k){
+    this.v.audios.splice(k, 1);
+    this.persistNow();
+    this.refreshIcons();
+  },
+  expand(){ return this.run('expand', async () => { this.v.prompt = (await this.api('/api/expand', {prompt:this.v.prompt})).prompt; this.persistNow() }) },
   makeVideo(){ if (!this.v.prompt.trim()) return; return this.run('video', async () => { const v = this.v, s = this.spec();
-    if (v.res === 'custom' && this.isFrame() && !/^\s*\d+\s*[x×]\s*\d+\s*$/i.test(v.custom)) throw new Error('Özel boyut GxY olmalı (örn 1000x600)');
-    const body = {model:v.model, prompt:v.prompt, expand:v.autoExpand, aspect_ratio:v.ar,
-      resolution: v.res === 'custom' ? v.custom.replace('×','x') : v.res, fps:v.fps, duration:v.duration,
-      ...(v.mode === 'frames' ? {num_frames:s.f} : {seconds:v.seconds}),
+    if (v.res === 'custom' && this.isFrame() && !/^\s*\d+\s*[x×]\s*\d+\s*$/i.test(v.custom)) throw new Error('Özel boyut GxY olmalı (örn 1280x704)');
+    const promptText = v.prompt.trim();
+    const body = {model:v.model, prompt:promptText, expand:v.autoExpand, aspect_ratio:v.ar,
+      resolution: v.res === 'custom' ? `${s.w}x${s.h}` : v.res, fps:v.fps,
+      seconds: this.isFrame() ? Number(s.sec) : v.duration,
+      duration: v.duration,
+      ...(this.isFrame() ? {num_frames:s.f} : {}),
       start_image:v.start, end_image:v.end, ref_images:v.refs, ref_audio_urls:v.audios.filter(a => a.trim()),
-      ref_video_url:v.refVideo, negative_prompt:v.negative, seed:v.seed, num_inference_steps:v.steps};
+      ref_video_url:v.refVideo, negative_prompt:v.negative, seed:v.seed};
     const d = await this.api('/api/video', body);
-    this.jobs.unshift({id:uid(), ...d, status:'queued', progress:0, url:null, error:null, created:Date.now()});
+    this.jobs.unshift({id:uid(), ...d, prompt: d.prompt || promptText, status:'queued', progress:0, url:null, error:null, created:Date.now()});
+    this.persistNow();
+    this.refreshIcons();
     this.track(this.jobs[0]); this.toast('Görev kuyruğa alındı') }) },
   async track(job){
     while (!this.done(job)){
@@ -580,13 +1055,31 @@ function studio(){ return {
         job.status = (st.status === 'completed' && !st.url) ? 'in_progress' : st.status;
       }catch(e){}
     }
-    this.toast(job.status === 'completed' ? 'Video hazır 🎬' : 'Video başarısız: ' + (job.error || 'bilinmeyen hata')) },
+    this.persistNow();
+    this.refreshIcons();
+    this.toast(job.status === 'completed' ? 'Video hazır' : 'Video başarısız: ' + (job.error || 'bilinmeyen hata')) },
 
-  /* ---------- resim ---------- */
-  makeImage(){ if (!this.i.prompt.trim()) return; return this.run('image', async () => { const i = this.i, size = this.imgSize();
-    const d = await this.api('/api/image', {model:i.model, prompt:i.prompt, size, n:i.n, seed:i.seed,
-      response_format:i.fmt, reference_images:i.refs, strength:i.strength});
-    d.images.forEach(x => this.images.unshift({id:uid(), src: x.url || ('data:image/png;base64,' + x.b64_json), prompt:i.prompt, size}));
+  /* ---------- resim (Resmi Agnes Image Dokümanlarına Uygun) ---------- */
+  makeImage(){ if (!this.i.prompt.trim()) return; return this.run('image', async () => {
+    const i = this.i;
+    const body = {
+      model: i.model,
+      prompt: i.prompt,
+      size: i.tier === 'custom' ? (i.custom.trim() || '2K') : i.tier,
+      ratio: i.ar,
+      aspect_ratio: i.ar,
+      negative_prompt: i.negative,
+      n: i.n,
+      seed: i.seed,
+      response_format: i.fmt,
+      reference_images: i.refs,
+      strength: i.strength
+    };
+    const d = await this.api('/api/image', body);
+    const label = `${i.tier} (${i.ar})`;
+    d.images.forEach(x => this.images.unshift({id:uid(), src: x.url || ('data:image/png;base64,' + x.b64_json), prompt:i.prompt, size:label}));
+    this.persistNow();
+    this.refreshIcons();
     this.toast(d.images.length + ' resim üretildi') }) },
 
   /* ---------- sohbet ---------- */
@@ -602,7 +1095,7 @@ function studio(){ return {
     c.pending = [];
     if (inputEl) {
       inputEl.value = '';
-      inputEl.style.height = 'auto';
+      inputEl.style.height = '38px';
     }
 
     this.chatAbortCtrl = new AbortController();
@@ -649,7 +1142,7 @@ function studio(){ return {
           });
           const d = await res.json().catch(() => ({ error: 'Sunucu yanıtı okunamadı' }));
           if (!res.ok) throw new Error(d.error || 'İstek başarısız: ' + res.status);
-          out.text = d.content || '';
+          out.text = (d.content || '').replace(/^\s*[\r\n]+/, '').trimEnd();
           out.usage = d.usage;
           down();
           return;
@@ -671,8 +1164,12 @@ function studio(){ return {
           const { done, value } = await reader.read();
           if (done) break;
           out.text += decoder.decode(value, { stream: true });
+          if (out.text.startsWith('\n') || out.text.startsWith('\r') || (out.text.length < 10 && !out.text.trim())) {
+            out.text = out.text.replace(/^\s*[\r\n]+/, '');
+          }
           down();
         }
+        out.text = out.text.replace(/^\s*[\r\n]+/, '').trimEnd();
       } catch (err) {
         if (err.name === 'AbortError') {
           out.text = (out.text ? out.text + '\n' : '') + '[Durduruldu]';
@@ -688,6 +1185,7 @@ function studio(){ return {
         this.busy.chat = false;
         this.chatAbortCtrl = null;
         down();
+        this.persistNow();
       }
     })();
   },
@@ -696,6 +1194,11 @@ function studio(){ return {
       this.chatAbortCtrl.abort();
     }
     this.busy.chat = false;
+    const inputEl = this.$refs.chatInput;
+    if (inputEl && !this.c.input) {
+      inputEl.style.height = '38px';
+    }
+    this.toast('Cevap durduruldu');
   },
 
   /* ---------- modeller / raw ---------- */
