@@ -179,10 +179,10 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
       <div><div class="lbl">Süre <span class="seg" style="padding:2px"><button style="padding:3px 10px" :class="v.mode==='seconds'&&'on'" @click="v.mode='seconds'">Saniye</button><button style="padding:3px 10px" :class="v.mode==='frames'&&'on'" @click="v.mode='frames'">Kare</button></span></div>
         <div x-show="v.mode==='seconds'"><div class="lbl" style="margin:4px 0"><span>Uzunluk</span><b x-text="v.seconds+' sn'"></b></div>
           <input type="range" min="1" :max="Math.max(1,Math.floor(spec().max/v.fps))" step="0.5" x-model.number="v.seconds">
-          <div class="seg" style="margin-top:8px"><template x-for="s in [3,5,8,10,15,20]"><button :class="v.seconds===s&&'on'" @click="v.seconds=s" x-text="s+'s'"></button></template></div></div>
+          <div class="seg" style="margin-top:8px"><template x-for="s in [3,5,8,10,15,20,30,40].filter(x => x <= Math.max(5, Math.floor(spec().max/v.fps)))"><button :class="v.seconds===s&&'on'" @click="v.seconds=s" x-text="s+'s'"></button></template></div></div>
         <div x-show="v.mode==='frames'"><input type="number" class="inp" x-model.number="v.frames" step="8" min="9">
-          <div class="seg" style="margin-top:8px"><template x-for="f in [81,121,161,241,441]"><button :class="v.frames===f&&'on'" @click="v.frames=f" x-text="f"></button></template></div>
-          <p class="hint">8n+1 kuralına otomatik yuvarlanır.</p></div></div>
+          <div class="seg" style="margin-top:8px"><template x-for="f in [81,121,161,241,441,481,961].filter(x => x <= spec().max)"><button :class="v.frames===f&&'on'" @click="v.frames=f" x-text="f"></button></template></div>
+          <p class="hint">8n+1 kuralına otomatik yuvarlanır (480p'de 961 kareye kadar).</p></div></div>
 
       <div><div class="lbl"><span>Kare hızı</span><b x-text="v.fps+' fps'"></b></div>
         <input type="range" min="1" max="60" x-model.number="v.fps">
