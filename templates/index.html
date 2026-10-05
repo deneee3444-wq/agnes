@@ -13,29 +13,44 @@
 :root{--bg:#f6f6f8;--fg:#17171c;--mut:#6b6b76;--bd:#e3e3e8;--card:#ffffffcc;--inp:#fff;--soft:#eeeef2;--on:#fff;--acc:#7c3aed;--acc2:#db2777;--sh:0 1px 2px #0000000d,0 8px 24px #0000000a}
 .dark{--bg:#08080b;--fg:#f2f2f5;--mut:#8e8e9a;--bd:#ffffff14;--card:#ffffff08;--inp:#ffffff0a;--soft:#ffffff0d;--on:#ffffff1c;--sh:0 1px 0 #ffffff08 inset}
 *{box-sizing:border-box}html,body{margin:0}
-body{background:var(--bg);color:var(--fg);font:14px/1.5 Inter,system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--fg);font:14px/1.5 Inter,system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 [x-cloak]{display:none!important}
 button,input,select,textarea{font:inherit;color:inherit}
 svg.lucide{width:16px;height:16px;flex-shrink:0;stroke-width:2}
 .glow{position:fixed;inset:0 0 auto;height:520px;pointer-events:none;z-index:0;
   background:radial-gradient(50% 60% at 20% 0%,#7c3aed2e,transparent 70%),radial-gradient(40% 50% at 85% 0%,#db277722,transparent 70%)}
+
+/* Modern sleek custom scrollbar (Windows / macOS / Linux / Firefox) */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(140,140,160,0.25);border-radius:999px;transition:background .2s}
+::-webkit-scrollbar-thumb:hover{background:rgba(140,140,160,0.48)}
+.dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.16)}
+.dark ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.32)}
+*{scrollbar-width:thin;scrollbar-color:rgba(140,140,160,0.25) transparent}
+.dark *{scrollbar-color:rgba(255,255,255,0.16) transparent}
+
 /* header */
-.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid var(--bd)}
-.top-in{max-width:1320px;margin:auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:15px}
+.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--bd)}
+.top-in{max-width:1320px;margin:auto;padding:8px 16px}
+.top-bar-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:15px;white-space:nowrap;flex-shrink:0}
 .logo{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 20px #7c3aed55}
-.tabs{display:flex;gap:4px;margin:0 auto;background:var(--soft);padding:4px;border-radius:14px}
-.tab{display:flex;align-items:center;gap:7px;border:0;background:none;padding:7px 14px;border-radius:10px;color:var(--mut);font-weight:500;cursor:pointer;transition:.15s}
+.tabs-wrap{display:flex;align-items:center;margin:0 auto;overflow:visible}
+.tabs{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:14px}
+.tab{display:inline-flex;align-items:center;gap:7px;border:0;background:none;padding:7px 13px;border-radius:10px;color:var(--mut);font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap;font-size:13px}
 .tab:hover{color:var(--fg)}.tab.on{background:var(--on);color:var(--fg);box-shadow:0 1px 3px #0000001f}
+.top-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .ibtn{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--bd);border-radius:10px;background:var(--card);cursor:pointer;transition:.15s}
 .ibtn:hover{background:var(--soft)}
 .dark .i-moon,html:not(.dark) .i-sun{display:none}
 .sync{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:6px}
 .dot{width:7px;height:7px;border-radius:9px;background:#22c55e}.dot.wait{background:#f59e0b}
+
 /* layout */
 main{position:relative;z-index:1;max-width:1320px;margin:auto;padding:20px 16px 40px}
 .split{display:grid;gap:20px}
-@media(min-width:1024px){.split{grid-template-columns:370px 1fr;align-items:start}.split.chat{grid-template-columns:310px 1fr}
+@media(min-width:1024px){.split{grid-template-columns:370px 1fr;align-items:start}.split.chat{grid-template-columns:320px 1fr}
   .side{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow-y:auto}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;box-shadow:var(--sh);backdrop-filter:blur(20px)}
 .side>*+*{margin-top:18px}.stack>*+*{margin-top:18px}
@@ -46,6 +61,7 @@ main{position:relative;z-index:1;max-width:1320px;margin:auto;padding:20px 16px 
 .hint{font-size:11.5px;color:var(--mut);margin-top:6px}
 .sec{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:12px}
 hr.sep{border:0;border-top:1px solid var(--bd);margin:18px 0}
+
 /* form */
 .inp{width:100%;background:var(--inp);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;outline:none;transition:.15s}
 .inp:focus{border-color:var(--acc);box-shadow:0 0 0 4px #7c3aed1f}
@@ -61,14 +77,16 @@ input[type=range]{width:100%;accent-color:var(--acc);height:20px;margin:0}
 .sw input{display:none}.sw i{width:34px;height:20px;border-radius:20px;background:var(--soft);border:1px solid var(--bd);position:relative;transition:.2s}
 .sw i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:14px;background:var(--mut);transition:.2s}
 .sw input:checked+i{background:var(--acc);border-color:var(--acc)}.sw input:checked+i::after{left:16px;background:#fff}
+
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--bd);background:var(--card);padding:9px 14px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;transition:.15s;text-decoration:none}
 .btn:hover{background:var(--soft)}
 .btn.p{border:0;color:#fff;background:linear-gradient(100deg,var(--acc),var(--acc2));box-shadow:0 8px 26px #7c3aed4d;padding:10px 18px}
 .btn.p:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 .btn.sm{padding:6px 10px;font-size:12px;border-radius:9px}
 .link{background:none;border:0;color:var(--acc);font-size:12px;font-weight:600;cursor:pointer;padding:0}
+
 /* drop & thumbs */
 .drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1.5px dashed var(--bd);border-radius:12px;color:var(--mut);font-size:12px;cursor:pointer;transition:.15s;text-align:center}
 .drop:hover,.drop.over{border-color:var(--acc);color:var(--acc);background:#7c3aed0d}
@@ -83,6 +101,7 @@ details.box summary{list-style:none;cursor:pointer;display:flex;align-items:cent
 details.box summary::-webkit-details-marker{display:none}
 details.box summary .chev{margin-left:auto;transition:.2s}details.box[open] summary .chev{transform:rotate(180deg)}
 details.box>div{margin-top:14px}details.box>div>*+*{margin-top:14px}
+
 /* composer */
 .composer textarea{width:100%;border:0;background:none;outline:none;resize:none;font-size:16px;line-height:1.55;min-height:96px}
 .composer textarea::placeholder{color:var(--mut)}
@@ -91,6 +110,7 @@ details.box>div{margin-top:14px}details.box>div>*+*{margin-top:14px}
 .chip.warn{background:#f59e0b1f;color:#d97706}
 .specbox{border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,#7c3aed1a,#db27771a);border:1px solid #7c3aed33;font-size:12.5px}
 .specbox b{font-size:14px}
+
 /* gallery */
 .gal{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
 .media{position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid var(--bd)}
@@ -109,8 +129,13 @@ details.box>div{margin-top:14px}details.box>div>*+*{margin-top:14px}
 .masonry>div{break-inside:avoid;margin-bottom:16px}
 .hov{position:absolute;inset:auto 0 0;display:flex;gap:6px;padding:10px;background:linear-gradient(transparent,#000c);opacity:0;transition:.2s}
 .media:hover .hov{opacity:1}@media(hover:none){.hov{opacity:1}}
+
 /* chat */
-.chatwrap{display:flex;flex-direction:column;height:calc(100vh - 120px);min-height:480px;padding:0}
+.chatwrap{display:flex;flex-direction:column;height:calc(100vh - 120px);min-height:500px;padding:0;overflow:hidden}
+.chat-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bd);background:color-mix(in srgb,var(--card) 95%,transparent)}
+.chat-header-title{display:flex;align-items:center;gap:8px;font-size:13px}
+.chat-toggle-btn{display:none}
+.chat-mobile-drawer{border-bottom:1px solid var(--bd);padding:12px 14px;background:var(--soft)}
 .msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
 .msg{max-width:86%;padding:10px 14px;border-radius:16px;white-space:pre-wrap;word-break:break-word}
 .msg.u{align-self:flex-end;color:#fff;background:linear-gradient(135deg,var(--acc),#9333ea);border-bottom-right-radius:5px}
@@ -118,9 +143,20 @@ details.box>div{margin-top:14px}details.box>div>*+*{margin-top:14px}
 .msg img{max-height:120px;border-radius:10px;margin:0 6px 6px 0}
 .typing{display:inline-flex;gap:4px}.typing i{width:6px;height:6px;border-radius:6px;background:var(--mut);animation:bl 1.2s infinite}
 .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}@keyframes bl{0%,80%,100%{opacity:.25}40%{opacity:1}}
-.inbar{border-top:1px solid var(--bd);padding:12px}
-.inrow{display:flex;align-items:flex-end;gap:8px;background:var(--inp);border:1px solid var(--bd);border-radius:16px;padding:6px}
-.inrow textarea{flex:1;border:0;background:none;outline:none;resize:none;padding:8px;max-height:160px}
+.inbar{border-top:1px solid var(--bd);padding:10px 14px;background:color-mix(in srgb,var(--card) 95%,transparent)}
+.inrow{display:flex;align-items:flex-end;gap:8px;background:var(--inp);border:1px solid var(--bd);border-radius:16px;padding:6px 8px;transition:border-color .15s,box-shadow .15s}
+.inrow:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px #7c3aed1a}
+.inrow textarea{flex:1;min-width:0;border:0;background:none;outline:none;resize:none;padding:8px 6px;font-size:14px;line-height:1.45;max-height:160px;color:var(--fg)}
+.upload-clip{width:34px;height:34px;border-radius:10px;flex-shrink:0}
+.send-btn{width:38px;height:38px;min-width:38px;border-radius:12px;border:0;display:grid;place-items:center;
+  color:#fff;cursor:pointer;transition:all .18s cubic-bezier(0.16,1,0.3,1);padding:0;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));flex-shrink:0}
+.send-btn.muted{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+.send-btn.ready{opacity:1;cursor:pointer;transform:scale(1.02);box-shadow:0 4px 18px #7c3aed55}
+.send-btn.ready:hover{transform:scale(1.06);filter:brightness(1.1)}
+.send-btn.busy{background:#ef4444;opacity:1;cursor:pointer;box-shadow:0 4px 16px #ef444455}
+.send-btn.busy:hover{filter:brightness(1.15)}
+
 /* models / raw */
 .mgrid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
 .mitem{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--bd);border-radius:14px}
@@ -130,14 +166,29 @@ details.box>div{margin-top:14px}details.box>div>*+*{margin-top:14px}
 pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-height:70vh;white-space:pre-wrap;word-break:break-all}
 .mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:500;box-shadow:0 10px 30px #0000004d;max-width:90vw}
-/* mobile */
-@media(max-width:760px){
-  .tabs{position:fixed;left:10px;right:10px;bottom:10px;margin:0;justify-content:space-around;z-index:50;border:1px solid var(--bd);
-    background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(18px);padding:5px;margin-bottom:env(safe-area-inset-bottom)}
-  .tab{flex-direction:column;gap:2px;font-size:10.5px;padding:6px 4px;flex:1}
-  .brand span,.sync span{display:none}.top-in{justify-content:space-between}
-  main{padding-bottom:100px}.toast{bottom:90px}
-  .chatwrap{height:calc(100vh - 170px)}.gal{grid-template-columns:1fr}
+
+/* mobile responsive */
+@media(max-width:860px){
+  .top-in{padding:8px 12px}
+  .top-bar-row{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;gap:8px 10px;align-items:center}
+  .brand{grid-column:1;grid-row:1}
+  .top-actions{grid-column:2;grid-row:1;justify-content:flex-end}
+  .sync-label{display:none}
+  .tabs-wrap{grid-column:1 / -1;grid-row:2;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:2px;scrollbar-width:none;margin:0}
+  .tabs-wrap::-webkit-scrollbar{display:none}
+  .tabs{width:max-content;padding:3px;gap:4px}
+  .tab{padding:6px 12px;font-size:12.5px;gap:5px}
+  main{padding:12px 10px 32px}
+  .split{display:grid;grid-template-columns:1fr;gap:16px}
+  .chat-settings-side{display:none}
+  .chat-toggle-btn{display:inline-flex}
+  .split.chat{display:block}
+  .chatwrap{height:calc(100dvh - 140px);min-height:460px}
+  .gal{grid-template-columns:1fr}
+}
+@media(min-width:861px){
+  .chat-mobile-drawer{display:none!important}
 }
 </style>
 </head>
@@ -145,18 +196,22 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
 <div class="glow"></div>
 
 <header class="top"><div class="top-in">
-  <div class="brand"><div class="logo"><i data-lucide="clapperboard"></i></div><span>Agnes Studio</span></div>
-  <nav class="tabs">
-    <button class="tab" :class="tab==='video'&&'on'" @click="tab='video'"><i data-lucide="film"></i>Video</button>
-    <button class="tab" :class="tab==='image'&&'on'" @click="tab='image'"><i data-lucide="image"></i>Resim</button>
-    <button class="tab" :class="tab==='chat'&&'on'" @click="tab='chat'"><i data-lucide="message-circle"></i>Sohbet</button>
-    <button class="tab" :class="tab==='models'&&'on'" @click="tab='models'"><i data-lucide="layers"></i>Modeller</button>
-    <button class="tab" :class="tab==='raw'&&'on'" @click="tab='raw'"><i data-lucide="terminal"></i>API</button>
-  </nav>
-  <div class="row">
-    <div class="sync" :title="dirty?'Kaydediliyor':'Oturum kaydedildi'"><i class="dot" :class="dirty&&'wait'"></i><span x-text="dirty?'Kaydediliyor':'Kaydedildi'"></span></div>
-    <button class="ibtn" @click="resetAll()" title="Oturumu sıfırla"><i data-lucide="rotate-ccw"></i></button>
-    <button class="ibtn" @click="toggleTheme()" title="Tema"><i data-lucide="sun" class="i-sun"></i><i data-lucide="moon" class="i-moon"></i></button>
+  <div class="top-bar-row">
+    <div class="brand"><div class="logo"><i data-lucide="clapperboard"></i></div><span>Agnes Studio</span></div>
+    <nav class="tabs-wrap">
+      <div class="tabs">
+        <button class="tab" :class="tab==='video'&&'on'" @click="tab='video'"><i data-lucide="film"></i><span>Video</span></button>
+        <button class="tab" :class="tab==='image'&&'on'" @click="tab='image'"><i data-lucide="image"></i><span>Resim</span></button>
+        <button class="tab" :class="tab==='chat'&&'on'" @click="tab='chat'"><i data-lucide="message-circle"></i><span>Sohbet</span></button>
+        <button class="tab" :class="tab==='models'&&'on'" @click="tab='models'"><i data-lucide="layers"></i><span>Modeller</span></button>
+        <button class="tab" :class="tab==='raw'&&'on'" @click="tab='raw'"><i data-lucide="terminal"></i><span>API</span></button>
+      </div>
+    </nav>
+    <div class="top-actions">
+      <div class="sync" :title="dirty?'Kaydediliyor':'Oturum kaydedildi'"><i class="dot" :class="dirty&&'wait'"></i><span class="sync-label" x-text="dirty?'Kaydediliyor':'Kaydedildi'"></span></div>
+      <button class="ibtn" @click="resetAll()" title="Oturumu sıfırla"><i data-lucide="rotate-ccw"></i></button>
+      <button class="ibtn" @click="toggleTheme()" title="Tema"><i data-lucide="sun" class="i-sun"></i><i data-lucide="moon" class="i-moon"></i></button>
+    </div>
   </div>
 </div></header>
 
@@ -306,7 +361,8 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
 
 <!-- ============================ CHAT ============================ -->
 <section x-show="tab==='chat'" class="split chat">
-  <aside class="card side">
+  <aside class="card side chat-settings-side">
+    <div class="sec"><i data-lucide="sliders"></i><span>Model & Parametreler</span></div>
     <div><div class="lbl">Model</div>
       <select class="inp" x-model="c.model"><template x-for="m in byCat('text')" :key="m.id"><option :value="m.id" :selected="m.id===c.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
     <div><div class="lbl">Sistem promptu</div><textarea class="inp" rows="3" x-model="c.system"></textarea></div>
@@ -318,7 +374,41 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
     <div class="row" style="gap:18px"><label class="sw"><input type="checkbox" x-model="c.stream"><i></i>Stream</label><label class="sw"><input type="checkbox" x-model="c.json_mode"><i></i>JSON</label></div>
     <button class="btn" style="width:100%" @click="messages=[]"><i data-lucide="eraser"></i>Sohbeti temizle</button>
   </aside>
+
   <div class="card chatwrap">
+    <!-- Chat Header with mobile settings toggle and clear -->
+    <div class="chat-header">
+      <div class="chat-header-title">
+        <i data-lucide="bot"></i>
+        <span class="mono" style="font-weight:600" x-text="c.model"></span>
+        <span class="badge b-FREE" style="margin-left:4px">Canlı</span>
+      </div>
+      <span class="grow"></span>
+      <button class="btn sm chat-toggle-btn" @click="chatSettingsOpen = !chatSettingsOpen" title="Parametreleri Aç/Kapat">
+        <i data-lucide="sliders"></i><span x-text="chatSettingsOpen ? 'Ayarları Kapat' : 'Ayarlar'"></span>
+      </button>
+      <button class="btn sm" @click="messages=[]" title="Sohbeti temizle"><i data-lucide="trash-2"></i></button>
+    </div>
+
+    <!-- Mobile collapsible settings drawer -->
+    <div class="chat-mobile-drawer" x-show="chatSettingsOpen" x-transition x-cloak>
+      <div style="font-weight:600;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <i data-lucide="sliders"></i><span>Sohbet Parametreleri</span>
+      </div>
+      <div><div class="lbl">Model</div>
+        <select class="inp" x-model="c.model"><template x-for="m in byCat('text')" :key="m.id"><option :value="m.id" :selected="m.id===c.model" x-text="m.id+'  ·  '+m.tier"></option></template></select></div>
+      <div style="margin-top:8px"><div class="lbl">Sistem promptu</div><textarea class="inp" rows="2" x-model="c.system"></textarea></div>
+      <div class="g2" style="margin-top:8px">
+        <div><div class="lbl"><span>Temperature</span><b x-text="c.temperature"></b></div><input type="range" min="0" max="2" step="0.1" x-model.number="c.temperature"></div>
+        <div><div class="lbl"><span>Top P</span><b x-text="c.top_p"></b></div><input type="range" min="0" max="1" step="0.05" x-model.number="c.top_p"></div>
+      </div>
+      <div class="row" style="gap:14px;margin-top:8px">
+        <label class="sw"><input type="checkbox" x-model="c.stream"><i></i>Stream</label>
+        <label class="sw"><input type="checkbox" x-model="c.json_mode"><i></i>JSON</label>
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
     <div class="msgs" x-ref="chatbox">
       <template x-for="(m,k) in messages" :key="k"><div class="msg" :class="m.role==='user'?'u':'a'">
         <div x-show="m.imgs?.length"><template x-for="s in m.imgs||[]"><img :src="s"></template></div>
@@ -328,12 +418,25 @@ pre.out{margin:0;font:12px/1.55 ui-monospace,Menlo,monospace;overflow:auto;max-h
       </div></template>
       <div class="empty" style="margin:auto;border:0" x-show="!messages.length"><i data-lucide="message-circle"></i><div><b>Sohbete başla</b><br><small>Resim ekleyip analiz de ettirebilirsin.</small></div></div>
     </div>
+
+    <!-- Chat Input Area -->
     <div class="inbar">
-      <div class="thumbs" style="margin-bottom:8px" x-show="c.pending.length"><template x-for="(s,k) in c.pending" :key="k"><div class="thumb"><img :src="s"><button class="x" @click="c.pending.splice(k,1)">×</button></div></template></div>
+      <div class="thumbs" style="margin-bottom:8px" x-show="c.pending.length"><template x-for="(s,k) in c.pending" :key="k"><div class="thumb"><img :src="s"><button type="button" class="x" @click="c.pending.splice(k,1)">×</button></div></template></div>
       <div class="inrow" @dragover.prevent @drop.prevent="addMany($event.dataTransfer.files,c.pending,6)">
-        <label class="ibtn" style="border:0;cursor:pointer"><i data-lucide="paperclip"></i><input type="file" accept="image/*" multiple hidden @change="addMany($event.target.files,c.pending,6);$event.target.value=''"></label>
-        <textarea rows="1" x-model="c.input" placeholder="Mesaj yaz… (Shift+Enter yeni satır)" @input="$el.style.height='auto';$el.style.height=$el.scrollHeight+'px'" @keydown.enter="if(!$event.shiftKey){$event.preventDefault();send()}"></textarea>
-        <button class="btn p" style="padding:9px 12px" @click="send()" :disabled="busy.chat"><i data-lucide="arrow-up"></i></button>
+        <label class="ibtn upload-clip" style="border:0;cursor:pointer" title="Görsel ekle"><i data-lucide="paperclip"></i><input type="file" accept="image/*" multiple hidden @change="addMany($event.target.files,c.pending,6);$event.target.value=''"></label>
+        <textarea rows="1" x-ref="chatInput" x-model="c.input" placeholder="Mesaj yaz… (Enter: gönder, Shift+Enter: yeni satır)" @input="$el.style.height='auto';$el.style.height=Math.min($el.scrollHeight,180)+'px'" @keydown.enter="if(!$event.shiftKey){$event.preventDefault();send()}"></textarea>
+        <button type="button" class="send-btn"
+                :class="{
+                  'ready': (c.input.trim().length > 0 || c.pending.length > 0) && !busy.chat,
+                  'busy': busy.chat,
+                  'muted': !c.input.trim().length && !c.pending.length && !busy.chat
+                }"
+                @click="busy.chat ? abortChat() : send()"
+                :disabled="!busy.chat && !c.input.trim().length && !c.pending.length"
+                :title="busy.chat ? 'Durdur' : 'Gönder (Enter)'">
+          <template x-if="!busy.chat"><i data-lucide="arrow-up"></i></template>
+          <template x-if="busy.chat"><i data-lucide="square" style="width:12px;height:12px;fill:currentColor"></i></template>
+        </button>
       </div>
     </div>
   </div>
@@ -381,7 +484,10 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
 function studio(){ return {
-  CFG, ...DEF(), models: CFG.models, ready:false, dirty:false, busy:{}, toastMsg:'', now:Date.now(),
+  CFG, ...DEF(), models: CFG.models, ready:false, dirty:false,
+  chatSettingsOpen: false, chatAbortCtrl: null,
+  busy: { chat: false, video: false, image: false, models: false, raw: false, expand: false },
+  toastMsg:'', now:Date.now(),
 
   async init(){
     try{
@@ -484,22 +590,113 @@ function studio(){ return {
     this.toast(d.images.length + ' resim üretildi') }) },
 
   /* ---------- sohbet ---------- */
-  send(){ const c = this.c; if (this.busy.chat || (!c.input.trim() && !c.pending.length)) return;
-    this.messages.push({role:'user', text:c.input, imgs:[...c.pending]}); c.input = ''; c.pending = [];
-    return this.run('chat', async () => {
-      const msgs = [{role:'system', content:c.system}, ...this.messages.map(m => ({role:m.role,
-        content: m.imgs?.length ? [...m.imgs.map(u => ({type:'image_url', image_url:{url:u}})), {type:'text', text:m.text || 'Bu resmi detaylı analiz et.'}] : m.text}))];
-      const body = {model:c.model, messages:msgs, temperature:c.temperature, top_p:c.top_p, max_tokens:c.max_tokens,
-        frequency_penalty:c.frequency_penalty, presence_penalty:c.presence_penalty, seed:c.seed, stop:c.stop, json_mode:c.json_mode, stream:c.stream};
-      this.messages.push({role:'assistant', text:''}); const out = this.messages[this.messages.length - 1];
-      const box = this.$refs.chatbox; const down = () => this.$nextTick(() => box.scrollTop = box.scrollHeight); down();
-      try{
-        if (!c.stream){ const d = await this.api('/api/chat', body); out.text = d.content; out.usage = d.usage; down(); return }
-        const res = await fetch('/api/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
-        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText);
-        const rd = res.body.getReader(), dec = new TextDecoder();
-        for (;;){ const {done, value} = await rd.read(); if (done) break; out.text += dec.decode(value, {stream:true}); down() }
-      }catch(e){ this.messages.splice(-1, 1); throw e } }) },
+  send(){
+    const c = this.c;
+    const inputEl = this.$refs.chatInput;
+    const rawText = (c.input || (inputEl ? inputEl.value : '')).trim();
+    if (this.busy.chat) return;
+    if (!rawText && !c.pending.length) return;
+
+    this.messages.push({ role: 'user', text: rawText, imgs: [...c.pending] });
+    c.input = '';
+    c.pending = [];
+    if (inputEl) {
+      inputEl.value = '';
+      inputEl.style.height = 'auto';
+    }
+
+    this.chatAbortCtrl = new AbortController();
+    this.busy.chat = true;
+
+    const msgs = [
+      { role: 'system', content: c.system || 'Sen yardımsever bir yapay zeka asistanısın.' },
+      ...this.messages.map(m => ({
+        role: m.role,
+        content: m.imgs && m.imgs.length
+          ? [...m.imgs.map(u => ({ type: 'image_url', image_url: { url: u } })), { type: 'text', text: m.text || 'Bu resmi detaylı analiz et.' }]
+          : (m.text || '')
+      }))
+    ];
+
+    const body = {
+      model: c.model || 'agnes-2.5-flash',
+      messages: msgs,
+      temperature: c.temperature ?? 0.7,
+      top_p: c.top_p ?? 1.0,
+      max_tokens: c.max_tokens || 4096,
+      frequency_penalty: c.frequency_penalty ?? 0.0,
+      presence_penalty: c.presence_penalty ?? 0.0,
+      seed: c.seed,
+      stop: c.stop,
+      json_mode: c.json_mode,
+      stream: c.stream !== false
+    };
+
+    this.messages.push({ role: 'assistant', text: '' });
+    const out = this.messages[this.messages.length - 1];
+    const box = this.$refs.chatbox;
+    const down = () => this.$nextTick(() => { if (box) box.scrollTop = box.scrollHeight; });
+    down();
+
+    (async () => {
+      try {
+        if (!body.stream) {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            signal: this.chatAbortCtrl.signal
+          });
+          const d = await res.json().catch(() => ({ error: 'Sunucu yanıtı okunamadı' }));
+          if (!res.ok) throw new Error(d.error || 'İstek başarısız: ' + res.status);
+          out.text = d.content || '';
+          out.usage = d.usage;
+          down();
+          return;
+        }
+
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          signal: this.chatAbortCtrl.signal
+        });
+        if (!res.ok) {
+          const d = await res.json().catch(() => ({ error: res.statusText }));
+          throw new Error(d.error || 'İstek hatası: ' + res.status);
+        }
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          out.text += decoder.decode(value, { stream: true });
+          down();
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          out.text = (out.text ? out.text + '\n' : '') + '[Durduruldu]';
+        } else {
+          this.toast(err.message || 'Sohbet hatası oluştu');
+          if (!out.text) {
+            this.messages.splice(this.messages.length - 1, 1);
+          } else {
+            out.text += '\n\n[HATA: ' + (err.message || 'Bağlantı koptu') + ']';
+          }
+        }
+      } finally {
+        this.busy.chat = false;
+        this.chatAbortCtrl = null;
+        down();
+      }
+    })();
+  },
+  abortChat(){
+    if (this.chatAbortCtrl) {
+      this.chatAbortCtrl.abort();
+    }
+    this.busy.chat = false;
+  },
 
   /* ---------- modeller / raw ---------- */
   refreshModels(){ return this.run('models', async () => { this.models = await this.api('/api/models', null, 'GET'); this.toast(this.models.length + ' model yüklendi') }) },
