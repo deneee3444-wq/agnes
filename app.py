@@ -72,7 +72,7 @@ from flask import Flask, Response, jsonify, render_template, request, stream_wit
 # YAPILANDIRMA
 # ==============================================================================
 
-API_KEY = os.environ.get("AGNES_API_KEY") or "sk-KZhob2kogDQGnUhsOvm3U1254J4BTQ9oRjZrwuRcgtR8vWeA"
+API_KEY = os.environ.get("AGNES_API_KEY") or "sk-S7quAYwYqrpGnZuXZxPVncM5SFED5sh2lgmFzvhDNMjYEyP0"
 APP_PASSWORD = os.environ.get("APP_PASSWORD", "")
 API_ROOT = "https://apihub.agnes-ai.com"
 BASE_URL = f"{API_ROOT}/v1"
