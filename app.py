@@ -96,26 +96,51 @@ MODELS = {
 }
 
 IMAGE_PRESETS = {
-    "1:1":  {"1K": "1024x1024", "2K": "2048x2048", "4K": "4096x4096"},
-    "16:9": {"1K": "1280x720",  "2K": "1920x1080", "4K": "3840x2160"},
-    "9:16": {"1K": "720x1280",  "2K": "1080x1920", "4K": "2160x3840"},
-    "4:3":  {"1K": "1024x768",  "2K": "2048x1536", "4K": "4096x3072"},
-    "3:4":  {"1K": "768x1024",  "2K": "1536x2048", "4K": "3072x4096"},
-    "21:9": {"1K": "1344x576",  "2K": "2560x1080", "4K": "5040x2160"},
+    "1:1":  {"1K": "1024x1024", "2K": "2048x2048", "3K": "3072x3072", "4K": "4096x4096"},
+    "16:9": {"1K": "1280x720",  "2K": "1920x1080", "3K": "2560x1440", "4K": "3840x2160"},
+    "9:16": {"1K": "720x1280",  "2K": "1080x1920", "3K": "1440x2560", "4K": "2160x3840"},
+    "4:3":  {"1K": "1024x768",  "2K": "2048x1536", "3K": "3072x2304", "4K": "4096x3072"},
+    "3:4":  {"1K": "768x1024",  "2K": "1536x2048", "3K": "2304x3072", "4K": "3072x4096"},
+    "3:2":  {"1K": "1080x720",  "2K": "2160x1440", "3K": "3240x2160", "4K": "4320x2880"},
+    "2:3":  {"1K": "720x1080",  "2K": "1440x2160", "3K": "2160x3240", "4K": "2880x4320"},
+    "21:9": {"1K": "1344x576",  "2K": "2560x1080", "3K": "3440x1440", "4K": "5040x2160"},
 }
 
-# Boyutlar: 480p için 854x480 (veya 832x448), 720p için 1280x704, 1080p için 1920x1088
+# Boyutlar: 64'ün tam katı olan standart tensör hizalı çözünürlükler
 VIDEO_PRESETS = {
-    "480p":  {"16:9": [854, 480],   "9:16": [480, 854],   "1:1": [480, 480]},
+    "480p":  {"16:9": [832, 448],   "9:16": [448, 832],   "1:1": [512, 512]},
     "720p":  {"16:9": [1280, 704],  "9:16": [704, 1280],  "1:1": [768, 768]},
     "1080p": {"16:9": [1920, 1088], "9:16": [1088, 1920], "1:1": [1088, 1088]},
 }
 
 LIMITS = {"image_refs": 6, "video_ref_images": 5, "video_ref_audios": 3}
 
-# Oturum durumu deposu
+# Oturum durumu deposu (disk dosyası + bellek senkronizasyonu)
 BOOT_ID = uuid.uuid4().hex
-_STATE: dict[str, Any] = {"data": {}, "updated": 0.0}
+STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state.json")
+
+
+def _load_state_file() -> dict:
+    if os.path.exists(STATE_FILE):
+        try:
+            with open(STATE_FILE, "r", encoding="utf-8") as f:
+                d = json.load(f)
+                return d if isinstance(d, dict) else {}
+        except Exception:
+            pass
+    return {}
+
+
+def _save_state_file(data: dict) -> None:
+    try:
+        with open(STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+_INIT_DATA = _load_state_file().get("data", {})
+_STATE: dict[str, Any] = {"data": _INIT_DATA, "updated": time.time()}
 _LOCK = threading.Lock()
 
 
@@ -223,13 +248,32 @@ def _short(x):
 # MODELLER
 # ==============================================================================
 
+MODEL_NAMES = {
+    # Video Modelleri
+    "agnes-video-v2.0": "Agnes Video v2.0",
+    "agnes-video-2.5-flash": "Agnes Video 2.5 Flash",
+    "agnes-video-2.5": "Agnes Video 2.5 Pro",
+    # Resim Modelleri
+    "agnes-image-2.5-flash": "Agnes Image 2.5 Flash",
+    "agnes-image-2.1-flash": "Agnes Image 2.1 Flash",
+    "agnes-image-2.0-flash": "Agnes Image 2.0 Flash",
+    # Metin / Sohbet Modelleri
+    "agnes-3.0-flash": "Agnes 3.0 Flash",
+    "agnes-2.5-flash": "Agnes 2.5 Flash",
+    "agnes-2.0-flash": "Agnes 2.0 Flash",
+    "agnes-2.5-pro": "Agnes 2.5 Pro",
+    "agnes-2.5-pro-alpha": "Agnes 2.5 Pro Alpha",
+    "agnes-2.5-pro-beta": "Agnes 2.5 Pro Beta",
+}
+
+
 def model_info(mid: str) -> dict:
     if mid in MODELS:
         cat, tier = MODELS[mid]
     else:
         low = mid.lower()
         cat, tier = ("video" if "video" in low else "image" if "image" in low else "text"), "UNKNOWN"
-    return {"id": mid, "category": cat, "tier": tier}
+    return {"id": mid, "label": MODEL_NAMES.get(mid, mid), "category": cat, "tier": tier}
 
 
 def list_models(live: bool = True) -> list[dict]:
@@ -248,11 +292,30 @@ def list_models(live: bool = True) -> list[dict]:
 # SOHBET VE METİN PROMPT GENİŞLETİCİ (Agnes 2.0 Flash)
 # ==============================================================================
 
-def _chat_payload(d: dict, stream: bool) -> dict:
-    msgs = d.get("messages") or []
+def _chat_payload(d: dict, stream: bool, fallback_json: bool = False) -> dict:
+    msgs = list(d.get("messages") or [])
     if not msgs:
         raise AgnesError("messages boş olamaz.")
-    p = {
+
+    json_mode = bool(d.get("json_mode"))
+    if json_mode:
+        # OpenAI / Agnes API Kuralı: response_format 'json_object' istendiğinde
+        # messages içinde MUTLAKA 'JSON' / 'json' kelimesi geçmelidir.
+        has_json_word = any(
+            "json" in str(m.get("content", "")).lower()
+            for m in msgs
+        )
+        if not has_json_word:
+            # Sistem mesajı varsa genişlet, yoksa ekle
+            sys_idx = next((i for i, m in enumerate(msgs) if m.get("role") == "system"), None)
+            json_instruction = " You must respond strictly in valid JSON format. Always output a valid JSON object."
+            if sys_idx is not None:
+                orig = str(msgs[sys_idx].get("content", ""))
+                msgs[sys_idx] = {**msgs[sys_idx], "content": orig + json_instruction}
+            else:
+                msgs.insert(0, {"role": "system", "content": "You are a helpful AI assistant." + json_instruction})
+
+    p: dict[str, Any] = {
         "model": d.get("model") or "agnes-2.5-flash",
         "messages": msgs,
         "stream": stream,
@@ -262,24 +325,50 @@ def _chat_payload(d: dict, stream: bool) -> dict:
         "frequency_penalty": _float(d.get("frequency_penalty"), 0.0),
         "presence_penalty": _float(d.get("presence_penalty"), 0.0),
     }
+
     stop = [s.strip() for s in str(d.get("stop") or "").split(",") if s.strip()]
     if stop:
         p["stop"] = stop
-    if d.get("json_mode"):
+
+    # Sadece fallback modunda değilse response_format parametresini gönder
+    if json_mode and not fallback_json:
         p["response_format"] = {"type": "json_object"}
+
     if (seed := _int(d.get("seed"))) is not None:
         p["seed"] = seed
     return p
 
 
 def chat(d: dict) -> dict:
-    data = _req("POST", "/chat/completions", _chat_payload(d, False), timeout=120).json()
+    try:
+        data = _req("POST", "/chat/completions", _chat_payload(d, False, fallback_json=False), timeout=120).json()
+    except AgnesError as e:
+        # Eğer model 400 INVALID_ARGUMENT (response_format desteklemiyor) hatası verirse
+        if e.status_code == 400 and d.get("json_mode"):
+            data = _req("POST", "/chat/completions", _chat_payload(d, False, fallback_json=True), timeout=120).json()
+        else:
+            raise
+
     ch = (data.get("choices") or [{}])[0]
-    return {"content": ch.get("message", {}).get("content", ""), "usage": data.get("usage", {})}
+    content = ch.get("message", {}).get("content", "")
+    if content:
+        content = re.sub(r"^\s*[\r\n]+", "", content).rstrip()
+    return {"content": content, "usage": data.get("usage", {})}
 
 
 def chat_stream(d: dict):
-    r = _req("POST", "/chat/completions", _chat_payload(d, True), timeout=120, stream=True)
+    payload = _chat_payload(d, True, fallback_json=False)
+    try:
+        r = _req("POST", "/chat/completions", payload, timeout=120, stream=True)
+    except AgnesError as e:
+        # Eğer model 400 INVALID_ARGUMENT dönerse ve JSON mode açıksa fallback ile tekrar dene
+        if e.status_code == 400 and d.get("json_mode"):
+            payload = _chat_payload(d, True, fallback_json=True)
+            r = _req("POST", "/chat/completions", payload, timeout=120, stream=True)
+        else:
+            raise
+
+    first_content = True
     with r:
         for raw in r.iter_lines():
             line = raw.decode("utf-8", "replace") if raw else ""
@@ -293,7 +382,13 @@ def chat_stream(d: dict):
             except ValueError:
                 continue
             if piece:
-                yield piece
+                if first_content:
+                    piece = re.sub(r"^\s*[\r\n]+", "", piece)
+                    if piece:
+                        first_content = False
+                        yield piece
+                else:
+                    yield piece
 
 
 def expand_video_prompt(idea: str, model: str = "agnes-2.0-flash") -> str:
@@ -327,43 +422,82 @@ def expand_video_prompt(idea: str, model: str = "agnes-2.0-flash") -> str:
 
 
 # ==============================================================================
-# RESİM ÜRETİMİ (POST /v1/images/generations)
+# RESİM ÜRETİMİ (POST /v1/images/generations - Resmi Agnes Image Dokümanlarına Uygun)
+# https://wiki.agnes-ai.com/en/docs/agnes-image-21-flash
 # ==============================================================================
 
 def generate_image(d: dict) -> list[dict]:
     prompt = (d.get("prompt") or "").strip()
     if not prompt:
         raise AgnesError("prompt boş olamaz.")
-    size = _wxh(d.get("size"))
-    if not size:
-        raise AgnesError(f"Geçersiz boyut: {d.get('size') or '-'} (örn: 1024x768)")
+
+    model = d.get("model") or "agnes-image-2.5-flash"
     n = _int(d.get("n"), 1)
     fmt = d.get("response_format", "url")
-    if n < 1 or fmt not in ("url", "b64_json"):
-        raise AgnesError("n>=1 ve response_format url|b64_json olmalı.")
-    p = {
-        "model": d.get("model") or "agnes-image-2.5-flash",
+    if fmt not in ("url", "b64_json"):
+        fmt = "url"
+
+    # Boyut ve Oran (Resmi Doküman: size "1K".."4K" ve ratio "16:9", "1:1", vb.)
+    size_in = str(d.get("size") or "2K").strip()
+    ratio_in = str(d.get("ratio") or d.get("aspect_ratio") or "16:9").strip()
+
+    # Eğer tam çözünürlük gelirse (örn 1920x1080) veya tier ("2K")
+    p: dict[str, Any] = {
+        "model": model,
         "prompt": prompt,
-        "n": n,
-        "size": f"{size[0]}x{size[1]}",
+        "size": size_in if size_in in ("1K", "2K", "3K", "4K") else (f"{_wxh(size_in)[0]}x{_wxh(size_in)[1]}" if _wxh(size_in) else "2K"),
+        "ratio": ratio_in if ratio_in in ("1:1", "16:9", "9:16", "4:3", "3:4", "2:3", "3:2", "21:9") else "16:9",
+    }
+
+    if n > 1:
+        p["n"] = n
+
+    # Base64 çıktısı için doküman standardı: top-level return_base64: true
+    if fmt == "b64_json":
+        p["return_base64"] = True
+
+    # Extra body: Dokümanda açıkça uyarılmıştır:
+    # "Do not place response_format at the top level of the request body.
+    #  For URL output, use extra_body.response_format: 'url'.
+    #  For image-to-image Base64 output, use extra_body.response_format: 'b64_json'."
+    extra_body: dict[str, Any] = {
         "response_format": fmt
     }
+
+    # Negative Prompt desteği
+    if (neg := (d.get("negative_prompt") or "").strip()):
+        p["negative_prompt"] = neg
+        extra_body["negative_prompt"] = neg
+
+    # Seed desteği
     seed = _int(d.get("seed"))
     if seed is not None and seed != -1:
         if not 0 <= seed <= 999:
             raise AgnesError("seed -1 ile 999 arasında olmalı.")
         p["seed"] = seed
-    refs = [_img(r) for r in d.get("reference_images") or [] if r]
-    # API sunucu kuralı: En fazla 6 referans görsel ('at most 6 allowed').
-    # 8 adet gönderilirse sunucu 400 hatası vermemesi için güvenle ilk 6'sı alınır.
+
+    # Referans Görseller (Image-to-image & Multi-image Composition)
+    # Resmi doküman: extra_body.image = ["url1", "url2"]
+    raw_refs = d.get("reference_images") or d.get("image") or []
+    if isinstance(raw_refs, str):
+        raw_refs = [raw_refs]
+    refs = [_img(r) for r in raw_refs if r]
+
+    # En fazla 6 referans görsel (sunucu kuralı: at most 6 allowed)
     if len(refs) > 6:
         refs = refs[:6]
+
     if refs:
         strength = _float(d.get("strength"), 0.75)
         if not 0.1 <= strength <= 1.0:
             raise AgnesError("strength 0.1 - 1.0 olmalı.")
-        p["image"] = refs[0] if len(refs) == 1 else refs
+        # Resmi dokümantasyon: extra_body.image içine dizi verilir
+        extra_body["image"] = refs
+        p["image"] = refs
         p["strength"] = strength
+
+    p["extra_body"] = extra_body
+
     data = _req("POST", "/images/generations", p, timeout=180).json()
     if not data.get("data"):
         raise AgnesError("Yanıtta resim yok.", 502, data)
@@ -399,8 +533,8 @@ def resolve_video_spec(resolution="720p", aspect_ratio="16:9", seconds=5.0, fps=
     custom = _wxh(resolution)
     if custom:
         w, h = custom
-        w = max(256, (w // 64) * 64)
-        h = max(256, (h // 64) * 64)
+        w = max(256, round(w / 64) * 64)
+        h = max(256, round(h / 64) * 64)
         aspect_ratio = "16:9" if w > h else "9:16" if h > w else "1:1"
     else:
         try:
@@ -444,7 +578,7 @@ def create_video(d: dict) -> dict:
     is_v2 = "v2.0" in model.lower()
 
     if is_v2:
-        # V2.0 KARE TABANLI MİMARİ
+        # V2.0 KARE TABANLI MİMARİ (yay0128/Agnes)
         spec = resolve_video_spec(
             resolution=d.get("resolution", "720p"),
             aspect_ratio=d.get("aspect_ratio", "16:9"),
@@ -457,57 +591,90 @@ def create_video(d: dict) -> dict:
         p["num_frames"] = spec["num_frames"]
         p["frame_rate"] = spec["frame_rate"]
         # ÖNEMLİ: v2.0 için aspect_ratio gönderilmez, width x height belirler!
+
+        start, end = d.get("start_image"), d.get("end_image")
+        if end and not start:
+            raise AgnesError("Bitiş karesi için başlangıç karesi de gereklidir.")
+
+        if start:
+            s = _img(start)
+            if end:
+                e = _img(end)
+                # KEYFRAME GEÇİŞİ (yay0128/Agnes: examples/video_keyframes.py)
+                # DOĞRU KULLANIM: mode ve image doğrudan 'extra_body' sözlüğü içinde gönderilir!
+                # Kök düzeyde 'mode' veya 'image' GÖNDERİLMEZ.
+                p["extra_body"] = {"image": [s, e], "mode": "keyframes"}
+            else:
+                # IMAGE-TO-VIDEO (yay0128/Agnes: examples/video_image_to_video.py)
+                # Tek görsel kök düzeyde 'image' olarak verilir, kök 'mode' GÖNDERİLMEZ.
+                p["image"] = s
+
     else:
-        # 2.5 AİLESİ (SÜRE TABANLI MİMARİ)
-        dur = _int(d.get("duration"), 5)
+        # ==============================================================================
+        # 2.5 VE FLASH MODELLERİ (Resmi Agnes AI API Dokümantasyonu)
+        # https://agnes-ai.com/doc/agnes-video-25
+        # https://agnes-ai.com/doc/agnes-video-25-flash
+        # ==============================================================================
+        # 1. SÜRE: "duration" DESTEKLENMEZ! Parametre adı zorunlu olarak string "seconds" olmalıdır!
+        sec_val = int(_float(d.get("seconds") or d.get("duration"), 5.0))
+        if not 4 <= sec_val <= 12:
+            raise AgnesError("seconds 4 ile 12 saniye arasında olmalıdır.")
+        p["seconds"] = str(sec_val)
+
+        # 2. EN-BOY ORANI
         ar = d.get("aspect_ratio", "16:9")
-        if not 4 <= dur <= 12 or ar not in ("16:9", "9:16", "1:1"):
-            raise AgnesError("duration 4-12 sn, aspect_ratio 16:9|9:16|1:1 olmalıdır.")
-        p["duration"] = dur
+        if ar not in ("16:9", "9:16", "1:1", "4:3", "3:4", "21:9"):
+            ar = "16:9"
         p["aspect_ratio"] = ar
 
-    # --------------------------------------------------------------------------
-    # GÖRSEL / REFERANS YAPILANDIRMASI (yay0128/Agnes Resmi Şeması)
-    # --------------------------------------------------------------------------
-    start, end = d.get("start_image"), d.get("end_image")
-    if end and not start:
-        raise AgnesError("Bitiş karesi için başlangıç karesi de gereklidir.")
-
-    if start:
-        s = _img(start)
-        if end:
-            e = _img(end)
-            # KEYFRAMES MODU (yay0128/Agnes: examples/video_keyframes.py)
-            p["mode"] = "keyframes"
-            p["image"] = [s, e]
-            p["extra_body"] = {"image": [s, e], "mode": "keyframes"}
+        # 3. ÇÖZÜNÜRLÜK (size)
+        # agnes-video-2.5-flash için SADECE "720P" geçerlidir.
+        # agnes-video-2.5 için "720P", "1080P", "1K", "2K" desteklenir.
+        is_flash = "flash" in model.lower()
+        res_req = str(d.get("resolution") or "720p").upper()
+        if is_flash:
+            p["size"] = "720P"
         else:
-            # IMAGE-TO-VIDEO MODU (yay0128/Agnes: examples/video_image_to_video.py)
-            p["image"] = s
-            p["mode"] = "ti2vid"
+            p["size"] = res_req if res_req in ("1080P", "1K", "2K") else "720P"
 
-    # R2V Multimodal Referanslar (2.5 serisi için)
-    imgs = d.get("ref_images") or []
-    auds = [a.strip() for a in d.get("ref_audio_urls") or [] if a and a.strip()]
-    vid = (d.get("ref_video_url") or "").strip()
-    if len(imgs) > LIMITS["video_ref_images"] or len(auds) > LIMITS["video_ref_audios"]:
-        raise AgnesError("En fazla 5 referans görsel ve 3 referans ses verilebilir.")
-    refs = [{"type": "image_url", "image_url": {"url": _img(i)}, "role": "style"} for i in imgs]
-    refs += [{"type": "audio_url", "audio_url": {"url": a}, "role": "audio"} for a in auds]
-    if vid:
-        refs.append({"type": "video_url", "video_url": {"url": vid}, "role": "motion"})
-    if refs:
-        p["references"] = refs
+        # 4. GÖRSEL / KEYFRAME / REFERANS MODLARI (2.5 Standartları)
+        start, end = d.get("start_image"), d.get("end_image")
+        ref_imgs = d.get("ref_images") or []
+        ref_auds = [a.strip() for a in d.get("ref_audio_urls") or [] if a and a.strip()]
+        ref_vid = (d.get("ref_video_url") or "").strip()
 
-    # İsteğe Bağlı Parametreler
+        if end and not start:
+            raise AgnesError("Bitiş karesi için başlangıç karesi de gereklidir.")
+
+        if start:
+            # KEYFRAME MODU (2.5 Resmi Dokümantasyonu: mode="keyframe", first_frame, last_frame)
+            p["mode"] = "keyframe"
+            p["first_frame"] = _img(start)
+            if end:
+                p["last_frame"] = _img(end)
+        elif ref_imgs or ref_auds or ref_vid:
+            # MULTIMODAL REFERANS MODU (2.5 Resmi Dokümantasyonu: mode="reference")
+            p["mode"] = "reference"
+            if len(ref_imgs) > 5:
+                ref_imgs = ref_imgs[:5]
+            if len(ref_auds) > 3:
+                ref_auds = ref_auds[:3]
+            p["images"] = [_img(x) for x in ref_imgs]
+            if ref_auds:
+                p["audios"] = ref_auds
+            if ref_vid and not is_flash:
+                p["videos"] = [{"url": ref_vid, "start_seconds": 0, "require_audio": False}]
+        else:
+            # METİNDEN VİDEO (2.5 Resmi Dokümantasyonu: mode="text")
+            p["mode"] = "text"
+
+    # İsteğe Bağlı Parametreler (Agnes Video V2.0 ve 2.5)
+    # NOT (yay0128/Agnes): Video üretiminde "steps" / "num_inference_steps" parametresi
+    # desteklenmez; model kendi dahili difüzyon adım sayısını kullanır.
     if (neg := (d.get("negative_prompt") or "").strip()):
         p["negative_prompt"] = neg
     if (seed := _int(d.get("seed"))) is not None:
         p["seed"] = seed
-    if (steps := _int(d.get("num_inference_steps"))) is not None:
-        if steps < 1:
-            raise AgnesError("num_inference_steps pozitif olmalıdır.")
-        p["num_inference_steps"] = steps
 
     # Görevi oluştur
     data = _req("POST", "/videos", p, timeout=60).json()
@@ -516,8 +683,10 @@ def create_video(d: dict) -> dict:
     if not task_id and not video_id:
         raise AgnesError("Görev ID'si alınamadı.", 502, data)
 
-    spec_summary = {k: p[k] for k in ("width", "height", "num_frames", "frame_rate", "duration",
+    spec_summary = {k: p[k] for k in ("width", "height", "num_frames", "frame_rate", "seconds", "size",
                                        "aspect_ratio", "mode") if k in p}
+    if "extra_body" in p and isinstance(p["extra_body"], dict):
+        spec_summary["mode"] = p["extra_body"].get("mode", "keyframes")
     return {
         "task_id": task_id,
         "video_id": video_id,
@@ -653,6 +822,7 @@ def api_state_put():
     d = _body()
     with _LOCK:
         _STATE["data"], _STATE["updated"] = d, time.time()
+        _save_state_file({"data": d, "updated": _STATE["updated"]})
     return jsonify({"ok": True})
 
 
@@ -660,6 +830,7 @@ def api_state_put():
 def api_state_delete():
     with _LOCK:
         _STATE["data"], _STATE["updated"] = {}, time.time()
+        _save_state_file({"data": {}, "updated": _STATE["updated"]})
     return jsonify({"ok": True})
 
 
