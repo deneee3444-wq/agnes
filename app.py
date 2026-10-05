@@ -673,18 +673,18 @@ def api_chat():
     d = _body()
     if not d.get("stream", True):
         return jsonify(chat(d))
-    gen = chat_stream(d)
-    first = next(gen, "")
 
     def out():
-        yield first
         try:
-            yield from gen
+            for piece in chat_stream(d):
+                yield piece
         except AgnesError as e:
             yield f"\n\n[HATA] {e.message}"
+        except Exception as e:
+            yield f"\n\n[HATA] {str(e)}"
 
     return Response(stream_with_context(out()), mimetype="text/plain; charset=utf-8",
-                    headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+                    headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"})
 
 
 @app.post("/api/image")
